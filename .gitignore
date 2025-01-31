@@ -1,15 +1,29 @@
+# Ignore Android Studio/IntelliJ specific files
+.idea/
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
+*.iws
+*.ipr
+*.xml
+
+# Ignore build folder
+build/
+
+# Ignore Gradle wrapper files
+gradle-wrapper.jar
+gradle-wrapper.properties
+
+# Ignore logs
+*.log
+
+# Ignore the deploymentTargetSelector.xml file
+deploymentTargetSelector.xml
+
+# Ignore Kotlin specific files
+*.kotlin_metadata
+
+# Ignore other specific files and folders
+*.DS_Store
 /captures
-.externalNativeBuild
-.cxx
+/externalNativeBuild
+/cxx
 local.properties
