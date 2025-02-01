@@ -66,4 +66,17 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    testImplementation(libs.junitJupiterApi) // JUnit 5 API
+    testRuntimeOnly(libs.junitJupiterEngine) // JUnit 5 engine for running tests
+    testImplementation(libs.junitJupiterParams) // JUnit 5 parameterized tests
+    testImplementation(libs.mockk) // Mocking library for Kotlin tests
+    testImplementation(libs.kotestAssertions) // Kotest assertion
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
 }
