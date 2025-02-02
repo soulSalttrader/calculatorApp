@@ -1,6 +1,10 @@
-package com.example.calculatorApp.view.framework
+package com.example.calculatorApp.model.elements
 
 import androidx.compose.ui.graphics.Color
+import com.example.calculatorApp.model.elements.Element
+import com.example.calculatorApp.model.elements.ElementCategory
+import com.example.calculatorApp.model.elements.ElementCategoryStyleCollection
+import com.example.calculatorApp.model.elements.ElementColorStyle
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk

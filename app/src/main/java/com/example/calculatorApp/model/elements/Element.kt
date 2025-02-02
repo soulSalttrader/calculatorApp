@@ -1,9 +1,9 @@
-package com.example.calculatorApp.view.framework
+package com.example.calculatorApp.model.elements
 
 import androidx.compose.ui.graphics.Color
 
 interface Element<
-        Category : com.example.calculatorApp.view.framework.ElementCategory<BaseStyle>,
+        Category : ElementCategory<BaseStyle>,
         Style : ElementCategoryStyleCollection<BaseStyle>,
         BaseStyle : ElementColorStyle,
         > {

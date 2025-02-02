@@ -1,4 +1,4 @@
-package com.example.calculatorApp.view.framework
+package com.example.calculatorApp.model.elements
 
 abstract class ElementCategoryStyleBuilder<Category : ElementCategory<BaseStyle>, BaseStyle : ElementColorStyle>(
     protected val categories: MutableMap<Category, ElementCategoryStyle<BaseStyle>> = mutableMapOf()

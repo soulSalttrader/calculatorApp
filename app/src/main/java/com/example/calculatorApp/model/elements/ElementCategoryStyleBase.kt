@@ -1,4 +1,4 @@
-package com.example.calculatorApp.view.framework
+package com.example.calculatorApp.model.elements
 
 abstract class ElementCategoryStyleBase<BaseStyle : ElementColorStyle>(
     override val baseStyle: BaseStyle,

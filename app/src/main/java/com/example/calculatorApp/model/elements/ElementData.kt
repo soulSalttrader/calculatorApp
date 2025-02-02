@@ -1,4 +1,6 @@
-package com.example.calculatorApp.view.framework
+package com.example.calculatorApp.model.elements
+
+import com.example.calculatorApp.model.layout.ElementLayout
 
 interface ElementData<
         Category : ElementCategory<BaseStyle>,

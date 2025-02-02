@@ -1,3 +1,3 @@
-package com.example.calculatorApp.view.framework
+package com.example.calculatorApp.model.layout
 
 interface ElementLayout : HasAlignment, HasModifier, HasShape, HasTextStyle, HasWeight

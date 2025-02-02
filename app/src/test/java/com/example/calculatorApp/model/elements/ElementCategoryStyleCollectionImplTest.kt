@@ -1,4 +1,4 @@
-package com.example.calculatorApp.view.framework
+package com.example.calculatorApp.model.elements
 
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.maps.shouldBeEmpty
