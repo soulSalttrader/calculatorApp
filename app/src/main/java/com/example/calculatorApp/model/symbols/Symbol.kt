@@ -1,4 +1,4 @@
-package com.example.calculatorApp.model.symbol
+package com.example.calculatorApp.model.symbols
 
 interface Symbol {
     val label: String

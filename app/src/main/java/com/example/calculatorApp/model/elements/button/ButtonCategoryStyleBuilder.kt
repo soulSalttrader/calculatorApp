@@ -1,0 +1,31 @@
+package com.example.calculatorApp.model.elements.button
+
+import com.example.calculatorApp.model.elements.ElementCategory
+import com.example.calculatorApp.model.elements.ElementCategoryStyleBuilder
+import com.example.calculatorApp.model.elements.ElementCategoryStyleCollection
+import com.example.calculatorApp.model.elements.ElementCategoryStyleCollectionImpl
+import com.example.calculatorApp.model.elements.ElementColorStyle
+
+class ButtonCategoryStyleBuilder : ElementCategoryStyleBuilder<ElementCategory<ElementColorStyle>, ElementColorStyle>() {
+
+    fun arithmeticStyle(baseStyle: ElementColorStyle) = apply {
+        categories[ButtonCategory.Arithmetic] = ButtonCategoryStyleArithmetic(baseStyle)
+    }
+
+    fun controlStyle(
+        baseStyle: ElementColorStyle,
+        decimalStyle: ElementColorStyle? = null
+    ) = apply {
+        categories[ButtonCategory.Control] = ButtonCategoryStyleControl(
+            baseStyle, decimalStyle ?: baseStyle
+        )
+    }
+
+    fun numberStyle(baseStyle: ElementColorStyle) = apply {
+        categories[ButtonCategory.Number] = ButtonCategoryStyleNumber(baseStyle)
+    }
+
+    override fun build(): ElementCategoryStyleCollection<ElementColorStyle> {
+        return ElementCategoryStyleCollectionImpl(categories)
+    }
+}
