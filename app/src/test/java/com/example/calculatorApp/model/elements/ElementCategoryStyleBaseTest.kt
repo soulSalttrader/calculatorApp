@@ -10,9 +10,9 @@ import org.junit.jupiter.api.Test
 class ElementCategoryStyleBaseTest {
 
     @Nested
-    inner class GetSpecificStyle {
+    inner class SpecificStyle {
         @Test
-        fun `getSpecificStyle should default to empty map if specificStyles is null`() {
+        fun `should default to empty map if specificStyles is null`() {
             // Arrange:
             val baseStyle = ElementColorStyleImpl(Color.Green, Color.Black)
 
@@ -25,9 +25,9 @@ class ElementCategoryStyleBaseTest {
     }
 
     @Nested
-    inner class GetBaseStyle {
+    inner class BaseStyle {
         @Test
-        fun `getBaseStyle should store base style and specific styles`() {
+        fun `should store base style and specific styles`() {
             // Arrange:
             val baseStyle = ElementColorStyleImpl(Color.Blue, Color.Yellow)
             val specificStyles = mapOf("test" to ElementColorStyleImpl(Color.Red, Color.White))

@@ -1,11 +1,6 @@
 package com.example.calculatorApp.model.elements
 
 import androidx.compose.ui.graphics.Color
-import com.example.calculatorApp.model.elements.Element
-import com.example.calculatorApp.model.elements.ElementCategory
-import com.example.calculatorApp.model.elements.ElementCategoryStyleCollection
-import com.example.calculatorApp.model.elements.ElementColorStyle
-import com.example.calculatorApp.model.elements.ElementColorStyleImpl
 import io.kotest.matchers.equals.shouldBeEqual
 import io.mockk.every
 import io.mockk.mockk
@@ -16,7 +11,7 @@ import org.junit.jupiter.api.Test
 class ElementColorStyleImplTest {
 
     @Test
-    fun `ElementColorStyleImpl should call getBackgroundColor and getTextColor`() {
+    fun `should call getBackgroundColor and getTextColor`() {
         // Arrange:
         val mockCategory = mockk<ElementCategory<ElementColorStyle>>(relaxed = true)
         val mockStyle = mockk<ElementCategoryStyleCollection<ElementColorStyle>>(relaxed = true)
@@ -36,10 +31,10 @@ class ElementColorStyleImplTest {
     }
 
     @Nested
-    inner class BackgroundColorTests {
+    inner class GetBackgroundColor {
 
         @Test
-        fun `ElementColorStyleImpl should return correct background color`() {
+        fun `should return correct background color`() {
             // Arrange:
             val colorStyle = ElementColorStyleImpl(Color.Red, Color.Black)
 
@@ -51,7 +46,7 @@ class ElementColorStyleImplTest {
     }
 
     @Nested
-    inner class TextColorTests {
+    inner class GetTextColor {
 
         @Test
         fun `ElementColorStyleImpl should return correct text color`() {

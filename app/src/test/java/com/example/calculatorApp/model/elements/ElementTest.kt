@@ -1,10 +1,6 @@
 package com.example.calculatorApp.model.elements
 
 import androidx.compose.ui.graphics.Color
-import com.example.calculatorApp.model.elements.Element
-import com.example.calculatorApp.model.elements.ElementCategory
-import com.example.calculatorApp.model.elements.ElementCategoryStyleCollection
-import com.example.calculatorApp.model.elements.ElementColorStyle
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
@@ -17,7 +13,7 @@ class ElementTest {
     inner class GetColor {
 
         @Test
-        fun `Element should return correct background and text color`() {
+        fun `should return correct background and text color`() {
             // Arrange:
             val mockCategory = mockk<ElementCategory<ElementColorStyle>>(relaxed = true)
             val mockStyle = mockk<ElementCategoryStyleCollection<ElementColorStyle>>(relaxed = true)
@@ -46,7 +42,7 @@ class ElementTest {
     inner class GetCategory {
 
         @Test
-        fun `Element should return correct category`() {
+        fun `should return correct category`() {
             // Arrange:
             val expectedCategory = mockk<ElementCategory<ElementColorStyle>>()
             val mockElement = mockk<

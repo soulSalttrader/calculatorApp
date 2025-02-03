@@ -10,10 +10,10 @@ import org.junit.jupiter.api.Test
 class ElementCategoryStyleCollectionImplTest {
 
     @Nested
-    inner class GetCategories {
+    inner class Categories {
 
         @Test
-        fun `ElementCategoryStyleCollectionImpl should store categories correctly`() {
+        fun `should store categories correctly`() {
             // Arrange:
             val categoryMock = mockk<ElementCategory<ElementColorStyle>>(relaxed = true)
             val styleMock = mockk<ElementCategoryStyle<ElementColorStyle>>(relaxed = true)
@@ -30,14 +30,14 @@ class ElementCategoryStyleCollectionImplTest {
         }
 
         @Test
-        fun `ElementCategoryStyleCollectionImpl should handle empty categories map`() {
-            // Arrange
+        fun `should handle empty categories map`() {
+            // Arrange:
             val categories = mutableMapOf<ElementCategory<ElementColorStyle>, ElementCategoryStyle<ElementColorStyle>>()
 
-            // Act
+            // Act:
             val collection = ElementCategoryStyleCollectionImpl(categories)
 
-            // Assert
+            // Assert:
             collection.categories.shouldBeEmpty()
         }
     }
