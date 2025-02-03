@@ -9,16 +9,16 @@ import com.example.calculatorApp.model.symbols.SymbolButton
 
 sealed class ButtonCalculatorNumber(override val symbol: Symbol) : Button {
 
-    data object Zero : ButtonCalculatorNumber(SymbolButton.DIGIT_0)
-    data object One : ButtonCalculatorNumber(SymbolButton.DIGIT_1)
-    data object Two : ButtonCalculatorNumber(SymbolButton.DIGIT_2)
-    data object Three : ButtonCalculatorNumber(SymbolButton.DIGIT_3)
-    data object Four : ButtonCalculatorNumber(SymbolButton.DIGIT_4)
-    data object Five : ButtonCalculatorNumber(SymbolButton.DIGIT_5)
-    data object Six : ButtonCalculatorNumber(SymbolButton.DIGIT_6)
-    data object Seven : ButtonCalculatorNumber(SymbolButton.DIGIT_7)
-    data object Eight : ButtonCalculatorNumber(SymbolButton.DIGIT_8)
-    data object Nine : ButtonCalculatorNumber(SymbolButton.DIGIT_9)
+    data object Zero : ButtonCalculatorNumber(SymbolButton.ZERO)
+    data object One : ButtonCalculatorNumber(SymbolButton.ONE)
+    data object Two : ButtonCalculatorNumber(SymbolButton.TWO)
+    data object Three : ButtonCalculatorNumber(SymbolButton.THREE)
+    data object Four : ButtonCalculatorNumber(SymbolButton.FOUR)
+    data object Five : ButtonCalculatorNumber(SymbolButton.FIVE)
+    data object Six : ButtonCalculatorNumber(SymbolButton.SIX)
+    data object Seven : ButtonCalculatorNumber(SymbolButton.SEVEN)
+    data object Eight : ButtonCalculatorNumber(SymbolButton.EIGHT)
+    data object Nine : ButtonCalculatorNumber(SymbolButton.NINE)
 
     override fun getCategory(): ElementCategory<ElementColorStyle> = ButtonCategory.Number
     override fun getBackgroundColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).backgroundColor

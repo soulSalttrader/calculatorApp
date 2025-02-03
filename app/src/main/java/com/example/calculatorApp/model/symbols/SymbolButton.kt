@@ -22,14 +22,14 @@ enum class SymbolButton(
     EQUALS("="),
 
     // number
-    DIGIT_0("0"),
-    DIGIT_1("1"),
-    DIGIT_2("2"),
-    DIGIT_3("3"),
-    DIGIT_4("4"),
-    DIGIT_5("5"),
-    DIGIT_6("6"),
-    DIGIT_7("7"),
-    DIGIT_8("8"),
-    DIGIT_9("9");
+    ZERO("0"),
+    ONE("1"),
+    TWO("2"),
+    THREE("3"),
+    FOUR("4"),
+    FIVE("5"),
+    SIX("6"),
+    SEVEN("7"),
+    EIGHT("8"),
+    NINE("9");
 }
