@@ -39,6 +39,9 @@ mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 # Kotest Assertions
 kotestAssertions = { group = "io.kotest", name = "kotest-assertions-core", version.ref = "kotestAssertions" }
 
+# Reflection
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

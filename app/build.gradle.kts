@@ -72,6 +72,8 @@ dependencies {
     testImplementation(libs.junitJupiterParams) // JUnit 5 parameterized tests
     testImplementation(libs.mockk) // Mocking library for Kotlin tests
     testImplementation(libs.kotestAssertions) // Kotest assertion
+    implementation(libs.kotlin.reflect) // Enable reflection
+
 }
 
 tasks.withType<Test>().configureEach {
