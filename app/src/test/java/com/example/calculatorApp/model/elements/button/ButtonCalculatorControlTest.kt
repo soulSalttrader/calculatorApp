@@ -16,26 +16,26 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
 
-class ButtonCalculatorArithmeticTest {
+class ButtonCalculatorControlTest {
 
     @Nested
     inner class GetCategory {
 
         // Arrange: Setup test data (button instance)
-        private fun provideArguments(): Array<ButtonCalculatorArithmetic> {
-            return TestArgumentsButton().arithmetics
+        private fun provideArguments(): Array<ButtonCalculatorControl> {
+            return TestArgumentsButton().controls
         }
 
         @ParameterizedTest
         @MethodSource("provideArguments")
-        fun `should get the right category for each arithmetic button`(button: ButtonCalculatorArithmetic) {
+        fun `should get the right category for each control button`(button: ButtonCalculatorControl) {
             // Act & Assert: Check if the button's category matches the expected category
-            ButtonCategory.Arithmetic shouldBe button.getCategory()
+            ButtonCategory.Control shouldBe button.getCategory()
         }
 
         @ParameterizedTest
         @MethodSource("provideArguments")
-        fun `should throw exception when category is not found`(button: ButtonCalculatorArithmetic) {
+        fun `should throw exception when category is not found`(button: ButtonCalculatorControl) {
             // Arrange: Create an empty style collection (default is empty)
             val emptyStyleCollection = ElementCategoryStyleCollectionImpl<ElementColorStyle>()
 
@@ -56,13 +56,13 @@ class ButtonCalculatorArithmeticTest {
 
         // Arrange: Setup test data (button instance)
         private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsButton().provideArithmeticColors()
+            return TestArgumentsButton().provideControlColors()
         }
 
         @ParameterizedTest
         @MethodSource("provideArguments")
-        fun `should get the right backgroundColor for each arithmetic button`(
-            button: ButtonCalculatorArithmetic,
+        fun `should get the right backgroundColor for each control button`(
+            button: ButtonCalculatorControl,
             @ConvertWith(ColorToLongConverter::class) expectedColor: Long,
         ) {
             // Arrange:
@@ -80,13 +80,13 @@ class ButtonCalculatorArithmeticTest {
     inner class GetTextColor {
 
         private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsButton().provideArithmeticColors()
+            return TestArgumentsButton().provideControlColors()
         }
 
         @ParameterizedTest
         @MethodSource("provideArguments")
-        fun `should get the right textColor for each arithmetic button`(
-            button: ButtonCalculatorArithmetic,
+        fun `should get the right textColor for each control button`(
+            button: ButtonCalculatorControl,
             @ConvertWith(ColorToLongConverter::class) expectedColor: Long,
         ) {
             // Arrange:
@@ -105,13 +105,13 @@ class ButtonCalculatorArithmeticTest {
 
         // Arrange: Setup test data (button instance and expected symbol)
         private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsButton().provideArithmeticSymbols()
+            return TestArgumentsButton().provideControlSymbols()
         }
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should correctly map symbols to buttons`(
-            button: ButtonCalculatorArithmetic,
+            button: ButtonCalculatorControl,
             expectedSymbol: SymbolButton,
         ) {
             // Act & Assert: Check if the button's symbol matches the expected symbol
