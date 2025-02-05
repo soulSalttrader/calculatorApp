@@ -122,10 +122,31 @@ class ButtonCategoryStyleBuilderTest {
         }
     }
 
-//    @Nested
-//    inner class Build() {
-//        fun `should build and return the expected style collection`() {
-//
-//        }
-//    }
+    @Nested
+    inner class Build {
+        // Arrange:
+        private fun provideArguments(): Stream<Arguments> {
+            return TestArgumentsButtonStyleBuilder.provideButtonStyle()
+        }
+
+        @ParameterizedTest
+        @MethodSource("provideArguments")
+        fun `should build and return the expected style collection`(
+            button: Button,
+            style: ElementCategoryStyleCollection<ElementColorStyle>,
+            expectedStyle: ElementColorStyle,
+        ) {
+            // Act:
+            val actualBackgroundColor = button.getBackgroundColor(style)
+            val actualTextColor = button.getTextColor(style)
+            // Assert:
+            withClue("Background color mismatch for ${button.symbol.label}") {
+                expectedStyle.backgroundColor shouldBe actualBackgroundColor
+            }
+
+            withClue("Text color mismatch for ${button.symbol.label}") {
+                expectedStyle.textColor shouldBe actualTextColor
+            }
+        }
+    }
 }
