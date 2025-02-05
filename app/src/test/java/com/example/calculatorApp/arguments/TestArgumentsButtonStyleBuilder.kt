@@ -1,109 +1,72 @@
 package com.example.calculatorApp.arguments
 
-import androidx.compose.ui.graphics.Color
 import com.example.calculatorApp.model.elements.ElementColorStyleImpl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorArithmetic
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
 import com.example.calculatorApp.model.elements.button.ButtonCategoryStyleBuilder
-import com.example.calculatorApp.model.symbols.SymbolButton
 import com.example.calculatorApp.ui.theme.Onyx
 import com.example.calculatorApp.ui.theme.SilverGrey
 import com.example.calculatorApp.ui.theme.VividGamboge
 import com.example.calculatorApp.ui.theme.White
+import com.example.calculatorApp.utils.ButtonCalculatorList
 import org.junit.jupiter.params.provider.Arguments
+import java.util.stream.Stream
 
 data class TestArgumentsButtonStyleBuilder(
     val builder: ButtonCategoryStyleBuilder = ButtonCategoryStyleBuilder(),
-    val arithmetics: Array<ButtonCalculatorArithmetic> = arrayOf(
-        ButtonCalculatorArithmetic.Addition,
-        ButtonCalculatorArithmetic.Subtraction,
-        ButtonCalculatorArithmetic.Multiplication,
-        ButtonCalculatorArithmetic.Division,
-        ButtonCalculatorArithmetic.Equals,
-    ),
-    val controls: Array<ButtonCalculatorControl> = arrayOf(
-        ButtonCalculatorControl.AllClear,
-        ButtonCalculatorControl.Clear,
-        ButtonCalculatorControl.PlusMinus,
-        ButtonCalculatorControl.Percent,
-        ButtonCalculatorControl.Decimal,
-    ),
-    val numbers: Array<ButtonCalculatorNumber> = arrayOf(
-        ButtonCalculatorNumber.Zero,
-        ButtonCalculatorNumber.One,
-        ButtonCalculatorNumber.Two,
-        ButtonCalculatorNumber.Three,
-        ButtonCalculatorNumber.Four,
-        ButtonCalculatorNumber.Five,
-        ButtonCalculatorNumber.Six,
-        ButtonCalculatorNumber.Seven,
-        ButtonCalculatorNumber.Eight,
-        ButtonCalculatorNumber.Nine,
-    )
+    val arithmetics: Array<ButtonCalculatorArithmetic> = ButtonCalculatorList.arithmetics,
+    val controls: Array<ButtonCalculatorControl> = ButtonCalculatorList.controls,
+    val numbers: Array<ButtonCalculatorNumber> = ButtonCalculatorList.numbers,
 ) : TestArguments {
 
-    fun provideArithmeticStyle() = arithmetics.map { button ->
-        val specificBackgroundColors = emptyMap<SymbolButton, Color>()
-        val specificTextColors = emptyMap<SymbolButton, Color>()
+    fun provideControlStyle(): Stream<Arguments> {
+        val baseStyle = ElementColorStyleImpl(backgroundColor = SilverGrey, textColor = Onyx)
+        val decimalStyle = ElementColorStyleImpl(backgroundColor = Onyx, textColor = White)
+        val plusMinusStyle = ElementColorStyleImpl(backgroundColor = Onyx, textColor = White)
 
-        val elementStyle = when (button) {
-            ButtonCalculatorArithmetic.Addition,
-            ButtonCalculatorArithmetic.Subtraction,
-            ButtonCalculatorArithmetic.Multiplication,
-            ButtonCalculatorArithmetic.Division,
-            ButtonCalculatorArithmetic.Equals -> ElementColorStyleImpl(VividGamboge, White)
-        }
+        val styles = mapOf(
+            ButtonCalculatorControl.Decimal to decimalStyle,
+            ButtonCalculatorControl.PlusMinus to plusMinusStyle,
+            *controls.map { it to baseStyle }.toTypedArray(),
+        )
 
-        val expectedBackgroundColor = specificBackgroundColors[button.symbol] ?: VividGamboge
-        val expectedTextColor = specificTextColors[button.symbol] ?: White
-        val style = builder.arithmeticStyle(elementStyle).build()
+        return controls.map { button ->
+            val builder = ButtonCategoryStyleBuilder()
+            val style = builder.controlStyle(baseStyle, styles[button]).build()
+            val expectedStyle = styles[button]
 
-        Arguments.of(button, style, expectedBackgroundColor, expectedTextColor)
-    }.stream()
+            Arguments.of(button, style, expectedStyle)
+        }.stream()
+    }
 
-    fun provideControlStyle() = controls.map { button ->
-        val specificBackgroundColors = mapOf(SymbolButton.DECIMAL to Onyx)
-        val specificTextColors = mapOf(SymbolButton.DECIMAL to White)
+    fun provideArithmeticStyle(): Stream<Arguments> {
+        val baseStyle = ElementColorStyleImpl(backgroundColor = VividGamboge, textColor = White)
 
-        val baseStyle = ElementColorStyleImpl(SilverGrey, Onyx)
-        val decimalStyle = ElementColorStyleImpl(Onyx, White)
+        val styles = mapOf(*arithmetics.map { it to baseStyle }.toTypedArray())
 
-        val elementStyle = when (button) {
-            ButtonCalculatorControl.AllClear,
-            ButtonCalculatorControl.Clear,
-            ButtonCalculatorControl.PlusMinus,
-            ButtonCalculatorControl.Percent -> baseStyle
-            ButtonCalculatorControl.Decimal -> decimalStyle
-        }
+        return arithmetics.map { button ->
+            val builder = ButtonCategoryStyleBuilder()
+            val style = builder.arithmeticStyle(baseStyle).build()
+            val expectedStyle = styles[button]
 
-        val expectedBackgroundColor = specificBackgroundColors[button.symbol] ?: SilverGrey
-        val expectedTextColor = specificTextColors[button.symbol] ?: Onyx
-        val style = builder.controlStyle(baseStyle, elementStyle).build()
+            Arguments.of(button, style, expectedStyle)
+        }.stream()
+    }
 
-        Arguments.of(button, style, expectedBackgroundColor, expectedTextColor)
-    }.stream()
+    fun provideNumberStyle(): Stream<Arguments> {
+        val baseStyle = ElementColorStyleImpl(backgroundColor = Onyx, textColor = White)
 
-    fun provideNumberStyle() = numbers.map { button ->
-        val elementStyle = when (button) {
-            ButtonCalculatorNumber.Zero,
-            ButtonCalculatorNumber.One,
-            ButtonCalculatorNumber.Two,
-            ButtonCalculatorNumber.Three,
-            ButtonCalculatorNumber.Four,
-            ButtonCalculatorNumber.Five,
-            ButtonCalculatorNumber.Six,
-            ButtonCalculatorNumber.Seven,
-            ButtonCalculatorNumber.Eight,
-            ButtonCalculatorNumber.Nine -> ElementColorStyleImpl(Onyx, White)
-        }
+        val styles = mapOf(*numbers.map { it to baseStyle }.toTypedArray())
 
-        val backgroundColor = elementStyle.backgroundColor
-        val textColor = elementStyle.textColor
-        val style = builder.numberStyle(elementStyle).build()
+        return numbers.map { button ->
+            val builder = ButtonCategoryStyleBuilder()
+            val style = builder.numberStyle(baseStyle).build()
+            val expectedStyle = styles[button]
 
-        Arguments.of(button, style, backgroundColor, textColor)
-    }.stream()
+            Arguments.of(button, style, expectedStyle)
+        }.stream()
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

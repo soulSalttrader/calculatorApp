@@ -1,25 +1,21 @@
 package com.example.calculatorApp.model.elements.button
 
-import androidx.compose.ui.graphics.toArgb
 import com.example.calculatorApp.arguments.TestArgumentsButtonStyleBuilder
 import com.example.calculatorApp.model.elements.ElementCategoryStyleCollection
 import com.example.calculatorApp.model.elements.ElementColorStyle
-import com.example.calculatorApp.utils.ColorToLongConverter
+import io.kotest.assertions.withClue
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.converter.ConvertWith
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
 
 class ButtonCategoryStyleBuilderTest {
 
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @Nested
     inner class ArithmeticStyle {
-
+        // Arrange:
         private fun provideArguments(): Stream<Arguments> {
             return TestArgumentsButtonStyleBuilder().provideArithmeticStyle()
         }
@@ -28,48 +24,78 @@ class ButtonCategoryStyleBuilderTest {
         @MethodSource("provideArguments")
         fun `should apply arithmetic style correctly`(
             button: ButtonCalculatorArithmetic,
-            style: ElementCategoryStyleCollection<ElementColorStyle>,
-            @ConvertWith(ColorToLongConverter::class) expectedBackgroundColor: Long,
-            @ConvertWith(ColorToLongConverter::class) expectedTextColor: Long,
+            styles: ElementCategoryStyleCollection<ElementColorStyle>,
+            expectedStyle: ElementColorStyle,
         ) {
+            // Act:
+            val actualBackgroundColor = button.getBackgroundColor(styles)
+            val actualTextColor = button.getTextColor(styles)
 
-            val actualBackgroundColor = button.getBackgroundColor(style).toArgb()
-            val actualTextColor = button.getTextColor(style).toArgb()
+            // Assert:
+            withClue("Background color mismatch for ${button.symbol.label}.") {
+                expectedStyle.backgroundColor shouldBe actualBackgroundColor
+            }
 
-            expectedBackgroundColor shouldBe actualBackgroundColor
-            expectedTextColor shouldBe actualTextColor
+            withClue("Text color mismatch for ${button.symbol.label}.") {
+                expectedStyle.textColor shouldBe actualTextColor
+            }
         }
-    }
 
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+
+    }
     @Nested
     inner class ControlStyle {
-
+        // Arrange:
         private fun provideArguments(): Stream<Arguments> {
             return TestArgumentsButtonStyleBuilder().provideControlStyle()
         }
 
         @ParameterizedTest
         @MethodSource("provideArguments")
+        fun `should apply control style correctly`(
+            button: ButtonCalculatorControl,
+            styles: ElementCategoryStyleCollection<ElementColorStyle>,
+            expectedStyle: ElementColorStyle,
+        ) {
+            // Act:
+            val actualBackgroundColor = button.getBackgroundColor(styles)
+            val actualTextColor = button.getTextColor(styles)
+
+            // Assert:
+            withClue("Background color mismatch for ${button.symbol.label}.") {
+                expectedStyle.backgroundColor shouldBe actualBackgroundColor
+            }
+
+            withClue("Text color mismatch for ${button.symbol.label}.") {
+                expectedStyle.textColor shouldBe actualTextColor
+            }
+        }
+
+        @ParameterizedTest
+        @MethodSource("provideArguments")
         fun `should apply control style correctly with default and decimal style`(
             button: ButtonCalculatorControl,
-            style: ElementCategoryStyleCollection<ElementColorStyle>,
-            @ConvertWith(ColorToLongConverter::class) expectedBackgroundColor: Long,
-            @ConvertWith(ColorToLongConverter::class) expectedTextColor: Long,
+            styles: ElementCategoryStyleCollection<ElementColorStyle>,
+            expectedStyle: ElementColorStyle,
         ) {
-            val actualBackgroundColor = button.getBackgroundColor(style).toArgb()
-            val actualTextColor = button.getTextColor(style).toArgb()
+            // Act:
+            val actualBackgroundColor = button.getBackgroundColor(styles)
+            val actualTextColor = button.getTextColor(styles)
 
-            // Compare the actual and expected colors
-            expectedBackgroundColor shouldBe actualBackgroundColor
-            expectedTextColor shouldBe actualTextColor
+            // Assert:
+            withClue("Background color mismatch for ${button.symbol.label}.") {
+                expectedStyle.backgroundColor shouldBe actualBackgroundColor
+            }
+
+            withClue("Text color mismatch for ${button.symbol.label}.") {
+                expectedStyle.textColor shouldBe actualTextColor
+            }
         }
     }
 
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @Nested
     inner class NumberStyle {
-
+        // Arrange:
         private fun provideArguments(): Stream<Arguments> {
             return TestArgumentsButtonStyleBuilder().provideNumberStyle()
         }
@@ -78,16 +104,21 @@ class ButtonCategoryStyleBuilderTest {
         @MethodSource("provideArguments")
         fun `should apply number style correctly`(
             button: ButtonCalculatorNumber,
-            style: ElementCategoryStyleCollection<ElementColorStyle>,
-            @ConvertWith(ColorToLongConverter::class) expectedBackgroundColor: Long,
-            @ConvertWith(ColorToLongConverter::class) expectedTextColor: Long,
+            styles: ElementCategoryStyleCollection<ElementColorStyle>,
+            expectedStyle: ElementColorStyle,
         ) {
+            // Act:
+            val actualBackgroundColor = button.getBackgroundColor(styles)
+            val actualTextColor = button.getTextColor(styles)
 
-            val actualBackgroundColor = button.getBackgroundColor(style).toArgb()
-            val actualTextColor = button.getTextColor(style).toArgb()
+            // Assert:
+            withClue("Background color mismatch for ${button.symbol.label}") {
+                expectedStyle.backgroundColor shouldBe actualBackgroundColor
+            }
 
-            expectedBackgroundColor shouldBe actualBackgroundColor
-            expectedTextColor shouldBe actualTextColor
+            withClue("Text color mismatch for ${button.symbol.label}") {
+                expectedStyle.textColor shouldBe actualTextColor
+            }
         }
     }
 
