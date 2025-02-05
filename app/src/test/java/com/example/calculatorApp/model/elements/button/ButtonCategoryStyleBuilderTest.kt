@@ -17,7 +17,7 @@ class ButtonCategoryStyleBuilderTest {
     inner class ArithmeticStyle {
         // Arrange:
         private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsButtonStyleBuilder().provideArithmeticStyle()
+            return TestArgumentsButtonStyleBuilder.provideButtonStyle().filter { it.get()[0] is ButtonCalculatorArithmetic }
         }
 
         @ParameterizedTest
@@ -47,7 +47,7 @@ class ButtonCategoryStyleBuilderTest {
     inner class ControlStyle {
         // Arrange:
         private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsButtonStyleBuilder().provideControlStyle()
+            return TestArgumentsButtonStyleBuilder.provideButtonStyle().filter { it.get()[0] is ButtonCalculatorControl }
         }
 
         @ParameterizedTest
@@ -97,7 +97,7 @@ class ButtonCategoryStyleBuilderTest {
     inner class NumberStyle {
         // Arrange:
         private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsButtonStyleBuilder().provideNumberStyle()
+            return TestArgumentsButtonStyleBuilder.provideButtonStyle().filter { it.get()[0] is ButtonCalculatorNumber }
         }
 
         @ParameterizedTest

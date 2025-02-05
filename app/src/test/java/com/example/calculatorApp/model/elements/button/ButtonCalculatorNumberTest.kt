@@ -6,6 +6,7 @@ import com.example.calculatorApp.model.elements.ElementCategoryStyleCollectionIm
 import com.example.calculatorApp.model.elements.ElementColorStyle
 import com.example.calculatorApp.model.styles.StylesButton
 import com.example.calculatorApp.model.symbols.SymbolButton
+import com.example.calculatorApp.utils.ButtonCalculatorList.numbers
 import com.example.calculatorApp.utils.ColorToLongConverter
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
@@ -23,7 +24,7 @@ class ButtonCalculatorNumberTest {
 
         // Arrange: Setup test data (button instance)
         private fun provideArguments(): Array<ButtonCalculatorNumber> {
-            return TestArgumentsButton().numbers
+            return numbers
         }
 
         @ParameterizedTest
@@ -56,7 +57,7 @@ class ButtonCalculatorNumberTest {
 
         // Arrange: Setup test data (button instance)
         private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsButton().provideNumberColors()
+            return TestArgumentsButton.provideNumberColors()
         }
 
         @ParameterizedTest
@@ -81,7 +82,7 @@ class ButtonCalculatorNumberTest {
 
         // Arrange:
         private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsButton().provideNumberColors()
+            return TestArgumentsButton.provideNumberColors()
         }
 
         @ParameterizedTest
@@ -106,7 +107,7 @@ class ButtonCalculatorNumberTest {
 
         // Arrange: Setup test data (button instance and expected symbol)
         private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsButton().provideNumberSymbols()
+            return TestArgumentsButton.provideNumberSymbols()
         }
 
         @ParameterizedTest
