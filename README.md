@@ -21,6 +21,7 @@ The app mimics the look and behavior of the iPhone calculator, offering a famili
 
 1. **Element**
 2. **Button**
+3. **Display**
 
 ---
 
@@ -126,4 +127,78 @@ object StylesButton {
 }
 ```
 
+---
+
+### 3. **Display**
+
+The **Display** implementation extends the **Element**,  offering customizable displays for different purposes. For the first version of the project, only the Input display will be fully developed and implemented. The displays are categorized into types such as **Input**, **Result**, **Error**, **History**, and **Memory**, each with its own default style. However, all display types beyond **Input** are considered concepts and are planned for future updates. Similar to buttons, displays can be individually styled, giving you fine control over their appearance and behavior.
+
+#### Key Concepts of Display:
+
+- **Display Interface**: The `Display` interface defines the basic properties and methods that every display element should have. It extends the `Element` interface, providing a standard structure for displays, which can be used across various categories and styles.
+
+- **Display Categories**: Displays are organized into categories, such as `Input`, `Result`, `Error`, `History`, and `Memory`. For the first version, only the Input category will be implemented and fully functional. The remaining categories are considered concepts, with potential future development.
+
+- **DisplayData**: The `DisplayData` class binds a display element with its layout and style. It extends the `ElementData` interface, encapsulating both the display and its layout properties.
+
+- **Display Category Styles**: Just like buttons, displays can be styled individually within a category. For example, the **Input** category may have different styles for a **Scientific** input display compared to a regular **Standard** input display.
+
+#### Example of Display Input Category:
+
+```kotlin
+sealed class DisplayCalculatorInput : Display {
+
+    data object Standard : DisplayCalculatorInput()
+
+    @ConceptClass
+    data object Scientific : DisplayCalculatorInput()
+
+    override fun getCategory(): ElementCategory<ElementColorStyle> = DisplayCategory.Input
+    override fun getBackgroundColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).backgroundColor
+    override fun getTextColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).textColor
+
+    private fun getStyle(style: ElementCategoryStyleCollection<ElementColorStyle>): ElementColorStyle {
+        val categoryStyle = style.categories[getCategory()]
+            ?: throw IllegalArgumentException("Category '${getCategory()}' not found.")
+
+        return categoryStyle.specificStyles[this::class.simpleName] ?: categoryStyle.baseStyle
+    }
+}
+```
+
+---
+
+## Development Practices:
+
+### **Concept Annotations**
+
+The **Concept Annotations** feature is designed to help manage experimental or under development ideas within the project code. These annotations mark classes, methods, or other elements that are part of concepts still being explored, with the intention to separate them from the production code. This mechanism helps track potential future work and experimental features that may evolve, change, or even be removed in future versions of the project.
+
+Unlike features that are actively being developed and are part of the core functionality, Concept Annotations are used specifically to isolate ideas or concepts that might be realized in future updates but are not part of the current product. These concepts should be used with caution, as they are not finalized and could change or be removed entirely.
+
+#### Key Concepts of Concept Annotations:
+
+- **Concept Interface**: The `Concept` interface is used to track concepts that are currently under development. These concepts are experimental and subject to change.
+
+#### ConceptClass Annotation:
+
+- The @ConceptClass annotation is used to mark a class as a concept that is under development and may change significantly or be removed without prior notice. It signals to developers that the class is part of an experimental or evolving feature.
+
+```kotlin
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR, message = "This is a concept under development and may change significantly or be removed without prior notice.")
+@Retention(AnnotationRetention.BINARY)
+@Target(AnnotationTarget.CLASS)
+annotation class ConceptClass
+```
+
+#### ConceptMethod Annotation:
+
+- The @ConceptMethod annotation marks a method that is part of an under development concept and may change significantly or be removed without prior notice. This helps track methods that are placeholders or are being designed for future functionality.
+
+```kotlin
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR, message = "This is a concept under development and may change significantly or be removed without prior notice.")
+@Retention(AnnotationRetention.BINARY)
+@Target(AnnotationTarget.FUNCTION)
+annotation class ConceptMethod
+```
 ---
