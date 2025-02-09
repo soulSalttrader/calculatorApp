@@ -19,13 +19,14 @@ class TestArgumentsDisplayLayout(
 
     fun provideInputProperties(): Stream<Arguments> {
         return Stream.of(
-            Arguments.of(input.weight, 2f, "weight"),
-            Arguments.of(input.textAlign, TextAlign.End, "textAlign"),
             Arguments.of(input.alignment, Alignment.BottomEnd, "alignment"),
             Arguments.of(input.modifier, Modifier.fillMaxWidth().padding(4.dp), "modifier"),
-            Arguments.of(input.fontSize, 85.sp, "fontSize"),
-            Arguments.of(input.fontWeight, FontWeight.Light, "fontWeight"),
             Arguments.of(input.shape, RectangleShape, "shape"),
+            Arguments.of(input.weight, 2f, "weight"),
+
+            Arguments.of(input.alignText, TextAlign.End, "textAlign"),
+            Arguments.of(input.sizeFont, 85.sp, "fontSize"),
+            Arguments.of(input.weightFont, FontWeight.Light, "fontWeight"),
         )
     }
 }

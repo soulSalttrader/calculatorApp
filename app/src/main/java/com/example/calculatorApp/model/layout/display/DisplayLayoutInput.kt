@@ -12,15 +12,15 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.calculatorApp.model.layout.ElementLayout
+import com.example.calculatorApp.model.layout.ElementLayoutText
 
 class DisplayLayoutInput(
-    override val weight: Float = 2f,
-    override val textAlign: TextAlign = TextAlign.End,
     override val alignment: Alignment = Alignment.BottomEnd,
-    override val modifier: Modifier = Modifier
-        .fillMaxWidth()
-        .padding(4.dp),
-    override val fontSize: TextUnit = 85.sp,
-    override val fontWeight: FontWeight = FontWeight.Light,
+    override val modifier: Modifier = Modifier.fillMaxWidth().padding(4.dp),
     override val shape: Shape = RectangleShape,
-) : ElementLayout
+    override val weight: Float = 2f,
+
+    override val alignText: TextAlign = TextAlign.End,
+    override val sizeFont: TextUnit = 85.sp,
+    override val weightFont: FontWeight = FontWeight.Light,
+) : ElementLayout, ElementLayoutText

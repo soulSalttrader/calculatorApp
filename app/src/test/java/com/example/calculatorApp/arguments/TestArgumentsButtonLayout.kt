@@ -18,25 +18,27 @@ data class TestArgumentsButtonLayout(
 
     fun provideRegularProperties(): Stream<Arguments> {
        return Stream.of(
-            Arguments.of(regular.weight, 1f, "weight"),
-            Arguments.of(regular.textAlign, TextAlign.Center, "textAlign"),
             Arguments.of(regular.alignment, Alignment.Center, "alignment"),
             Arguments.of(regular.modifier, Modifier, "modifier"),
-            Arguments.of(regular.fontSize, 42.sp, "fontSize"),
-            Arguments.of(regular.fontWeight, FontWeight.Normal, "fontWeight"),
             Arguments.of(regular.shape, CircleShape, "shape"),
+            Arguments.of(regular.weight, 1f, "weight"),
+
+           Arguments.of(regular.alignText, TextAlign.Center, "textAlign"),
+            Arguments.of(regular.sizeFont, 42.sp, "fontSize"),
+            Arguments.of(regular.weightFont, FontWeight.Normal, "fontWeight"),
         )
     }
 
     fun provideWideProperties(): Stream<Arguments> {
         return Stream.of(
-            Arguments.of(wide.weight, 2f, "weight"),
-            Arguments.of(wide.textAlign, TextAlign.Center, "textAlign"),
             Arguments.of(wide.alignment, Alignment.Center, "alignment"),
             Arguments.of(wide.modifier, Modifier, "modifier"),
-            Arguments.of(wide.fontSize, 42.sp, "fontSize"),
-            Arguments.of(wide.fontWeight, FontWeight.Normal, "fontWeight"),
             Arguments.of(wide.shape, CircleShape, "shape"),
+            Arguments.of(wide.weight, 2f, "weight"),
+
+            Arguments.of(wide.alignText, TextAlign.Center, "textAlign"),
+            Arguments.of(wide.sizeFont, 42.sp, "fontSize"),
+            Arguments.of(wide.weightFont, FontWeight.Normal, "fontWeight"),
         )
     }
 }

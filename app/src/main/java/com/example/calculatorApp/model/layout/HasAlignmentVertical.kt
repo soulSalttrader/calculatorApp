@@ -2,6 +2,6 @@ package com.example.calculatorApp.model.layout
 
 import androidx.compose.ui.Alignment
 
-interface HasAlignment {
-    val alignment: Alignment
+interface HasAlignmentVertical {
+    val alignmentVertical: Alignment.Vertical
 }
