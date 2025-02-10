@@ -1,0 +1,26 @@
+package com.example.calculatorApp.domain
+
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorArithmetic
+
+class EngineMathStandard : EngineMath {
+
+    override fun plusMinus(number: Double): Double = -number
+    override fun convertToPercent(number: Double): Double = number / 100
+
+    override fun calculateArithmeticOperations(
+        left: Double,
+        right: Double,
+        operation: ButtonCalculatorArithmetic,
+    ): Double {
+
+        return  when (operation) {
+            is ButtonCalculatorArithmetic.Addition -> left + right
+            is ButtonCalculatorArithmetic.Subtraction -> left - right
+            is ButtonCalculatorArithmetic.Multiplication -> left * right
+            is ButtonCalculatorArithmetic.Division -> safeDivide(right, left)
+            else -> throw IllegalArgumentException("Unknown operation.")
+        }
+    }
+
+    private fun safeDivide(right: Double, left: Double) = if (right != 0.0) left / right else Double.NaN
+}
