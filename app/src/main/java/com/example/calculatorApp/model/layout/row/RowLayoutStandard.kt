@@ -13,7 +13,7 @@ import com.example.calculatorApp.model.layout.HasColor
 
 class RowLayoutStandard(
     override val alignment: Alignment = Alignment.Center,
-    override val modifier: Modifier,
+    override val modifier: Modifier = Modifier,
     override val shape: Shape = RectangleShape,
     override val weight: Float = 1f,
 
