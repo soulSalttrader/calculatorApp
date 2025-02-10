@@ -8,4 +8,11 @@ data class CalculatorState(
     val operation: Button? = null,
     val previousNumber: String = "",
     val activeButtonLabel: String = "",
-)
+) {
+    fun modifyWith(vararg transformations: Pair<() -> Boolean, CalculatorState.() -> CalculatorState>): CalculatorState {
+        for ((condition, action) in transformations) {
+            if (condition()) return action()
+        }
+        return this
+    }
+}
