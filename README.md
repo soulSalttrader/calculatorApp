@@ -22,6 +22,7 @@ The app mimics the look and behavior of the iPhone calculator, offering a famili
 1. **Element**
 2. **Button**
 3. **Display**
+4. **Row**
 
 ---
 
@@ -166,11 +167,60 @@ sealed class DisplayCalculatorInput : Display {
 }
 ```
 
+#### Additional Concepts:
+
+Handling different display categories, creating display styles, and defining DisplayData follow the same principles described in previous chapters (e.g., Button, Element). The DisplayCategoryStyleBuilder allows customization of styles for different display categories, maintaining consistency with other elements.
+
+---
+
+### 4. **Row**
+
+The **Row** implementation extends the **Element**, providing a way to group multiple buttons into structured rows. Each row contains a predefined list of buttons and can be categorized for different layouts and styles.
+
+#### Key Concepts of Row:
+
+- **Row Interface**:  
+  The `Row` interface defines the basic structure for a row of buttons. Each row holds a list of `ButtonData` elements, allowing for flexible button grouping and arrangement.
+
+- **Row Categories**:  
+  Rows are categorized to support different layouts. The initial implementation focuses on `Standard` rows, but additional row categories like `Scientific` may be introduced in future updates.
+
+- **RowData**:  
+  The `RowData` class binds a row with its layout and style. It extends the `ElementData` interface, encapsulating both the row and its layout properties.
+
+#### Example of Standard Row Implementation:
+
+```kotlin
+interface Row : Element<ElementCategory<ElementColorStyle>, ElementCategoryStyleCollection<ElementColorStyle>, ElementColorStyle> {
+    val buttons: List<ButtonData>
+}
+
+sealed class RowCalculatorStandard(override val buttons: List<ButtonData>) : Row {
+
+    class Standard1(override val buttons: List<ButtonData>) : RowCalculatorStandard(buttons)
+    class Standard2(override val buttons: List<ButtonData>) : RowCalculatorStandard(buttons)
+    class Standard3(override val buttons: List<ButtonData>) : RowCalculatorStandard(buttons)
+    class Standard4(override val buttons: List<ButtonData>) : RowCalculatorStandard(buttons)
+    class Standard5(override val buttons: List<ButtonData>) : RowCalculatorStandard(buttons)
+
+    override fun getCategory(): ElementCategory<ElementColorStyle> = RowCategory.Standard
+    override fun getBackgroundColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).backgroundColor
+    override fun getTextColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).textColor
+
+    private fun getStyle(style: ElementCategoryStyleCollection<ElementColorStyle>): ElementColorStyle {
+        val categoryStyle = style.categories[getCategory()]
+            ?: throw IllegalArgumentException("Category '${getCategory()}' not found.")
+
+        return categoryStyle.specificStyles[this::class.simpleName] ?: categoryStyle.baseStyle
+    }
+}
+```
+
 ---
 
 ## Development Practices:
 
-### **Concept Annotations**
+### **Concept Annotations:**
 
 The **Concept Annotations** feature is designed to help manage experimental or under development ideas within the project code. These annotations mark classes, methods, or other elements that are part of concepts still being explored, with the intention to separate them from the production code. This mechanism helps track potential future work and experimental features that may evolve, change, or even be removed in future versions of the project.
 
