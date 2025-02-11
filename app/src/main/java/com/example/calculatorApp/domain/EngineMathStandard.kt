@@ -4,10 +4,10 @@ import com.example.calculatorApp.model.elements.button.ButtonCalculatorArithmeti
 
 class EngineMathStandard : EngineMath {
 
-    override fun plusMinus(number: Double): Double = -number
-    override fun convertToPercent(number: Double): Double = number / 100
+    override fun applySign(number: Double): Double = -number
+    override fun applyPercent(number: Double): Double = number / 100
 
-    override fun calculateArithmeticOperations(
+    override fun applyArithmetic(
         left: Double,
         right: Double,
         operation: ButtonCalculatorArithmetic,

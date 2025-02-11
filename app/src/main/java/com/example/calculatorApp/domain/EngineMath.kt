@@ -4,7 +4,7 @@ import com.example.calculatorApp.model.elements.button.ButtonCalculatorArithmeti
 
 interface EngineMath : Engine {
 
-    fun plusMinus(number: Double): Double
-    fun convertToPercent(number: Double): Double
-    fun calculateArithmeticOperations(left: Double, right: Double, operation: ButtonCalculatorArithmetic): Double
+    fun applySign(number: Double): Double
+    fun applyPercent(number: Double): Double
+    fun applyArithmetic(left: Double, right: Double, operation: ButtonCalculatorArithmetic): Double
 }
