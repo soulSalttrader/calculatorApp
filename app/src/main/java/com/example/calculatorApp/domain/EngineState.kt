@@ -5,7 +5,7 @@ import com.example.calculatorApp.model.state.CalculatorState
 
 interface EngineState : Engine {
 
-    fun enterOperation(state: CalculatorState, operation: ButtonCalculatorArithmetic): CalculatorState
+    fun enterArithmetic(state: CalculatorState, operation: ButtonCalculatorArithmetic): CalculatorState
     fun enterNumber(state: CalculatorState, number: Int): CalculatorState
     fun enterDecimal(state: CalculatorState): CalculatorState
     fun applyClear(state: CalculatorState): CalculatorState

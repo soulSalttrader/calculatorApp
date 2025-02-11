@@ -7,7 +7,7 @@ import com.example.calculatorApp.utils.Constants.MAX_NUM_LENGTH
 
 class EngineStateStandard : EngineState {
 
-    override fun enterOperation(state: CalculatorState, operation: ButtonCalculatorArithmetic): CalculatorState {
+    override fun enterArithmetic(state: CalculatorState, operation: ButtonCalculatorArithmetic): CalculatorState {
         return state.modifyWith(
             { state.operation != null } to { state.copy(operation = operation) },
             { state.currentNumber.isNotBlank() } to { state.copy(previousNumber = state.currentNumber, currentNumber = "", operation = operation) },

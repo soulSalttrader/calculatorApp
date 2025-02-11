@@ -37,7 +37,7 @@ class EngineStateStandardTest {
         @Test
         fun `should set operation when there is no existing operation`() {
             // Act:
-            val newState = engine.enterOperation(state, operation)
+            val newState = engine.enterArithmetic(state, operation)
             // Assert:
             operation shouldBe newState.operation
         }
@@ -47,7 +47,7 @@ class EngineStateStandardTest {
             // Arrange:
             val modifiedState = state.copy(operation = ButtonCalculatorArithmetic.Addition)
             // Act:
-            val newState = engine.enterOperation(modifiedState, operation)
+            val newState = engine.enterArithmetic(modifiedState, operation)
             // Assert
             operation shouldBe newState.operation
         }
@@ -57,7 +57,7 @@ class EngineStateStandardTest {
             // Arrange:
             val modifiedState = state.copy(currentNumber = "329")
             // Act:
-            val newState = engine.enterOperation(modifiedState, operation)
+            val newState = engine.enterArithmetic(modifiedState, operation)
             // Assert
             operation shouldBe newState.operation
             modifiedState.previousNumber shouldBe newState.currentNumber
