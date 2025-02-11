@@ -14,8 +14,9 @@ class EngineStateStandard : EngineState {
         )
     }
 
-    override fun addNumber(state: CalculatorState, number: Int): CalculatorState {
+    override fun enterNumber(state: CalculatorState, number: Int): CalculatorState {
         return state.modifyWith(
+            { state.currentNumber == "0" } to { copy(currentNumber = number.toString()) },
             { state.currentNumber.length >= MAX_NUM_LENGTH } to { this },
             { true } to { copy(currentNumber = currentNumber + number) }
         )
@@ -27,13 +28,12 @@ class EngineStateStandard : EngineState {
         )
     }
 
-    override fun clearAll(): CalculatorState = CalculatorState()
+    override fun applyClearAll(state: CalculatorState): CalculatorState = CalculatorState()
 
-    override fun clear(state: CalculatorState): CalculatorState {
+    override fun applyClear(state: CalculatorState): CalculatorState {
         return state.modifyWith(
-            { state.operation != null } to { copy(currentNumber = state.previousNumber, operation = null) },
-            { state.currentNumber.isEmpty() } to { copy(currentNumber = SymbolButton.ZERO.label) },
-            { state.currentNumber.isNotBlank() } to { copy(currentNumber = SymbolButton.ZERO.label, previousNumber = state.previousNumber) },
+            { state.operation != null } to { copy(currentNumber = state.previousNumber, previousNumber = "", operation = null) },
+            { state.currentNumber.isNotBlank() } to { copy(currentNumber = SymbolButton.ZERO.label, previousNumber = "") },
         )
     }
 }
