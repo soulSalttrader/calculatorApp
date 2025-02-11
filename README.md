@@ -23,6 +23,7 @@ The app mimics the look and behavior of the iPhone calculator, offering a famili
 2. **Button**
 3. **Display**
 4. **Row**
+5. **Engine**
 
 ---
 
@@ -215,6 +216,114 @@ sealed class RowCalculatorStandard(override val buttons: List<ButtonData>) : Row
     }
 }
 ```
+
+---
+
+### 5. **Engine**
+
+The **Engine** is responsible for handling the core logic of the calculator, including mathematical computations and operation execution. It does not directly manage UI states but instead focuses on the business logic of calculations. The engine consists of two primary components:
+
+- **EngineMath**: Handles numerical operations such as arithmetic calculations, sign inversion, and percentage conversion.
+- **EngineState**: Manages the calculator state, including user input handling and operation execution.
+
+#### Key Concepts of Engine:
+
+- **Engine Interface**:  
+  The `Engine` interface serves as the base for all engine-related components.
+
+- **EngineMath Interface**:  
+  Defines core mathematical operations, including:
+    - `applySign(number: Double)`: Inverts the sign of a number.
+    - `applyPercent(number: Double)`: Converts a number into a percentage.
+    - `applyArithmetic(left: Double, right: Double, operation: ButtonCalculatorArithmetic)`: Performs arithmetic operations such as addition, subtraction, multiplication, and division.
+
+  **Implementation:**
+  ```kotlin
+  class EngineMathStandard : EngineMath {
+
+      override fun applySign(number: Double): Double = -number
+      override fun applyPercent(number: Double): Double = number / 100
+
+      override fun applyArithmetic(left: Double, right: Double, operation: ButtonCalculatorArithmetic): Double {
+          return when (operation) {
+              is ButtonCalculatorArithmetic.Addition -> left + right
+              is ButtonCalculatorArithmetic.Subtraction -> left - right
+              is ButtonCalculatorArithmetic.Multiplication -> left * right
+              is ButtonCalculatorArithmetic.Division -> safeDivide(right, left)
+              else -> throw IllegalArgumentException("Unknown operation.")
+          }
+      }
+
+      private fun safeDivide(right: Double, left: Double) = if (right != 0.0) left / right else Double.NaN
+  }
+  ```
+- **EngineState Interface**:  
+  Manages internal calculator state transitions, such as updating numbers, performing operations, and handling clear actions. This interface focuses on ensuring that the correct state is maintained as operations are performed:
+    - `enterOperation(state, operation)`: Updates the state when an arithmetic operation is entered.
+    - `enterNumber(state, number)`: Handles number input.
+    - `enterDecimal(state)`: Adds a decimal point.
+    - `applyClear(state)`: Clears the current input.
+    - `applyClearAll(state)`: Resets the calculator state.
+
+  **Implementation**:
+  ```kotlin
+  class EngineStateStandard : EngineState {
+
+    override fun enterOperation(state: CalculatorState, operation: ButtonCalculatorArithmetic): CalculatorState {
+        return state.modifyWith(
+            { state.operation != null } to { state.copy(operation = operation) },
+            { state.currentNumber.isNotBlank() } to { state.copy(previousNumber = state.currentNumber, currentNumber = "", operation = operation) },
+        )
+    }
+
+    override fun enterNumber(state: CalculatorState, number: Int): CalculatorState {
+        return state.modifyWith(
+            { state.currentNumber == "0" } to { copy(currentNumber = number.toString()) },
+            { state.currentNumber.length >= MAX_NUM_LENGTH } to { this },
+            { true } to { copy(currentNumber = currentNumber + number) }
+        )
+    }
+
+    override fun enterDecimal(state: CalculatorState): CalculatorState {
+        return state.modifyWith(
+            { !state.currentNumber.contains(".") } to { state.copy(currentNumber = state.currentNumber + ".") }
+        )
+    }
+
+    override fun applyClearAll(state: CalculatorState): CalculatorState = CalculatorState()
+
+    override fun applyClear(state: CalculatorState): CalculatorState {
+        return state.modifyWith(
+            { state.operation != null } to { copy(currentNumber = state.previousNumber, previousNumber = "", operation = null) },
+            { state.currentNumber.isNotBlank() } to { copy(currentNumber = SymbolButton.ZERO.label, previousNumber = "") },
+        )
+    }
+  }
+  ```
+- **CalculatorState**:
+  Represents the state of the calculator, which includes the current number, previous number, the active operation, and the active button label. This state is crucial for making calculations based on user input.
+    - `currentNumber`: The number currently being entered.
+    - `previousNumber`: The number stored for an operation.
+    - `operation`: The currently selected arithmetic operation.
+    - `activeButtonLabel`: The label of the active button.
+
+  **Implementation**:
+  ```kotlin
+  data class CalculatorState(
+    val currentNumber: String = SymbolButton.ZERO.label,
+    val operation: Button? = null,
+    val previousNumber: String = "",
+    val activeButtonLabel: String = "",
+  ) {
+  
+    fun modifyWith(vararg transformations: Pair<() -> Boolean, CalculatorState.() -> CalculatorState>): CalculatorState {
+        for ((condition, action) in transformations) {
+            if (condition()) return action()
+        }
+        return this
+    }
+  }
+  ```
 
 ---
 
