@@ -10,10 +10,10 @@ class EngineMathStandard : EngineMath {
     override fun applyArithmetic(
         left: Double,
         right: Double,
-        operation: ButtonCalculatorArithmetic,
+        arithmetic: ButtonCalculatorArithmetic,
     ): Double {
 
-        return  when (operation) {
+        return  when (arithmetic) {
             is ButtonCalculatorArithmetic.Addition -> left + right
             is ButtonCalculatorArithmetic.Subtraction -> left - right
             is ButtonCalculatorArithmetic.Multiplication -> left * right

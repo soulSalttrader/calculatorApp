@@ -6,5 +6,5 @@ interface EngineMath : Engine {
 
     fun applySign(number: Double): Double
     fun applyPercent(number: Double): Double
-    fun applyArithmetic(left: Double, right: Double, operation: ButtonCalculatorArithmetic): Double
+    fun applyArithmetic(left: Double, right: Double, arithmetic: ButtonCalculatorArithmetic): Double
 }

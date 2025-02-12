@@ -5,11 +5,11 @@ import com.example.calculatorApp.model.elements.button.ButtonCalculatorArithmeti
 import com.example.calculatorApp.model.state.CalculatorState
 
 class CommandEnterArithmetic(
-    private val operation: ButtonCalculatorArithmetic,
     private val engineState: EngineState,
+    private val arithmetic: ButtonCalculatorArithmetic,
 ) : Command {
 
     override fun execute(state: CalculatorState): CalculatorState {
-        return engineState.enterArithmetic(state, operation)
+        return engineState.enterArithmetic(state, arithmetic)
     }
 }

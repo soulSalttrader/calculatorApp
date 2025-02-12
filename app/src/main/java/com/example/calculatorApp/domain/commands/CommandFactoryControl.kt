@@ -1,11 +1,9 @@
 package com.example.calculatorApp.domain.commands
 
-import com.example.calculatorApp.domain.EngineMath
 import com.example.calculatorApp.domain.EngineState
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 
 class CommandFactoryControl(
-    private val engineMath: EngineMath,
     private val engineState: EngineState,
 ) : CommandFactorySub<ButtonCalculatorControl> {
 
@@ -15,8 +13,8 @@ class CommandFactoryControl(
             is ButtonCalculatorControl.Decimal -> CommandEnterDecimal(engineState)
             is ButtonCalculatorControl.AllClear -> CommandApplyClearAll(engineState)
             is ButtonCalculatorControl.Clear -> CommandApplyClear(engineState)
-            is ButtonCalculatorControl.Percent -> CommandApplyPercent(engineMath)
-            is ButtonCalculatorControl.PlusMinus -> CommandApplySign(engineMath)
+            is ButtonCalculatorControl.Percent -> CommandApplyPercent(engineState)
+            is ButtonCalculatorControl.PlusMinus -> CommandApplySign(engineState)
         }
     }
 }

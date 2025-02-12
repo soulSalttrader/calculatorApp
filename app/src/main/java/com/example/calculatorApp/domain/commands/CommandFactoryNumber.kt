@@ -8,7 +8,6 @@ class CommandFactoryNumber(
 ) : CommandFactorySub<ButtonCalculatorNumber> {
 
     override fun create(button: ButtonCalculatorNumber): Command {
-
-        return CommandEnterNumber(button.symbol.label.toInt(), engineState)
+        return CommandEnterNumber(engineState, button.symbol.label.toInt())
     }
 }

@@ -16,6 +16,7 @@ class EngineStateStandardTest {
     private lateinit var state: CalculatorState
     private lateinit var engine: EngineState
     private lateinit var operation: ButtonCalculatorArithmetic
+    private val engineMath = EngineMathStandard()
 
     @BeforeEach
     fun setUp() {
@@ -27,7 +28,7 @@ class EngineStateStandardTest {
             activeButtonLabel = ""
         )
 
-        engine = EngineStateStandard()
+        engine = EngineStateStandard(engineMath)
         operation = ButtonCalculatorArithmetic.Multiplication
     }
 
