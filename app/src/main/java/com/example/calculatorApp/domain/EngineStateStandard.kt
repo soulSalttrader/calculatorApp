@@ -42,6 +42,10 @@ class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
         val right = state.currentNumber.toDoubleOrNull() ?: return state
         val operation = state.operation as? ButtonCalculatorArithmetic ?: return state
 
+        if (left.isNaN() || right.isNaN()) {
+            return state
+        }
+
         val result = engineMath.applyArithmetic(left, right, operation)
 
         return state.copy(
