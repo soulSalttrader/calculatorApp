@@ -1,5 +1,6 @@
 package com.example.calculatorApp.domain
 
+import com.example.calculatorApp.arguments.TestArgumentsEngineState
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorArithmetic
 import com.example.calculatorApp.model.state.CalculatorState
 import com.example.calculatorApp.utils.Constants.MAX_NUM_LENGTH
@@ -10,6 +11,11 @@ import io.kotest.matchers.string.shouldNotMatch
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.CsvSource
+import org.junit.jupiter.params.provider.MethodSource
+import java.util.stream.Stream
 
 class EngineStateStandardTest {
 
@@ -33,10 +39,10 @@ class EngineStateStandardTest {
     }
 
     @Nested
-    inner class EnterOperation {
+    inner class EnterArithmetic {
 
         @Test
-        fun `should set operation when there is no existing operation`() {
+        fun `should set arithmetic operation when there is no existing operation`() {
             // Act:
             val newState = engine.enterArithmetic(state, operation)
             // Assert:
@@ -44,7 +50,7 @@ class EngineStateStandardTest {
         }
 
         @Test
-        fun `should replace operation if one already exists`() {
+        fun `should replace arithmetic operation if one already exists`() {
             // Arrange:
             val modifiedState = state.copy(operation = ButtonCalculatorArithmetic.Addition)
             // Act:
@@ -54,7 +60,7 @@ class EngineStateStandardTest {
         }
 
         @Test
-        fun `should move current number to previous number and set operation`() {
+        fun `should move current number to previous number and set arithmetic operation`() {
             // Arrange:
             val modifiedState = state.copy(currentNumber = "329")
             // Act:
@@ -170,6 +176,142 @@ class EngineStateStandardTest {
             val newState = engine.applyClear(modifiedState)
             // Assert:
             "0" shouldBe newState.currentNumber
+        }
+    }
+
+    @Nested
+    inner class ApplyArithmetic {
+
+        fun provideArguments(): Stream<Arguments> {
+            return TestArgumentsEngineState.provideArithmeticArguments()
+        }
+
+        @ParameterizedTest
+        @MethodSource("provideArguments")
+        fun `should execute applyArithmetic on engine and update state`(
+            arithmetic: ButtonCalculatorArithmetic,
+            left: Double,
+            right: Double,
+            expected: Double,
+        ) {
+            // Arrange:
+            val arrangedState = state.copy(
+                currentNumber = right.toString(),
+                previousNumber = left.toString(),
+                operation = arithmetic
+            )
+
+            // Act:
+            val newState = engine.applyArithmetic(arrangedState)
+
+            // Assert:
+            newState.currentNumber shouldBe expected.toString()
+            newState.previousNumber shouldBe ""
+            newState.operation shouldBe null
+        }
+
+        @ParameterizedTest
+        @CsvSource(
+            "'NaN', 5", // Invalid previousNumber (NaN)
+        )
+        fun `should return same state if previousNumber is not a valid number`(
+            left: String,
+            right: String,
+        ) {
+            // Arrange:
+            val arrangedState = state.copy(
+                currentNumber = right,
+                previousNumber = left,
+                operation = operation
+            )
+
+            // Act:
+            val newState = engine.applyArithmetic(arrangedState)
+
+            // Assert:
+            newState shouldBe arrangedState
+        }
+
+        @ParameterizedTest
+        @CsvSource(
+            "5, 'NaN'",  // Invalid currentNumber (NaN)
+        )
+        fun `should return same state if currentNumber is not a valid number`(
+            left: String,
+            right: String,
+        ) {
+            // Arrange:
+            val arrangedState = state.copy(
+                currentNumber = right,
+                previousNumber = left,
+                operation = operation
+            )
+
+            // Act:
+            val newState = engine.applyArithmetic(arrangedState)
+
+            // Assert:
+            newState shouldBe arrangedState
+        }
+
+        @Test
+        fun `should return same state if operation is null`() {
+            // Arrange:
+            val arrangedState = state.copy(
+                currentNumber = "5",
+                previousNumber = "",
+                operation = null
+            )
+
+            // Act:
+            val newState = engine.applyArithmetic(arrangedState)
+
+            // Assert:
+            newState shouldBe arrangedState
+        }
+    }
+
+    @Nested
+    inner class ApplySign {
+
+        @ParameterizedTest
+        @CsvSource(
+            "500.0, -500.0",
+            "5.0, -5.0",
+            "0.0, -0.0",
+            "-100, 100"
+        )
+        fun `should applyPercent on engine`(number: Double, expectedResult: Double) {
+            // Arrange:
+            state = state.copy(currentNumber = number.toString())
+
+            // Act:
+            val newState = engine.applySign(state)
+
+            // Assert:
+            newState.currentNumber shouldBe expectedResult.toString()
+        }
+
+    }
+
+    @Nested
+    inner class ApplyPercent {
+        @ParameterizedTest
+        @CsvSource(
+            "500.0, 5.0",
+            "5.0, 0.05",
+            "0.0, 0.0",
+            "-100, -1"
+        )
+        fun `should applyPercent`(number: Double, expectedResult: Double) {
+            // Arrange:
+            state = state.copy(currentNumber = number.toString())
+
+            // Act:
+            val newState = engine.applyPercent(state)
+
+            // Assert:
+            newState.currentNumber shouldBe expectedResult.toString()
         }
     }
 }
