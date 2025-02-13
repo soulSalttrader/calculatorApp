@@ -9,22 +9,22 @@ class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
 
     override fun enterArithmetic(state: CalculatorState, arithmetic: ButtonCalculatorArithmetic): CalculatorState {
         return state.modifyWith(
-            { state.operation != null } to { state.copy(operation = arithmetic) },
-            { state.currentNumber.isNotBlank() } to { state.copy(previousNumber = state.currentNumber, currentNumber = "", operation = arithmetic) },
+            { state.operator != null } to { state.copy(operator = arithmetic) },
+            { state.operandRight.isNotBlank() } to { state.copy(operandLeft = state.operandRight, operandRight = "", operator = arithmetic) },
         )
     }
 
     override fun enterNumber(state: CalculatorState, number: Int): CalculatorState {
         return state.modifyWith(
-            { state.currentNumber == "0" } to { copy(currentNumber = number.toString()) },
-            { state.currentNumber.length >= MAX_NUM_LENGTH } to { this },
-            { true } to { copy(currentNumber = currentNumber + number) }
+            { state.operandRight == "0" } to { copy(operandRight = number.toString()) },
+            { state.operandRight.length >= MAX_NUM_LENGTH } to { this },
+            { true } to { copy(operandRight = operandRight + number) }
         )
     }
 
     override fun enterDecimal(state: CalculatorState): CalculatorState {
         return state.modifyWith(
-            { !state.currentNumber.contains(".") } to { state.copy(currentNumber = state.currentNumber + ".") }
+            { !state.operandRight.contains(".") } to { state.copy(operandRight = state.operandRight + ".") }
         )
     }
 
@@ -32,38 +32,70 @@ class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
 
     override fun applyClear(state: CalculatorState): CalculatorState {
         return state.modifyWith(
-            { state.operation != null } to { copy(currentNumber = state.previousNumber, previousNumber = "", operation = null) },
-            { state.currentNumber.isNotBlank() } to { copy(currentNumber = SymbolButton.ZERO.label, previousNumber = "") },
+            { state.operator != null } to { copy(operandRight = state.operandLeft, operandLeft = "", operator = null) },
+            { state.operandRight.isNotBlank() } to { copy(operandRight = SymbolButton.ZERO.label, operandLeft = "") },
         )
     }
 
     override fun applyArithmetic(state: CalculatorState): CalculatorState {
-        val left = state.previousNumber.toDoubleOrNull() ?: return state
-        val right = state.currentNumber.toDoubleOrNull() ?: return state
-        val operation = state.operation as? ButtonCalculatorArithmetic ?: return state
+        return state.modifyWith(
+            { state.operandLeft.toDoubleOrNull() == null } to { this },
+            { state.operandRight.toDoubleOrNull() == null } to { this },
+            { state.operator !is ButtonCalculatorArithmetic } to { this },
+            { true } to {
 
-        if (left.isNaN() || right.isNaN()) {
-            return state
-        }
+                val operandLeft = state.operandLeft.toDouble()
+                val operandRight = state.operandRight.toDouble()
 
-        val result = engineMath.applyArithmetic(left, right, operation)
+                if (operandLeft.isNaN() || operandRight.isNaN()) return@to state
 
-        return state.copy(
-            currentNumber = result.toString(),
-            previousNumber = "",
-            operation = null,
+                val operation = state.operator as ButtonCalculatorArithmetic
+                val result = engineMath.applyArithmetic(operandLeft, operation, operandRight)
+                state.copy(operandRight = result.toString(), operandLeft = "", operator = null)
+            }
         )
     }
 
     override fun applySign(state: CalculatorState): CalculatorState {
-        val number = state.currentNumber.toDoubleOrNull() ?: return state
-        val result = engineMath.applySign(number)
-        return state.copy(currentNumber = result.toString())
+        return state.modifyWith(
+            { state.operandRight.toDoubleOrNull() == null } to { this },
+            { true } to {
+                val result = engineMath.applySign(state.operandRight.toDouble())
+                state.copy(operandRight = result.toString())
+            }
+        )
     }
 
     override fun applyPercent(state: CalculatorState): CalculatorState {
-        val number = state.currentNumber.toDoubleOrNull() ?: return state
-        val result = engineMath.applyPercent(number)
-        return state.copy(currentNumber = result.toString())
+        return state.modifyWith(
+            { state.operandRight.toDoubleOrNull() == null } to { this },
+            { true } to {
+                val result = engineMath.applyPercent(state.operandRight.toDouble())
+                state.copy(operandRight = result.toString())
+            }
+        )
+    }
+
+    override fun applyEquals(state: CalculatorState): CalculatorState {
+        return state.modifyWith(
+            { state.operandLeft.toDoubleOrNull() == null } to { this },
+            { state.operandRight.toDoubleOrNull() == null && state.operand == null } to { this },
+            { state.operator !is ButtonCalculatorArithmetic } to { this },
+            { true } to {
+                val operandLeft = state.operandLeft.toDouble()
+                val operandRight = state.operand?.toDoubleOrNull() ?: state.operandRight.toDouble()
+
+                if (operandLeft.isNaN() || operandRight.isNaN()) return@to state
+
+                val operation = state.operator as ButtonCalculatorArithmetic
+                val result = engineMath.applyArithmetic(operandLeft, operation, operandRight)
+
+                state.copy(
+                    operandRight = result.toString(),
+                    operandLeft = result.toString(),
+                    operand = operandRight.toString() // Save the last entered number
+                )
+            }
+        )
     }
 }

@@ -23,10 +23,10 @@ class CalculatorStateTest {
     fun setUp() {
         // Arrange:
         state = CalculatorState(
-            currentNumber = "0",
-            operation  = null,
-            previousNumber = "",
-            activeButtonLabel = ""
+            operandRight = "0",
+            operator  = null,
+            operandLeft = "",
+            activeLabel = ""
         )
     }
 
@@ -36,37 +36,37 @@ class CalculatorStateTest {
         @Test
         fun `should apply first matching transformation`() {
             // Arrange:
-            val modifiedState = state.copy(currentNumber = "5")
+            val modifiedState = state.copy(operandRight = "5")
 
             // Act:
             val newState = modifiedState.modifyWith(
-                { modifiedState.currentNumber == "5" } to { copy(operation = ButtonCalculatorArithmetic.Division) },
-                { modifiedState.currentNumber == "10" } to { copy(currentNumber = "15") }
+                { modifiedState.operandRight == "5" } to { copy(operator = ButtonCalculatorArithmetic.Division) },
+                { modifiedState.operandRight == "10" } to { copy(operandRight = "15") }
             )
             // Assert:
-            ButtonCalculatorArithmetic.Division shouldBe newState.operation
+            ButtonCalculatorArithmetic.Division shouldBe newState.operator
         }
 
         @Test
         fun `should not modify state if no conditions match`() {
             // Arrange & Act:
             val newState = state.modifyWith(
-                { state.currentNumber == "329" } to { copy(currentNumber = "200") }
+                { state.operandRight == "329" } to { copy(operandRight = "200") }
             )
 
             // Assert:
-            state.currentNumber shouldBeEqual newState.currentNumber
+            state.operandRight shouldBeEqual newState.operandRight
         }
 
         @Test
         fun `should apply only the first matching transformation`() {
             // Arrange & Act:
             val newState = state.modifyWith(
-                { true } to { copy(currentNumber = "10") },
-                { true } to { copy(currentNumber = "20") }
+                { true } to { copy(operandRight = "10") },
+                { true } to { copy(operandRight = "20") }
             )
             // Assert:
-            "10" shouldBeEqual newState.currentNumber
+            "10" shouldBeEqual newState.operandRight
         }
     }
 
@@ -84,10 +84,10 @@ class CalculatorStateTest {
             expectedSymbol: SymbolButton,
         ) {
             // Act:
-            val modifiedState = state.copy(activeButtonLabel = button.symbol.label)
+            val modifiedState = state.copy(activeLabel = button.symbol.label)
 
             // Assert:
-            expectedSymbol.label shouldBe modifiedState.activeButtonLabel
+            expectedSymbol.label shouldBe modifiedState.activeLabel
         }
 
         @Test
@@ -95,35 +95,35 @@ class CalculatorStateTest {
 
             // Arrange & Act & Assert:
             withClue("Expected currentNumber to be '0' by default.") {
-                state.currentNumber shouldBe "0"
+                state.operandRight shouldBe "0"
             }
             withClue("Expected previousNumber to be empty by default.") {
-                state.previousNumber shouldBe ""
+                state.operandLeft shouldBe ""
             }
             withClue("Expected operation to be null by default.") {
-                state.operation shouldBe null
+                state.operator shouldBe null
             }
             withClue("Expected activeButtonLabel to be empty by default.") {
-                state.activeButtonLabel shouldBe ""
+                state.activeLabel shouldBe ""
             }
         }
 
         @Test
         fun `should update current number correctly`() {
             // Arrange & Act:
-            val modifiedState = state.copy(currentNumber = "5")
+            val modifiedState = state.copy(operandRight = "5")
 
             // Assert:
-            "5" shouldBe modifiedState.currentNumber
+            "5" shouldBe modifiedState.operandRight
         }
 
         @Test
         fun `should update previous number correctly`() {
             // Arrange & Act
-            val modifiedState = state.copy(previousNumber = "10")
+            val modifiedState = state.copy(operandLeft = "10")
 
             // Assert
-            "10" shouldBe modifiedState.previousNumber
+            "10" shouldBe modifiedState.operandLeft
         }
     }
 }

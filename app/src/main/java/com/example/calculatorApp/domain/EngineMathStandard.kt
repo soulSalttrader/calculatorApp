@@ -8,19 +8,19 @@ class EngineMathStandard : EngineMath {
     override fun applyPercent(number: Double): Double = number / 100
 
     override fun applyArithmetic(
-        left: Double,
-        right: Double,
-        arithmetic: ButtonCalculatorArithmetic,
+        operandLeft: Double,
+        operator: ButtonCalculatorArithmetic,
+        operandRight: Double,
     ): Double {
 
-        return  when (arithmetic) {
-            is ButtonCalculatorArithmetic.Addition -> left + right
-            is ButtonCalculatorArithmetic.Subtraction -> left - right
-            is ButtonCalculatorArithmetic.Multiplication -> left * right
-            is ButtonCalculatorArithmetic.Division -> safeDivide(right, left)
+        return  when (operator) {
+            is ButtonCalculatorArithmetic.Addition -> operandLeft + operandRight
+            is ButtonCalculatorArithmetic.Subtraction -> operandLeft - operandRight
+            is ButtonCalculatorArithmetic.Multiplication -> operandLeft * operandRight
+            is ButtonCalculatorArithmetic.Division -> safeDivide(operandLeft, operandRight)
             else -> throw IllegalArgumentException("Unknown operation.")
         }
     }
 
-    private fun safeDivide(right: Double, left: Double) = if (right != 0.0) left / right else Double.NaN
+    private fun safeDivide(operandLeft: Double, operandRight: Double) = if (operandRight != 0.0) operandLeft / operandRight else Double.NaN
 }

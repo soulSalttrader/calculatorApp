@@ -15,4 +15,6 @@ interface EngineState : Engine {
     fun applyArithmetic(state: CalculatorState): CalculatorState
     fun applySign(state: CalculatorState): CalculatorState
     fun applyPercent(state: CalculatorState): CalculatorState
+
+    fun applyEquals(state: CalculatorState): CalculatorState
 }

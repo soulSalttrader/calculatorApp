@@ -28,10 +28,10 @@ class EngineStateStandardTest {
     fun setUp() {
         // Arrange:
         state = CalculatorState(
-            currentNumber = "0",
-            operation  = null,
-            previousNumber = "",
-            activeButtonLabel = ""
+            operandRight = "0",
+            operator  = null,
+            operandLeft = "",
+            activeLabel = ""
         )
 
         engine = EngineStateStandard(engineMath)
@@ -46,28 +46,28 @@ class EngineStateStandardTest {
             // Act:
             val newState = engine.enterArithmetic(state, operation)
             // Assert:
-            operation shouldBe newState.operation
+            operation shouldBe newState.operator
         }
 
         @Test
         fun `should replace arithmetic operation if one already exists`() {
             // Arrange:
-            val modifiedState = state.copy(operation = ButtonCalculatorArithmetic.Addition)
+            val modifiedState = state.copy(operator = ButtonCalculatorArithmetic.Addition)
             // Act:
             val newState = engine.enterArithmetic(modifiedState, operation)
             // Assert
-            operation shouldBe newState.operation
+            operation shouldBe newState.operator
         }
 
         @Test
         fun `should move current number to previous number and set arithmetic operation`() {
             // Arrange:
-            val modifiedState = state.copy(currentNumber = "329")
+            val modifiedState = state.copy(operandRight = "329")
             // Act:
             val newState = engine.enterArithmetic(modifiedState, operation)
             // Assert
-            operation shouldBe newState.operation
-            modifiedState.previousNumber shouldBe newState.currentNumber
+            operation shouldBe newState.operator
+            modifiedState.operandLeft shouldBe newState.operandRight
         }
     }
 
@@ -79,27 +79,27 @@ class EngineStateStandardTest {
             // Act:
             val newState = engine.enterNumber(state, 329)
             // Assert:
-            329 shouldBeEqual newState.currentNumber.toInt()
+            329 shouldBeEqual newState.operandRight.toInt()
         }
 
         @Test
         fun `should append a number to the current number`() {
             // Arrange:
-            val modifiedState = state.copy(currentNumber = "329")
+            val modifiedState = state.copy(operandRight = "329")
             // Act:
             val newState = engine.enterNumber(modifiedState, 55)
             // Assert:
-            32955 shouldBeEqual newState.currentNumber.toInt()
+            32955 shouldBeEqual newState.operandRight.toInt()
         }
 
         @Test
         fun `should not add a number if max length is reached`() {
             // Arrange:
-            val modifiedState = state.copy(currentNumber = "1".repeat(MAX_NUM_LENGTH))
+            val modifiedState = state.copy(operandRight = "1".repeat(MAX_NUM_LENGTH))
             // Act:
             val newState = engine.enterNumber(modifiedState, 55)
             // Assert:
-            1111111111 shouldBeEqual newState.currentNumber.toInt()
+            1111111111 shouldBeEqual newState.operandRight.toInt()
         }
     }
 
@@ -111,17 +111,17 @@ class EngineStateStandardTest {
             // Act:
             val newState = engine.enterDecimal(state)
             // Assert:
-            newState.currentNumber.shouldContain(".")
+            newState.operandRight.shouldContain(".")
         }
 
         @Test
         fun `should not add a decimal point if already present`() {
             // Arrange:
-            val modifiedState = state.copy(currentNumber = "32.9")
+            val modifiedState = state.copy(operandRight = "32.9")
             // Act:
             val newState = engine.enterDecimal(modifiedState)
             // Assert:
-            newState.currentNumber.shouldNotMatch("32.9.")
+            newState.operandRight.shouldNotMatch("32.9.")
         }
     }
 
@@ -132,18 +132,18 @@ class EngineStateStandardTest {
         fun `should reset calculator state to default`() {
             // Arrange:
             val modifiedState = state.copy(
-                currentNumber = "32.9",
-                previousNumber = "123",
-                operation = ButtonCalculatorArithmetic.Multiplication
+                operandRight = "32.9",
+                operandLeft = "123",
+                operator = ButtonCalculatorArithmetic.Multiplication
             )
             // Act:
             val newState = engine.applyClearAll(modifiedState)
 
             // Assert:
-            newState.currentNumber shouldBe "0"
-            newState.operation shouldBe null
-            newState.previousNumber shouldBe ""
-            newState.activeButtonLabel shouldBe ""
+            newState.operandRight shouldBe "0"
+            newState.operator shouldBe null
+            newState.operandLeft shouldBe ""
+            newState.activeLabel shouldBe ""
         }
     }
 
@@ -154,28 +154,28 @@ class EngineStateStandardTest {
         fun `should clear operation and restore previous number as current number if operation exists`() {
             // Arrange:
             val modifiedState = state.copy(
-                currentNumber = "329",
-                previousNumber = "111",
-                operation = ButtonCalculatorArithmetic.Multiplication
+                operandRight = "329",
+                operandLeft = "111",
+                operator = ButtonCalculatorArithmetic.Multiplication
             )
             // Act:
             val newState = engine.applyClear(modifiedState)
             // Assert:
-            "111" shouldBe newState.currentNumber
+            "111" shouldBe newState.operandRight
         }
 
         @Test
         fun `should reset current number to zero if previous number is empty`() {
             // Arrange:
             val modifiedState = state.copy(
-                currentNumber = "329",
-                previousNumber = "",
-                operation = null
+                operandRight = "329",
+                operandLeft = "",
+                operator = null
             )
             // Act:
             val newState = engine.applyClear(modifiedState)
             // Assert:
-            "0" shouldBe newState.currentNumber
+            "0" shouldBe newState.operandRight
         }
     }
 
@@ -196,18 +196,18 @@ class EngineStateStandardTest {
         ) {
             // Arrange:
             val arrangedState = state.copy(
-                currentNumber = right.toString(),
-                previousNumber = left.toString(),
-                operation = arithmetic
+                operandRight = right.toString(),
+                operandLeft = left.toString(),
+                operator = arithmetic
             )
 
             // Act:
             val newState = engine.applyArithmetic(arrangedState)
 
             // Assert:
-            newState.currentNumber shouldBe expected.toString()
-            newState.previousNumber shouldBe ""
-            newState.operation shouldBe null
+            newState.operandRight shouldBe expected.toString()
+            newState.operandLeft shouldBe ""
+            newState.operator shouldBe null
         }
 
         @ParameterizedTest
@@ -220,9 +220,9 @@ class EngineStateStandardTest {
         ) {
             // Arrange:
             val arrangedState = state.copy(
-                currentNumber = right,
-                previousNumber = left,
-                operation = operation
+                operandRight = right,
+                operandLeft = left,
+                operator = operation
             )
 
             // Act:
@@ -242,9 +242,9 @@ class EngineStateStandardTest {
         ) {
             // Arrange:
             val arrangedState = state.copy(
-                currentNumber = right,
-                previousNumber = left,
-                operation = operation
+                operandRight = right,
+                operandLeft = left,
+                operator = operation
             )
 
             // Act:
@@ -258,9 +258,9 @@ class EngineStateStandardTest {
         fun `should return same state if operation is null`() {
             // Arrange:
             val arrangedState = state.copy(
-                currentNumber = "5",
-                previousNumber = "",
-                operation = null
+                operandRight = "5",
+                operandLeft = "",
+                operator = null
             )
 
             // Act:
@@ -283,13 +283,13 @@ class EngineStateStandardTest {
         )
         fun `should applyPercent on engine`(number: Double, expectedResult: Double) {
             // Arrange:
-            state = state.copy(currentNumber = number.toString())
+            state = state.copy(operandRight = number.toString())
 
             // Act:
             val newState = engine.applySign(state)
 
             // Assert:
-            newState.currentNumber shouldBe expectedResult.toString()
+            newState.operandRight shouldBe expectedResult.toString()
         }
 
     }
@@ -305,13 +305,13 @@ class EngineStateStandardTest {
         )
         fun `should applyPercent`(number: Double, expectedResult: Double) {
             // Arrange:
-            state = state.copy(currentNumber = number.toString())
+            state = state.copy(operandRight = number.toString())
 
             // Act:
             val newState = engine.applyPercent(state)
 
             // Assert:
-            newState.currentNumber shouldBe expectedResult.toString()
+            newState.operandRight shouldBe expectedResult.toString()
         }
     }
 }
