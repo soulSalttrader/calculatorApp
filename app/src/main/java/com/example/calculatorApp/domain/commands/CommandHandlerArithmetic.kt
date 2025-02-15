@@ -1,0 +1,15 @@
+package com.example.calculatorApp.domain.commands
+
+import com.example.calculatorApp.domain.EngineState
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorArithmetic
+import com.example.calculatorApp.model.state.CalculatorState
+
+class CommandHandlerArithmetic(
+    private val engineState: EngineState,
+    private val operation: ButtonCalculatorArithmetic,
+) : Command {
+
+    override fun execute(state: CalculatorState): CalculatorState {
+        return engineState.handleArithmetic(state, operation)
+    }
+}

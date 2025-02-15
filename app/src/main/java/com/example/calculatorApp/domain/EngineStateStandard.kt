@@ -7,8 +7,21 @@ import com.example.calculatorApp.utils.Constants.MAX_NUM_LENGTH
 
 class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
 
+    override fun handleArithmetic(state: CalculatorState, arithmetic: ButtonCalculatorArithmetic): CalculatorState {
+        return state.modifyWith(
+            { state.operandRight.toDoubleOrNull()?.isNaN() == true } to { this },
+            { state.activeButton == ButtonCalculatorArithmetic.Equals } to { state.copy(operator = arithmetic, operandRight = "", operand = null, activeButton = null) },
+            { state.operator != null && state.operandRight.isNotBlank() } to {
+                val newState = applyArithmetic(state)
+                enterArithmetic(newState, arithmetic)
+            },
+            { true } to { enterArithmetic(state, arithmetic) }
+        )
+    }
+
     override fun enterArithmetic(state: CalculatorState, arithmetic: ButtonCalculatorArithmetic): CalculatorState {
         return state.modifyWith(
+            { state.operandRight.toDoubleOrNull()?.isNaN() == true } to { this },
             { state.operator != null } to { state.copy(operator = arithmetic) },
             { state.operandRight.isNotBlank() } to { state.copy(operandLeft = state.operandRight, operandRight = "", operator = arithmetic) },
         )
@@ -16,6 +29,7 @@ class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
 
     override fun enterNumber(state: CalculatorState, number: Int): CalculatorState {
         return state.modifyWith(
+            { state.operandRight.toDoubleOrNull()?.isNaN() == true } to { this },
             { state.operandRight == "0" } to { copy(operandRight = number.toString()) },
             { state.operandRight.length >= MAX_NUM_LENGTH } to { this },
             { true } to { copy(operandRight = operandRight + number) }
@@ -24,6 +38,7 @@ class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
 
     override fun enterDecimal(state: CalculatorState): CalculatorState {
         return state.modifyWith(
+            { state.operandRight.toDoubleOrNull()?.isNaN() == true } to { this },
             { !state.operandRight.contains(".") } to { state.copy(operandRight = state.operandRight + ".") }
         )
     }
@@ -32,6 +47,9 @@ class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
 
     override fun applyClear(state: CalculatorState): CalculatorState {
         return state.modifyWith(
+//            { state.operandRight.toDoubleOrNull()?.isNaN() == true } to { copy(operandLeft = "", operator = null, operandRight = SymbolButton.ZERO.label, operand = null, activeButton = null) },
+            { state.operandRight.toDoubleOrNull()?.isNaN() == true } to { applyClearAll(state) },
+            { !state.operand.isNullOrBlank() } to { applyClearAll(state) },
             { state.operator != null } to { copy(operandRight = state.operandLeft, operandLeft = "", operator = null) },
             { state.operandRight.isNotBlank() } to { copy(operandRight = SymbolButton.ZERO.label, operandLeft = "") },
         )
@@ -58,6 +76,7 @@ class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
 
     override fun applySign(state: CalculatorState): CalculatorState {
         return state.modifyWith(
+            { state.operandRight.toDoubleOrNull()?.isNaN() == true } to { this },
             { state.operandRight.toDoubleOrNull() == null } to { this },
             { true } to {
                 val result = engineMath.applySign(state.operandRight.toDouble())
@@ -68,6 +87,7 @@ class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
 
     override fun applyPercent(state: CalculatorState): CalculatorState {
         return state.modifyWith(
+            { state.operandRight.toDoubleOrNull()?.isNaN() == true } to { this },
             { state.operandRight.toDoubleOrNull() == null } to { this },
             { true } to {
                 val result = engineMath.applyPercent(state.operandRight.toDouble())

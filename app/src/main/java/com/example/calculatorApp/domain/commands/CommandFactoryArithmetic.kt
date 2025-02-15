@@ -10,11 +10,8 @@ class CommandFactoryArithmetic(
     override fun create(button: ButtonCalculatorArithmetic): Command {
 
         return when (button) {
-            is ButtonCalculatorArithmetic.Equals -> CommandApplyArithmetic(engineState)
-            else -> CommandChain(
-                CommandApplyArithmetic(engineState),
-                CommandEnterArithmetic(engineState, button)
-            )
+            is ButtonCalculatorArithmetic.Equals -> CommandApplyEquals(engineState)
+            else -> CommandHandlerArithmetic(engineState, button)
         }
     }
 }

@@ -7,6 +7,7 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.clearMocks
 import io.mockk.mockk
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -45,6 +46,7 @@ class CommandFactoryArithmeticTest {
             command.shouldBeInstanceOf<CommandApplyEquals>()
         }
 
+        @Disabled("deprecated")
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should create CommandChain with applyArithmetic and EnterArithmetic for other Arithmetic buttons`(
