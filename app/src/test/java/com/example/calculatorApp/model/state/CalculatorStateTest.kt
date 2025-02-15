@@ -1,6 +1,8 @@
 package com.example.calculatorApp.model.state
 
 import com.example.calculatorApp.arguments.TestArgumentsButton
+import com.example.calculatorApp.arguments.TestArgumentsEngineState
+import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorArithmetic
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.symbols.SymbolButton
@@ -26,7 +28,7 @@ class CalculatorStateTest {
             operandRight = "0",
             operator  = null,
             operandLeft = "",
-            activeLabel = ""
+            activeButton = null,
         )
     }
 
@@ -74,42 +76,42 @@ class CalculatorStateTest {
     inner class CalculatorStatePropertiesTest {
         // Arrange: Setup test data (button instance)
         private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsButton.provideControlSymbols()
+            return TestArgumentsButton.provideButtonButton()
         }
 
         @ParameterizedTest
         @MethodSource("provideArguments")
-        fun `should update active button label correctly`(
-            button: ButtonCalculatorControl,
-            expectedSymbol: SymbolButton,
+        fun `should update active button correctly`(
+            button: Button,
+            expectedButton: Button,
         ) {
             // Act:
-            val modifiedState = state.copy(activeLabel = button.symbol.label)
+            val modifiedState = state.copy(activeButton = button)
 
             // Assert:
-            expectedSymbol.label shouldBe modifiedState.activeLabel
+            expectedButton shouldBe modifiedState.activeButton
         }
 
         @Test
         fun `should return the correct property for calculator state`() {
 
             // Arrange & Act & Assert:
-            withClue("Expected currentNumber to be '0' by default.") {
+            withClue("Expected operandRight to be '0' by default.") {
                 state.operandRight shouldBe "0"
             }
-            withClue("Expected previousNumber to be empty by default.") {
+            withClue("Expected operandLeft to be empty by default.") {
                 state.operandLeft shouldBe ""
             }
             withClue("Expected operation to be null by default.") {
                 state.operator shouldBe null
             }
-            withClue("Expected activeButtonLabel to be empty by default.") {
-                state.activeLabel shouldBe ""
+            withClue("Expected activeButton to be empty by default.") {
+                state.activeButton shouldBe null
             }
         }
 
         @Test
-        fun `should update current number correctly`() {
+        fun `should update operandRight correctly`() {
             // Arrange & Act:
             val modifiedState = state.copy(operandRight = "5")
 
@@ -118,7 +120,7 @@ class CalculatorStateTest {
         }
 
         @Test
-        fun `should update previous number correctly`() {
+        fun `should update operandLeft correctly`() {
             // Arrange & Act
             val modifiedState = state.copy(operandLeft = "10")
 
