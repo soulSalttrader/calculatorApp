@@ -1,9 +1,11 @@
 package com.example.calculatorApp.arguments
 
+import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.model.symbols.SymbolButton
 import com.example.calculatorApp.ui.theme.Onyx
 import com.example.calculatorApp.ui.theme.SilverGrey
 import com.example.calculatorApp.ui.theme.VividGamboge
+import com.example.calculatorApp.utils.ButtonCalculatorList.allButtons
 import com.example.calculatorApp.utils.ButtonCalculatorList.arithmetics
 import com.example.calculatorApp.utils.ButtonCalculatorList.controls
 import com.example.calculatorApp.utils.ButtonCalculatorList.numbers
@@ -17,6 +19,9 @@ object TestArgumentsButton : TestArguments {
 
     private fun <T> provideButtonSymbols(buttons: Array<T>, symbolMapping: (T) -> SymbolButton?) =
         buttons.map { button -> Arguments.of(button, symbolMapping(button)) }.stream()
+
+    private fun <T> provideButtonButtons(buttons: Array<T>, buttonMapping: (T) -> Button?) =
+        buttons.map { button -> Arguments.of(button, buttonMapping(button)) }.stream()
 
     fun provideArithmeticColors() = provideButtonColors(
         buttons = arithmetics,
@@ -46,5 +51,10 @@ object TestArgumentsButton : TestArguments {
     fun provideNumberSymbols() = provideButtonSymbols(
         buttons = numbers,
         symbolMapping = { ButtonCalculatorMappings.numberSymbolMap[it] }
+    )
+
+    fun provideButtonButton() = provideButtonButtons(
+        buttons = allButtons,
+        buttonMapping = { ButtonCalculatorMappings.buttonButtonMap[it] }
     )
 }

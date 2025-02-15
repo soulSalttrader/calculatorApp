@@ -136,50 +136,54 @@ class EngineMathStandardTest {
         @ParameterizedTest
         @MethodSource("provideAdditionArguments")
         fun `should add two numbers correctly`(
+            operandLeft: Double,
             operation: ButtonCalculatorArithmetic.Addition,
-            left: Double,
-            right: Double,
+            operandRight: Double,
             expectedDouble: Double,
         ) {
             // Act & Assert:
-            engineMath.applyArithmetic(left, right, operation) shouldBe expectedDouble
+            engineMath.applyArithmetic(operandLeft, operation, operandRight) shouldBe expectedDouble
         }
 
         @ParameterizedTest
         @MethodSource("provideSubtractionArguments")
         fun `should subtract two numbers correctly`(
+            operandLeft: Double,
             operation: ButtonCalculatorArithmetic.Subtraction,
-            left: Double,
-            right: Double,
+            operandRight: Double,
             expectedDouble: Double,
         ) {
             // Act & Assert:
-            engineMath.applyArithmetic(left, right, operation) shouldBe expectedDouble
+            engineMath.applyArithmetic(operandLeft, operation, operandRight) shouldBe expectedDouble
         }
 
         @ParameterizedTest
         @MethodSource("provideMultiplicationArguments")
         fun `should multiply two numbers correctly`(
+            operandLeft: Double,
             operation: ButtonCalculatorArithmetic.Multiplication,
-            left: Double,
-            right: Double,
+            operandRight: Double,
             expectedDouble: Double,
         ) {
             // Act & Assert:
-            engineMath.applyArithmetic(left, right, operation).shouldBe(expectedDouble plusOrMinus(1e-9))
+            engineMath.applyArithmetic(
+                operandLeft,
+                operation,
+                operandRight
+            ).shouldBe(expectedDouble plusOrMinus(1e-9))
         }
 
         @ParameterizedTest
         @MethodSource("provideDivisionArguments")
         fun `should divide two numbers correctly`(
+            operandLeft: Double,
             operation: ButtonCalculatorArithmetic.Division,
-            left: Double,
-            right: Double,
+            operandRight: Double,
             expectedDouble: Double,
         ) {
 
             // Act & Assert:
-            val result = engineMath.applyArithmetic(left, right, operation)
+            val result = engineMath.applyArithmetic(operandLeft, operation, operandRight)
 
             result.apply {
                 if (expectedDouble.isNaN()) shouldBeNaN() else this shouldBe expectedDouble
@@ -189,13 +193,13 @@ class EngineMathStandardTest {
         @Test
         fun `should throw an exception for an unknown operation`() {
             // Arrange:
-            val left = 1.0
-            val right = 2.0
+            val operandLeft = 1.0
+            val operandRight = 2.0
             val unknownOperation = ButtonCalculatorArithmetic.Equals
 
             // Act:
             val exception = shouldThrow<IllegalArgumentException> {
-                engineMath.applyArithmetic(left, right, unknownOperation)
+                engineMath.applyArithmetic(operandLeft, unknownOperation, operandRight)
             }
 
             // Assert: Validate the exception message

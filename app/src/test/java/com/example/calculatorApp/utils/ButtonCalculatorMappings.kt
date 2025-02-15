@@ -1,5 +1,6 @@
 package com.example.calculatorApp.utils
 
+import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorArithmetic
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
@@ -71,5 +72,30 @@ object ButtonCalculatorMappings {
         ButtonCalculatorNumber.Seven to SymbolButton.SEVEN,
         ButtonCalculatorNumber.Eight to SymbolButton.EIGHT,
         ButtonCalculatorNumber.Nine to SymbolButton.NINE
+    )
+
+    val buttonButtonMap: Map<Button, Button> = mapOf(
+        ButtonCalculatorArithmetic.Addition to ButtonCalculatorArithmetic.Addition,
+        ButtonCalculatorArithmetic.Subtraction to ButtonCalculatorArithmetic.Subtraction,
+        ButtonCalculatorArithmetic.Multiplication to ButtonCalculatorArithmetic.Multiplication,
+        ButtonCalculatorArithmetic.Division to ButtonCalculatorArithmetic.Division,
+        ButtonCalculatorArithmetic.Equals to ButtonCalculatorArithmetic.Equals,
+
+        ButtonCalculatorControl.AllClear to ButtonCalculatorControl.AllClear,
+        ButtonCalculatorControl.Clear to ButtonCalculatorControl.Clear,
+        ButtonCalculatorControl.PlusMinus to ButtonCalculatorControl.PlusMinus,
+        ButtonCalculatorControl.Percent to ButtonCalculatorControl.Percent,
+        ButtonCalculatorControl.Decimal to ButtonCalculatorControl.Decimal,
+
+        ButtonCalculatorNumber.Zero to ButtonCalculatorNumber.Zero,
+        ButtonCalculatorNumber.One to ButtonCalculatorNumber.One,
+        ButtonCalculatorNumber.Two to ButtonCalculatorNumber.Two,
+        ButtonCalculatorNumber.Three to ButtonCalculatorNumber.Three,
+        ButtonCalculatorNumber.Four to ButtonCalculatorNumber.Four,
+        ButtonCalculatorNumber.Five to ButtonCalculatorNumber.Five,
+        ButtonCalculatorNumber.Six to ButtonCalculatorNumber.Six,
+        ButtonCalculatorNumber.Seven to ButtonCalculatorNumber.Seven,
+        ButtonCalculatorNumber.Eight to ButtonCalculatorNumber.Eight,
+        ButtonCalculatorNumber.Nine to ButtonCalculatorNumber.Nine,
     )
 }
