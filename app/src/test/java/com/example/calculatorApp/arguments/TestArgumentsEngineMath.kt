@@ -24,23 +24,28 @@ object TestArgumentsEngineMath {
 
     fun providesPercentArguments(): Stream<Arguments> {
         return Stream.of(
-            Arguments.of(1.0, 0.01),
-            Arguments.of(329.0, 3.29),
-            Arguments.of(1000.0, 10.0),
+            Arguments.of(22.0, 3.0, 0.66),
+            Arguments.of(329.0, 100.0, 329.0),
+            Arguments.of(1000.0, 100.0, 1000.0),
 
-            Arguments.of(-1.0, -0.01),
-            Arguments.of(-329.0, -3.29),
-            Arguments.of(-1000.0, -10.0),
+            Arguments.of( -1.0, 50.0, -0.5),
+            Arguments.of( -329.0, 1.0, -3.29),
+            Arguments.of( -1000.0, 0.0, 0.0),
 
-            Arguments.of(0.01, 0.0001),
-            Arguments.of(0.329, 0.00329),
-            Arguments.of(0.999, 0.00999),
+            Arguments.of( 0.01, 100.0, 0.01),
+            Arguments.of( 0.329, 10.0, 0.0329),
+            Arguments.of( 0.999, 5.0, 0.04995),
 
-            Arguments.of(-0.01, -0.0001),
-            Arguments.of(-0.329, -0.00329),
-            Arguments.of(-0.999, -0.00999),
+            Arguments.of( -0.01, 100.0, -0.01),
+            Arguments.of( -0.329, 20.0, -0.0658),
+            Arguments.of( -0.999, 80.0, -0.7992),
 
-            Arguments.of(0.0, 0.0),
+            Arguments.of( -0.01, 11.1, -0.00111),
+            Arguments.of( -0.329, 20.55, -0.0676095),
+            Arguments.of( -0.999, 80.99, -0.8090900999999999),
+
+            Arguments.of( 0.0, 0.0, 0.0),
+            Arguments.of( null, 22.0, 0.22),
         )
     }
 

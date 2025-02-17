@@ -66,48 +66,51 @@ class EngineMathStandardTest {
         // Arrange:
         private fun provideWholeNumbers(): Stream<Arguments> {
             return TestArgumentsEngineMath.providesPercentArguments()
-                .filter { args -> (args.get()[0] as Double) % 1.0 == 0.0 }
+                .filter { args -> (args.get()[1] as Double) % 1.0 == 0.0 }
         }
 
         // Arrange:
         private fun provideDecimalNumbers(): Stream<Arguments> {
             return TestArgumentsEngineMath.providesPercentArguments()
-                .filter { args -> (args.get()[0] as Double) % 1.0 != 0.0 }
+                .filter { args -> (args.get()[1] as Double) % 1.0 != 0.0 }
         }
         // Arrange:
         private fun provideZeroNumbers(): Stream<Arguments> {
             return TestArgumentsEngineMath.providesPercentArguments()
-                .filter { args -> (args.get()[0] as Double) == 0.0 }
+                .filter { args -> (args.get()[1] as Double) == 0.0 }
         }
 
         @ParameterizedTest
         @MethodSource("provideWholeNumbers")
         fun `should convert a whole number to percentage`(
-            number: Double,
+            operandLeft: Double?,
+            operandRight: Double,
             expectedNumber: Double,
         ) {
             // Act & Assert:
-            engineMath.applyPercent(number) shouldBe expectedNumber
+            engineMath.applyPercent(operandLeft, operandRight).shouldBe(expectedNumber plusOrMinus (1e-9))
         }
 
         @ParameterizedTest
         @MethodSource("provideDecimalNumbers")
         fun `should convert a decimal number to percentage`(
-            number: Double,
+            operandLeft: Double,
+            operandRight: Double,
             expectedNumber: Double,
         ) {
             // Act & Assert:
-            engineMath.applyPercent(number) shouldBe expectedNumber
+            engineMath.applyPercent(operandLeft, operandRight).shouldBe(expectedNumber plusOrMinus (1e-9))
         }
 
         @ParameterizedTest
         @MethodSource("provideZeroNumbers")
         fun `should return zero when input is zero`(
-            number: Double,
+            operandLeft: Double,
+            operandRight: Double,
             expectedNumber: Double,
         ) {
             // Act & Assert:
-            engineMath.applyPercent(number) shouldBe expectedNumber
+            engineMath.applyPercent(operandLeft, operandRight).shouldBe(expectedNumber plusOrMinus (1e-9))
         }
     }
 
@@ -166,11 +169,7 @@ class EngineMathStandardTest {
             expectedDouble: Double,
         ) {
             // Act & Assert:
-            engineMath.applyArithmetic(
-                operandLeft,
-                operation,
-                operandRight
-            ).shouldBe(expectedDouble plusOrMinus(1e-9))
+            engineMath.applyArithmetic(operandLeft, operation, operandRight).shouldBe(expectedDouble plusOrMinus(1e-9))
         }
 
         @ParameterizedTest

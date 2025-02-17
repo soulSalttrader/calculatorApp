@@ -5,7 +5,7 @@ import com.example.calculatorApp.model.elements.button.ButtonCalculatorArithmeti
 class EngineMathStandard : EngineMath {
 
     override fun applySign(number: Double): Double = -number
-    override fun applyPercent(number: Double): Double = number / 100
+    override fun applyPercent(operandLeft: Double?, operandRight: Double): Double = operandLeft?.times(operandRight / 100) ?: (operandRight / 100)
 
     override fun applyArithmetic(
         operandLeft: Double,
