@@ -5,7 +5,23 @@ import com.example.calculatorApp.model.elements.button.ButtonCalculatorArithmeti
 class EngineMathStandard : EngineMath {
 
     override fun applySign(number: Double): Double = -number
-    override fun applyPercent(operandLeft: Double?, operandRight: Double): Double = operandLeft?.times(operandRight / 100) ?: (operandRight / 100)
+    override fun applySign(number: Int): Int = -number
+
+    override fun applyPercent(
+        operandLeft: Double?,
+        operator: ButtonCalculatorArithmetic?,
+        operandRight: Double
+    ): Double {
+        return when (operator) {
+            ButtonCalculatorArithmetic.Addition,
+            ButtonCalculatorArithmetic.Subtraction -> (operandLeft ?: 1.0) * (operandRight / 100)
+
+            ButtonCalculatorArithmetic.Multiplication,
+            ButtonCalculatorArithmetic.Division -> operandRight / 100
+
+            else -> operandRight / 100
+        }
+    }
 
     override fun applyArithmetic(
         operandLeft: Double,

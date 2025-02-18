@@ -14,38 +14,39 @@ object TestArgumentsEngineMath {
             Arguments.of(0.329, -0.329),
             Arguments.of(999.999, -999.999),
 
-            Arguments.of(-1.0, 1.0),
-            Arguments.of(-5.5, 5.5),
-            Arguments.of(-99.0, 99.0),
-            Arguments.of(-0.329, 0.329),
-            Arguments.of(-999.999, 999.999),
+            Arguments.of(-1, 1),
+            Arguments.of(-5, 5),
+            Arguments.of(-99, 99),
+            Arguments.of(-0, 0),
+            Arguments.of(-999, 999),
         )
     }
 
     fun providesPercentArguments(): Stream<Arguments> {
         return Stream.of(
-            Arguments.of(22.0, 3.0, 0.66),
-            Arguments.of(329.0, 100.0, 329.0),
-            Arguments.of(1000.0, 100.0, 1000.0),
+            Arguments.of(22.0, ButtonCalculatorArithmetic.Addition, 3.0, 0.66),
+            Arguments.of(329.0, ButtonCalculatorArithmetic.Multiplication, 100.0, 1.0),
+            Arguments.of(1000.0, ButtonCalculatorArithmetic.Division, 100.0, 1.0),
 
-            Arguments.of( -1.0, 50.0, -0.5),
-            Arguments.of( -329.0, 1.0, -3.29),
-            Arguments.of( -1000.0, 0.0, 0.0),
+            Arguments.of( -1.0, ButtonCalculatorArithmetic.Subtraction, 50.0, -0.5),
+            Arguments.of( -329.0, ButtonCalculatorArithmetic.Addition, 1.0, -3.29),
+            Arguments.of( -1000.0, ButtonCalculatorArithmetic.Multiplication, 0.0, 0.0),
 
-            Arguments.of( 0.01, 100.0, 0.01),
-            Arguments.of( 0.329, 10.0, 0.0329),
-            Arguments.of( 0.999, 5.0, 0.04995),
+            Arguments.of( 0.01, ButtonCalculatorArithmetic.Division, 100.0, 1.0),
+            Arguments.of( 0.329, ButtonCalculatorArithmetic.Subtraction, 10.0, 0.0329),
+            Arguments.of( 0.999, ButtonCalculatorArithmetic.Addition, 5.0, 0.04995),
 
-            Arguments.of( -0.01, 100.0, -0.01),
-            Arguments.of( -0.329, 20.0, -0.0658),
-            Arguments.of( -0.999, 80.0, -0.7992),
+            Arguments.of( -0.01, ButtonCalculatorArithmetic.Multiplication, 100.0, 1.0),
+            Arguments.of( -0.329, ButtonCalculatorArithmetic.Division, 20.0, 0.2),
+            Arguments.of( -0.999, ButtonCalculatorArithmetic.Subtraction, 80.0, -0.7992),
 
-            Arguments.of( -0.01, 11.1, -0.00111),
-            Arguments.of( -0.329, 20.55, -0.0676095),
-            Arguments.of( -0.999, 80.99, -0.8090900999999999),
+            Arguments.of( -0.01, ButtonCalculatorArithmetic.Addition, 11.1, -0.00111),
+            Arguments.of( -0.329, ButtonCalculatorArithmetic.Multiplication, 20.55, 0.2055),
+            Arguments.of( -0.999, ButtonCalculatorArithmetic.Division, 80.99, 0.8099),
 
-            Arguments.of( 0.0, 0.0, 0.0),
-            Arguments.of( null, 22.0, 0.22),
+            Arguments.of( 0.0, ButtonCalculatorArithmetic.Subtraction, 0.0, 0.0),
+            Arguments.of( null, ButtonCalculatorArithmetic.Addition, 22.0, 0.22),
+            Arguments.of( null, null, 22.0, 0.22),
         )
     }
 

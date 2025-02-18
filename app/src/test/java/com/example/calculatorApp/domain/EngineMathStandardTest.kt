@@ -35,21 +35,29 @@ class EngineMathStandardTest {
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should return the negative of a positive number`(
-            double: Double,
-            expectedDouble: Double
+            number: Number,
+            expected: Number
         ) {
             // Act & Assert:
-            engineMath.applySign(double) shouldBeEqual expectedDouble
+            when (number) {
+                is Int -> engineMath.applySign(number) shouldBe expected
+                is Double -> engineMath.applySign(number) shouldBeEqual expected
+                else -> throw IllegalArgumentException("Unsupported type.")
+            }
         }
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should return the positive of a negative number`(
-            double: Double,
-            expectedDouble: Double
+            number: Number,
+            expected: Number
         ) {
             // Act & Assert:
-            engineMath.applySign(double) shouldBeEqual expectedDouble
+            when (number) {
+                is Int -> engineMath.applySign(number) shouldBe expected
+                is Double -> engineMath.applySign(number) shouldBeEqual expected
+                else -> throw IllegalArgumentException("Unsupported type.")
+            }
         }
 
         @Test
@@ -57,6 +65,8 @@ class EngineMathStandardTest {
             // Act & Assert:
             engineMath.applySign(0.0) shouldBe -0.0
             engineMath.applySign(-0.0) shouldBe 0.0
+            engineMath.applySign(0) shouldBe -0
+            engineMath.applySign(-0) shouldBe 0
         }
     }
 
@@ -66,51 +76,54 @@ class EngineMathStandardTest {
         // Arrange:
         private fun provideWholeNumbers(): Stream<Arguments> {
             return TestArgumentsEngineMath.providesPercentArguments()
-                .filter { args -> (args.get()[1] as Double) % 1.0 == 0.0 }
+                .filter { args -> (args.get()[2] as Double) % 1.0 == 0.0 }
         }
 
         // Arrange:
         private fun provideDecimalNumbers(): Stream<Arguments> {
             return TestArgumentsEngineMath.providesPercentArguments()
-                .filter { args -> (args.get()[1] as Double) % 1.0 != 0.0 }
+                .filter { args -> (args.get()[2] as Double) % 1.0 != 0.0 }
         }
         // Arrange:
         private fun provideZeroNumbers(): Stream<Arguments> {
             return TestArgumentsEngineMath.providesPercentArguments()
-                .filter { args -> (args.get()[1] as Double) == 0.0 }
+                .filter { args -> (args.get()[2] as Double) == 0.0 }
         }
 
         @ParameterizedTest
         @MethodSource("provideWholeNumbers")
         fun `should convert a whole number to percentage`(
             operandLeft: Double?,
+            operator: ButtonCalculatorArithmetic?,
             operandRight: Double,
             expectedNumber: Double,
         ) {
             // Act & Assert:
-            engineMath.applyPercent(operandLeft, operandRight).shouldBe(expectedNumber plusOrMinus (1e-9))
+            engineMath.applyPercent(operandLeft, operator, operandRight).shouldBe(expectedNumber plusOrMinus (1e-9))
         }
 
         @ParameterizedTest
         @MethodSource("provideDecimalNumbers")
         fun `should convert a decimal number to percentage`(
             operandLeft: Double,
+            operator: ButtonCalculatorArithmetic?,
             operandRight: Double,
             expectedNumber: Double,
         ) {
             // Act & Assert:
-            engineMath.applyPercent(operandLeft, operandRight).shouldBe(expectedNumber plusOrMinus (1e-9))
+            engineMath.applyPercent(operandLeft, operator, operandRight).shouldBe(expectedNumber plusOrMinus (1e-9))
         }
 
         @ParameterizedTest
         @MethodSource("provideZeroNumbers")
         fun `should return zero when input is zero`(
             operandLeft: Double,
+            operator: ButtonCalculatorArithmetic?,
             operandRight: Double,
             expectedNumber: Double,
         ) {
             // Act & Assert:
-            engineMath.applyPercent(operandLeft, operandRight).shouldBe(expectedNumber plusOrMinus (1e-9))
+            engineMath.applyPercent(operandLeft, operator, operandRight).shouldBe(expectedNumber plusOrMinus (1e-9))
         }
     }
 

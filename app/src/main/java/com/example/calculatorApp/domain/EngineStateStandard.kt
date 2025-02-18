@@ -106,10 +106,18 @@ class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
     override fun applySign(state: CalculatorState): CalculatorState {
         return state.modifyWith(
             { state.operandRight.toDoubleOrNull()?.isNaN() == true } to { this },
-            { state.operandRight.toDoubleOrNull() == null } to { this },
+            { state.operandRight == "0" || state.operandRight.isEmpty() } to { state.copy(operandRight = "-0") },
+            { state.operandRight.toIntOrNull() != null } to {
+                val intNumber = state.operandRight.toInt()
+                val result = engineMath.applySign(intNumber).toString()
+
+                state.copy(operandRight = result)
+            },
             { true } to {
-                val result = engineMath.applySign(state.operandRight.toDouble())
-                state.copy(operandRight = result.toString())
+                val doubleNumber = state.operandRight.toDouble()
+                val result = engineMath.applySign(doubleNumber).toString()
+
+                state.copy(operandRight = result)
             }
         )
     }
@@ -119,7 +127,12 @@ class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
             { state.operandRight.toDoubleOrNull()?.isNaN() == true } to { this },
             { state.operandRight.toDoubleOrNull() == null } to { this },
             { true } to {
-                val result = engineMath.applyPercent(state.operandLeft.toDoubleOrNull(), state.operandRight.toDouble())
+                val result = engineMath.applyPercent(
+                    state.operandLeft.toDoubleOrNull(),
+                    state.operator as? ButtonCalculatorArithmetic,
+                    state.operandRight.toDouble()
+                )
+
                 state.copy(operandRight = result.toString())
             }
         )
