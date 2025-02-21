@@ -17,6 +17,20 @@ The app mimics the look and behavior of the iPhone calculator, offering a famili
 
 ---
 
+## Calculator Operations
+1. Addition – Adds two numbers. The result is shown after pressing "=" or entering another operation.
+2. Subtraction – Subtracts one number from another. The result appears after "=" or the next operation. 
+3. Multiplication – Multiplies two numbers. The result is displayed after "=" or another operation. 
+4. Division – Divides one number by another. The result shows after "=" or continuing with another operation. 
+5. Repeatable Equals – Repeats the last operation when "=" is pressed again. 
+6. Change Sign – Switches a number between positive and negative.
+7. Decimal Support – Allows operations with decimal values. 
+8. Percentage – Calculates a percentage of a given number. 
+9. All Clear – Resets the calculator to default settings. 
+10. Clear – Clears the last entered number or operation.
+
+---
+
 ## Features:
 
 1. **Element**
@@ -24,6 +38,7 @@ The app mimics the look and behavior of the iPhone calculator, offering a famili
 3. **Display**
 4. **Row**
 5. **Engine**
+6. **Command**
 
 ---
 
@@ -234,98 +249,321 @@ The **Engine** is responsible for handling the core logic of the calculator, inc
 - **EngineMath Interface**:  
   Defines core mathematical operations, including:
     - `applySign(number: Double)`: Inverts the sign of a number.
-    - `applyPercent(number: Double)`: Converts a number into a percentage.
+    - `applySign(number: Int)`: Inverts the sign of a number.
+    - `applyPercentage(number: Double)`: Converts a number into a percentage.
     - `applyArithmetic(left: Double, right: Double, operation: ButtonCalculatorArithmetic)`: Performs arithmetic operations such as addition, subtraction, multiplication, and division.
 
   **Implementation:**
   ```kotlin
   class EngineMathStandard : EngineMath {
 
-      override fun applySign(number: Double): Double = -number
-      override fun applyPercent(number: Double): Double = number / 100
+    override fun applySign(number: Double): Double = -number
+    override fun applySign(number: Int): Int = -number
 
-      override fun applyArithmetic(left: Double, right: Double, operation: ButtonCalculatorArithmetic): Double {
-          return when (operation) {
-              is ButtonCalculatorArithmetic.Addition -> left + right
-              is ButtonCalculatorArithmetic.Subtraction -> left - right
-              is ButtonCalculatorArithmetic.Multiplication -> left * right
-              is ButtonCalculatorArithmetic.Division -> safeDivide(right, left)
-              else -> throw IllegalArgumentException("Unknown operation.")
-          }
-      }
+    override fun applyPercent(
+        operandLeft: Double?,
+        operator: ButtonCalculatorArithmetic?,
+        operandRight: Double
+    ): Double {
+        return when (operator) {
+            ButtonCalculatorArithmetic.Addition,
+            ButtonCalculatorArithmetic.Subtraction -> (operandLeft ?: 1.0) * (operandRight / 100)
 
-      private fun safeDivide(right: Double, left: Double) = if (right != 0.0) left / right else Double.NaN
+            ButtonCalculatorArithmetic.Multiplication,
+            ButtonCalculatorArithmetic.Division -> operandRight / 100
+
+            else -> operandRight / 100
+        }
+    }
+
+    override fun applyArithmetic(
+        operandLeft: Double,
+        operator: ButtonCalculatorArithmetic,
+        operandRight: Double,
+    ): Double {
+
+        return  when (operator) {
+            is ButtonCalculatorArithmetic.Addition -> operandLeft + operandRight
+            is ButtonCalculatorArithmetic.Subtraction -> operandLeft - operandRight
+            is ButtonCalculatorArithmetic.Multiplication -> operandLeft * operandRight
+            is ButtonCalculatorArithmetic.Division -> safeDivide(operandLeft, operandRight)
+            else -> throw IllegalArgumentException("Unknown operation.")
+        }
+    }
+
+    private fun safeDivide(operandLeft: Double, operandRight: Double) = if (operandRight != 0.0) operandLeft / operandRight else Double.NaN
   }
   ```
 - **EngineState Interface**:  
   Manages internal calculator state transitions, such as updating numbers, performing operations, and handling clear actions. This interface focuses on ensuring that the correct state is maintained as operations are performed:
-    - `enterOperation(state, operation)`: Updates the state when an arithmetic operation is entered.
+    - `handleArithmetic`(state, arithmetic): Manages state updates and applies the selected operation.
+    - `enterArithmetic(state, arithmetic)`: Updates the state when an arithmetic operation is entered.
+    - `applyArithmetic`(state): Applies the pending arithmetic operation.
+    - `applyEquals`(state): Calculates the result of the current expression.
     - `enterNumber(state, number)`: Handles number input.
     - `enterDecimal(state)`: Adds a decimal point.
     - `applyClear(state)`: Clears the current input.
     - `applyClearAll(state)`: Resets the calculator state.
+    - `applySign`(state): Toggles the sign of the current number.
+    - `applyPercent`(state): Converts the current number into a percentage.
 
   **Implementation**:
   ```kotlin
-  class EngineStateStandard : EngineState {
+  typealias Validator<T> = (T) -> Boolean
+  
+  class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
 
-    override fun enterOperation(state: CalculatorState, operation: ButtonCalculatorArithmetic): CalculatorState {
-        return state.modifyWith(
-            { state.operation != null } to { state.copy(operation = operation) },
-            { state.currentNumber.isNotBlank() } to { state.copy(previousNumber = state.currentNumber, currentNumber = "", operation = operation) },
-        )
-    }
+  override fun handleArithmetic(state: CalculatorState, arithmetic: ButtonCalculatorArithmetic): CalculatorState {
+      return state.modifyWith(
+          { hasNaN(state) } to { this },
+          { state.activeButton == ButtonCalculatorArithmetic.Equals } to { state.copy(operator = arithmetic, operandRight = "", operand = null) },
+          { hasOperatorAndOperandRight(state) } to {
+              val newState = applyArithmetic(state)
+              enterArithmetic(newState, arithmetic)
+          },
+          { true } to { enterArithmetic(state, arithmetic) }
+      )
+  }
 
-    override fun enterNumber(state: CalculatorState, number: Int): CalculatorState {
-        return state.modifyWith(
-            { state.currentNumber == "0" } to { copy(currentNumber = number.toString()) },
-            { state.currentNumber.length >= MAX_NUM_LENGTH } to { this },
-            { true } to { copy(currentNumber = currentNumber + number) }
-        )
-    }
+  override fun applyArithmetic(state: CalculatorState): CalculatorState {
+      return state.modifyWith(
+          { hasInvalidInput(state) } to { this },
+          { true } to {
+              val operandLeft = state.operandLeft.toDouble()
+              val operandRight = state.operandRight.toDouble()
 
-    override fun enterDecimal(state: CalculatorState): CalculatorState {
-        return state.modifyWith(
-            { !state.currentNumber.contains(".") } to { state.copy(currentNumber = state.currentNumber + ".") }
-        )
-    }
+              if (operandLeft.isNaN() || operandRight.isNaN()) return@to state
 
-    override fun applyClearAll(state: CalculatorState): CalculatorState = CalculatorState()
+              val operation = state.operator as ButtonCalculatorArithmetic
+              val result = engineMath.applyArithmetic(operandLeft, operation, operandRight)
 
-    override fun applyClear(state: CalculatorState): CalculatorState {
-        return state.modifyWith(
-            { state.operation != null } to { copy(currentNumber = state.previousNumber, previousNumber = "", operation = null) },
-            { state.currentNumber.isNotBlank() } to { copy(currentNumber = SymbolButton.ZERO.label, previousNumber = "") },
-        )
-    }
+              state.copy(
+                  operandRight = result.toString(),
+                  operandLeft = "",
+                  operator = null
+              )
+          }
+      )
+  }
+
+  override fun enterArithmetic(state: CalculatorState, arithmetic: ButtonCalculatorArithmetic): CalculatorState {
+      return state.modifyWith(
+          { state.operator != null } to { state.copy(operator = arithmetic) },
+          { state.operandRight.isNotBlank() } to { state.copy(operandLeft = state.operandRight, operandRight = "", operator = arithmetic) },
+      )
+  }
+
+  override fun applyEquals(state: CalculatorState): CalculatorState {
+      return state.modifyWith(
+          { state.operandLeft.toDoubleOrNull() == null } to { this },
+          { state.operandRight.toDoubleOrNull() == null && state.operand == null } to { this },
+          { state.operator !is ButtonCalculatorArithmetic } to { this },
+          { true } to {
+              val operandLeft = state.operandLeft.toDouble()
+              val operandRight = state.operand?.toDoubleOrNull() ?: state.operandRight.toDouble()
+
+              if (operandLeft.isNaN() || operandRight.isNaN()) return@to state
+
+              val operation = state.operator as ButtonCalculatorArithmetic
+              val result = engineMath.applyArithmetic(operandLeft, operation, operandRight)
+
+              state.copy(
+                  operandRight = result.toString(),
+                  operandLeft = result.toString(),
+                  operand = operandRight.toString() // Save the last entered number
+              )
+          }
+      )
+  }
+
+  override fun enterNumber(state: CalculatorState, number: Int): CalculatorState {
+      return state.modifyWith(
+          { hasNaN(state) } to { this },
+          { state.operandRight == SymbolButton.ZERO.label } to { copy(operandRight = number.toString()) },
+          { state.operandRight.length >= MAX_NUM_LENGTH } to { this },
+          { true } to { copy(operandRight = operandRight + number) }
+      )
+  }
+
+  override fun enterDecimal(state: CalculatorState): CalculatorState {
+      return state.modifyWith(
+          { hasNaN(state) } to { this },
+          { !state.operandRight.contains(".") && state.operandRight.isNotBlank() } to { state.copy(operandRight = state.operandRight + ".") },
+          { !state.operandRight.contains(".") && state.operandRight.isBlank() } to { state.copy(operandRight = SymbolButton.ZERO.label + ".") }
+      )
+  }
+
+  override fun applyClearAll(state: CalculatorState): CalculatorState = CalculatorState()
+
+  override fun applyClear(state: CalculatorState): CalculatorState {
+      return state.modifyWith(
+          { hasNaN(state) } to { applyClearAll(state) },
+          { !state.operand.isNullOrBlank() } to { applyClearAll(state) },
+          { state.operator != null } to { copy(operandRight = state.operandLeft, operandLeft = "", operator = null) },
+          { state.operandRight.isNotBlank() } to { copy(operandRight = SymbolButton.ZERO.label, operandLeft = "") },
+      )
+  }
+
+  override fun applySign(state: CalculatorState): CalculatorState {
+      return state.modifyWith(
+          { hasNaN(state) } to { this },
+          { isDefaultOrEmpty(state) } to { state.copy(operandRight = "-" + SymbolButton.ZERO.label) },
+          { state.operandRight.toIntOrNull() != null } to {
+              val intNumber = state.operandRight.toInt()
+              val result = engineMath.applySign(intNumber).toString()
+
+              state.copy(operandRight = result)
+          },
+          { true } to {
+              val doubleNumber = state.operandRight.toDouble()
+              val result = engineMath.applySign(doubleNumber).toString()
+
+              state.copy(operandRight = result)
+          }
+      )
+  }
+
+  override fun applyPercent(state: CalculatorState): CalculatorState {
+      return state.modifyWith(
+          { hasNaN(state) } to { this },
+          { state.operandRight.toDoubleOrNull() == null } to { this },
+          { true } to {
+              val result = engineMath.applyPercent(
+                  state.operandLeft.toDoubleOrNull(),
+                  state.operator as? ButtonCalculatorArithmetic,
+                  state.operandRight.toDouble()
+              )
+
+              state.copy(operandRight = result.toString())
+          }
+      )
+  }
+
+  val hasNaN: Validator<CalculatorState> = { it.operandRight == "NaN" || it.operandLeft == "NaN" }
+  val hasOperatorAndOperandRight: Validator<CalculatorState> = { it.operator != null && it.operandRight.isNotBlank() }
+  val hasInvalidInput: Validator<CalculatorState> = {
+      it.operandLeft.toDoubleOrNull() == null ||
+      it.operandRight.toDoubleOrNull() == null && it.operand == null ||
+      it.operator !is ButtonCalculatorArithmetic
+  }
+  val isDefaultOrEmpty: Validator<CalculatorState> = { it.operandRight == SymbolButton.ZERO.label || it.operandRight.isEmpty() }
   }
   ```
 - **CalculatorState**:
   Represents the state of the calculator, which includes the current number, previous number, the active operation, and the active button label. This state is crucial for making calculations based on user input.
-    - `currentNumber`: The number currently being entered.
-    - `previousNumber`: The number stored for an operation.
-    - `operation`: The currently selected arithmetic operation.
-    - `activeButtonLabel`: The label of the active button.
+    - `operandRight`: The number currently being entered.
+    - `operator`: The currently selected arithmetic operation.
+    - `operandLeft`: The number stored for an operation.
+    - `operand`: Holds intermediate values, including for repeatable equals.
+    - `activeButton`: The label of the active button.
 
   **Implementation**:
   ```kotlin
   data class CalculatorState(
-    val currentNumber: String = SymbolButton.ZERO.label,
-    val operation: Button? = null,
-    val previousNumber: String = "",
-    val activeButtonLabel: String = "",
+    val operandLeft: String = "",
+    val operator: Button? = null,
+    val operandRight: String = SymbolButton.ZERO.label,
+    val operand: String? = null,
+    val activeButton: Button? = null,
   ) {
-  
-    fun modifyWith(vararg transformations: Pair<() -> Boolean, CalculatorState.() -> CalculatorState>): CalculatorState {
-        for ((condition, action) in transformations) {
+      fun modifyWith(vararg transformations: Pair<() -> Boolean, CalculatorState.() -> CalculatorState>): CalculatorState {
+          for ((condition, action) in transformations) {
             if (condition()) return action()
-        }
-        return this
-    }
+          }
+          return this
+      }
   }
   ```
 
 ---
+
+### 6. Command
+
+- The **Command** pattern is used to encapsulate calculator actions into executable objects. Each command represents a specific operation and allows flexible management of calculator behavior. Commands are executed using the execute method, which takes the current CalculatorState and returns an updated state.
+- The **CommandFactory** is responsible for creating commands based on user actions. It ensures that the correct command is instantiated for each button press, promoting separation of concerns and simplifying state management.
+
+#### Key Concepts of Commands:
+
+- **Command Interface**:
+  The `Command` interface defines the structure for all commands:
+  - `CommandApplyArithmetic`: Executes an arithmetic operation.
+  - `CommandApplyEquals`: Finalizes the current operation and displays the result.
+  - `CommandApplyClear` and `CommandApplyClearAll`: Clear the current input or reset the entire state.
+  - `CommandApplyPercent`: Converts the current value into a percentage.
+  - `CommandApplySign`: Toggles the sign of the current number.
+  - `CommandEnterNumber`: Handles number input.
+  - `CommandEnterDecimal`: Appends a decimal point.
+  - `CommandEnterArithmetic`: Sets the current operation.
+
+  **Implementations**:
+
+  ```kotlin
+  class CommandApplyArithmetic(private val engine: EngineState) : Command {
+      override fun execute(state: CalculatorState): CalculatorState {
+          return engine.applyArithmetic(state)
+      }
+  }
+
+   class CommandEnterNumber(
+       private val engine: EngineState,
+       private val number: Int,
+   ) : Command {
+       override fun execute(state: CalculatorState): CalculatorState {
+           return engine.enterNumber(state, number)
+       }
+   }
+  ```
+
+- **Command Factory Interface**:
+  The `CommandFacgtory` is a base interface for creating commands:
+  - `CommandFactoryControl`: Creates commands for control buttons like clear, percent, and sign toggle.
+  - `CommandFactoryNumber`: Creates number input commands.
+  - `CommandFactoryArithmetic`: Creates commands for arithmetic operations.
+  - `CommandFactoryStandard`: Serves as the primary factory, delegating to sub-factories based on the button type.
+
+  **Implementations**:
+  Different factory implementations handle specific button types:
+
+  ```kotlin
+   class CommandFactoryControl(
+       private val engineState: EngineState,
+   ) : CommandFactorySub<ButtonCalculatorControl> {
+       override fun create(button: ButtonCalculatorControl): Command {
+           return when (button) {
+               is ButtonCalculatorControl.Decimal -> CommandEnterDecimal(engineState)
+               is ButtonCalculatorControl.AllClear -> CommandApplyClearAll(engineState)
+               is ButtonCalculatorControl.Clear -> CommandApplyClear(engineState)
+               is ButtonCalculatorControl.Percentage -> CommandApplyPercent(engineState)
+               is ButtonCalculatorControl.Sign -> CommandApplySign(engineState)
+           }
+       }
+   }
+   
+   class CommandFactoryStandard(
+       private val arithmeticCommandFactory: CommandFactoryArithmetic,
+       private val controlCommandFactory: CommandFactoryControl,
+       private val numberCommandFactory: CommandFactoryNumber,
+   ) : CommandFactory {
+       override fun createCommand(action: CalculatorAction): Command {
+           return when (action) {
+               is CalculatorAction.ButtonPressed -> handleButtonPressed(action.button)
+           }
+       }
+   
+       private fun handleButtonPressed(button: Button): Command {
+           return when (button) {
+               is ButtonCalculatorNumber -> numberCommandFactory.create(button)
+               is ButtonCalculatorArithmetic -> arithmeticCommandFactory.create(button)
+               is ButtonCalculatorControl -> controlCommandFactory.create(button)
+               else -> throw IllegalArgumentException("Unknown button.")
+           }
+       }
+   }
+  ```
+
+The CommandFactory simplifies the process of translating user interactions into executable actions while maintaining modularity and readability.
+
+___
 
 ## Development Practices:
 
