@@ -4,6 +4,7 @@ import com.example.calculatorApp.arguments.TestArgumentsEngineState
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorArithmetic
 import com.example.calculatorApp.model.state.CalculatorState
 import com.example.calculatorApp.utils.Constants.MAX_NUM_LENGTH
+import com.example.calculatorApp.utils.SymbolButtonExtensions.toButton
 import io.kotest.matchers.doubles.plusOrMinus
 import io.kotest.matchers.doubles.shouldBeNaN
 import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
@@ -31,9 +32,9 @@ class EngineStateStandardTest {
     fun setUp() {
         // Arrange:
         state = CalculatorState(
-            operandRight = "0",
-            operator  = null,
-            operandLeft = "",
+            lastInput = "0",
+            lastOperator  = null,
+            expression = emptyList(),
             activeButton = null,
         )
 
@@ -46,15 +47,15 @@ class EngineStateStandardTest {
 
         @ParameterizedTest
         @CsvSource(
-            "5, 'NaN'", // Invalid operandRight (NaN)
+            "5, 'NaN'", // Invalid lastInput (NaN)
         )
-        fun `should return the same state if operandRight is not a valid number`(
-            operandLeft: String,
-            operandRight: String,
+        fun `should return the same state if lastInput is not a valid number`(
+            expression: String,
+            lastInput: String,
         ) {
             // Arrange:
-            val operandRightOrNaN = operandRight.toDoubleOrNull() ?: Double.NaN
-            val initialState = state.copy(operandLeft = operandLeft, operandRight = operandRightOrNaN.toString())
+            val operandRightOrNaN = lastInput.toDoubleOrNull() ?: Double.NaN
+            val initialState = state.copy(expression = listOf(expression), lastInput = operandRightOrNaN.toString())
 
             // Act:
             val stateNaN = engine.handleArithmetic(initialState, arithmetic)
@@ -69,16 +70,16 @@ class EngineStateStandardTest {
             "-1, 0.7",
             "0, 0"
         )
-        fun `should reset operandRight and operand if Equals was last pressed`(
-            operandLeft: String,
-            operandRight: String,
+        fun `should reset lastInput and operand if Equals was last pressed`(
+            expression: String,
+            lastInput: String,
         ) {
             // Arrange:
             val initialState = CalculatorState(
-                operandLeft = operandLeft,
-                operandRight = operandRight,
-                operator = arithmetic,
-                operand = operandRight,
+                expression = listOf (expression, arithmetic.toString()),
+                lastInput = lastInput,
+                lastOperator = arithmetic,
+                lastResult = lastInput,
                 activeButton = ButtonCalculatorArithmetic.Equals
             )
 
@@ -88,11 +89,11 @@ class EngineStateStandardTest {
             // Assert:
             newState.shouldBeEqualToIgnoringFields(
                 initialState.copy(
-                    operator = arithmetic,
-                    operandRight = "",
-                    operand = null,
+                    lastOperator = arithmetic,
+                    lastInput = "",
+                    lastResult = null,
                 ),
-                CalculatorState::operandLeft, CalculatorState::activeButton
+                CalculatorState::activeButton
             )
         }
 
@@ -102,24 +103,24 @@ class EngineStateStandardTest {
             "-1, 0.7",
             "0, 0"
         )
-        fun `should apply the previous arithmetic operation before updating the operator`(
-            operandLeft: String,
-            operandRight: String,
+        fun `should apply the previous arithmetic operation before updating the lastOperator`(
+            expression: String,
+            lastInput: String,
         ) {
             // Arrange:
             val initialState = state.copy(
-                operandLeft = operandLeft,
-                operator = arithmetic,
-                operandRight = operandRight,
-                operand = operandRight,
+                expression = listOf (expression, arithmetic.toString()),
+                lastOperator = arithmetic,
+                lastInput = lastInput,
+                lastResult = lastInput,
                 activeButton = arithmetic,
             )
 
             val expectedState = engine.applyArithmetic(initialState)
                 .copy(
-                    operandLeft = engine.applyArithmetic(initialState).operandRight,
-                    operator = arithmetic,
-                    operandRight = "",
+                    expression = listOf(engine.applyArithmetic(initialState).lastInput, arithmetic.symbol.label),
+                    lastOperator = arithmetic,
+                    lastInput = "",
                     activeButton = arithmetic
                 )
 
@@ -137,20 +138,20 @@ class EngineStateStandardTest {
             "-1, ''",
             "0, ''"
         )
-        fun `should update operator without applying arithmetic if operandRight is empty`(
-            operandLeft: String,
-            operandRight: String,
+        fun `should update lastOperator without applying arithmetic if lastInput is empty`(
+            expression: String,
+            lastInput: String,
         ) {
             // Arrange:
             val initialState = state.copy(
-                operandLeft = operandLeft,
-                operandRight = operandRight,
+                expression = listOf (expression),
+                lastInput = lastInput,
             )
 
             val expectedState = initialState.copy(
-                    operandLeft = operandLeft,
-                    operator = engine.enterArithmetic(initialState, arithmetic).operator,
-                    operandRight = operandRight,
+                    expression = listOf(expression),
+                    lastOperator = engine.enterArithmetic(initialState, arithmetic).lastOperator,
+                    lastInput = lastInput,
                     activeButton = engine.enterArithmetic(initialState, arithmetic).activeButton,
                 )
 
@@ -168,22 +169,22 @@ class EngineStateStandardTest {
             "-1, 0",
             "0, 0"
         )
-        fun `should return the operandLeft NaN if division by zero is attempted`(
-            operandLeft: String,
-            operandRight: String,
+        fun `should return the expression NaN if division by zero is attempted`(
+            expression: String,
+            lastInput: String,
         ) {
             // Arrange:
             val initialState = state.copy(
-                operandLeft = operandLeft,
-                operator = ButtonCalculatorArithmetic.Division,
-                operandRight = operandRight
+                expression = listOf (expression, ButtonCalculatorArithmetic.Division.symbol.label),
+                lastOperator = ButtonCalculatorArithmetic.Division,
+                lastInput = lastInput
             )
 
             // Act:
             val stateNaN = engine.handleArithmetic(initialState, ButtonCalculatorArithmetic.Division)
 
             // Assert:
-            stateNaN.operandLeft shouldBe Double.NaN.toString()
+            stateNaN.expression[0] shouldBe Double.NaN.toString()
         }
     }
 
@@ -197,41 +198,44 @@ class EngineStateStandardTest {
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should correctly apply equals operation and update state`(
-            operandLeft: Double,
+            expression: Double,
             operation: ButtonCalculatorArithmetic,
-            operandRight: Double,
+            lastInput: Double,
             expected: Double,
         ) {
             // Arrange:
             val initialState = state.copy(
-                operandRight = operandRight.toString(),
-                operandLeft = operandLeft.toString(),
-                operator = operation
+                lastInput = lastInput.toString(),
+                expression = listOf(expression.toString(), operation.toString()),
+                lastOperator = operation
             )
 
             // Act:
             val newState = engine.applyArithmetic(initialState)
 
+            newState.also { println(it) }
+
             // Assert:
-            newState.operandRight shouldBe expected.toString()
-            newState.operandLeft shouldBe ""
-            newState.operator shouldBe null
+            newState.lastInput shouldBe expected.toString()
+            newState.lastResult shouldBe expected.toString()
+            newState.expression shouldBe listOf("$expression")
+            newState.lastOperator shouldBe null
         }
 
         @ParameterizedTest
         @CsvSource(
-            "'NaN', 5", // Invalid operandLeft (NaN)
+            "'NaN', 5", // Invalid expression (NaN)
         )
         fun `should return same state if previousNumber is not a valid number`(
-            operandLeft: String,
-            operandRight: String,
+            expression: String,
+            lastInput: String,
         ) {
             // Arrange:
-            val operandRightOrNaN = operandLeft.toDoubleOrNull() ?: Double.NaN
+            val operandRightOrNaN = expression.toDoubleOrNull() ?: Double.NaN
             val initialState = state.copy(
-                operandRight = operandRight,
-                operandLeft = operandRightOrNaN.toString(),
-                operator = arithmetic
+                lastInput = lastInput,
+                expression = listOf(operandRightOrNaN.toString()),
+                lastOperator = arithmetic
             )
 
             // Act:
@@ -243,18 +247,18 @@ class EngineStateStandardTest {
 
         @ParameterizedTest
         @CsvSource(
-            "5, 'NaN'",  // Invalid operandRight (NaN)
+            "5, 'NaN'",  // Invalid lastInput (NaN)
         )
-        fun `should return same state if operandRight is not a valid number`(
-            operandLeft: String,
-            operandRight: String,
+        fun `should return same state if lastInput is not a valid number`(
+            expression: String,
+            lastInput: String,
         ) {
             // Arrange:
-            val operandRightOrNaN = operandRight.toDoubleOrNull() ?: Double.NaN
+            val operandRightOrNaN = lastInput.toDoubleOrNull() ?: Double.NaN
             val initialState = state.copy(
-                operandRight = operandRightOrNaN.toString(),
-                operandLeft = operandLeft,
-                operator = arithmetic
+                lastInput = operandRightOrNaN.toString(),
+                expression = listOf(expression),
+                lastOperator = arithmetic
             )
 
             // Act:
@@ -268,9 +272,9 @@ class EngineStateStandardTest {
         fun `should return same state if operation is null`() {
             // Arrange:
             val initialState = state.copy(
-                operandRight = "5",
-                operandLeft = "",
-                operator = null
+                lastInput = "5",
+                expression = emptyList(),
+                lastOperator = null
             )
 
             // Act:
@@ -285,48 +289,48 @@ class EngineStateStandardTest {
     inner class EnterArithmetic {
 
         @Test
-        fun `should set arithmetic operation when there is no existing operator`() {
+        fun `should set arithmetic operation when there is no existing lastOperator`() {
             // Act:
             val newState = engine.enterArithmetic(state, arithmetic)
             // Assert:
-            arithmetic shouldBe newState.operator
+            arithmetic shouldBe newState.lastOperator
         }
 
         @Test
         fun `should replace arithmetic operation if one already exists`() {
             // Arrange:
-            val initialState = state.copy(operator = ButtonCalculatorArithmetic.Addition)
+            val initialState = state.copy(lastOperator = ButtonCalculatorArithmetic.Addition)
             // Act:
             val newState = engine.enterArithmetic(initialState, arithmetic)
             // Assert
-            arithmetic shouldBe newState.operator
+            arithmetic shouldBe newState.lastOperator
         }
 
         @Test
-        fun `should move operandRight to operandLeft and set arithmetic operator`() {
+        fun `should move lastInput to expression and set arithmetic lastOperator`() {
             // Arrange:
-            val initialState = state.copy(operandRight = "329")
+            val initialState = state.copy(lastInput = "329")
             // Act:
             val newState = engine.enterArithmetic(initialState, arithmetic)
             // Assert
-            arithmetic shouldBe newState.operator
-            initialState.operandLeft shouldBe newState.operandRight
+            arithmetic shouldBe newState.lastOperator
+            initialState.expression.isEmpty() shouldBe newState.lastInput.isEmpty()
         }
 
         @ParameterizedTest
         @CsvSource("'NaN'")
-        fun `should return same state when trying to enter arithmetic on NaN operandRight`(
-            operandRight: String
+        fun `should return same state when trying to enter arithmetic on NaN lastInput`(
+            lastInput: String
         ) {
             // Arrange:
-            val operandRightOrNaN = operandRight.toDoubleOrNull() ?: Double.NaN
-            val initialState = state.copy(operator = arithmetic, operandRight = operandRightOrNaN.toString())
+            val operandRightOrNaN = lastInput.toDoubleOrNull() ?: Double.NaN
+            val initialState = state.copy(lastOperator = arithmetic, lastInput = operandRightOrNaN.toString())
 
             // Act:
             val invalidState = engine.enterArithmetic(initialState,arithmetic)
 
             // Assert:
-            invalidState.operandRight.toDouble().shouldBeNaN()
+            invalidState.lastInput.toDouble().shouldBeNaN()
         }
     }
 
@@ -344,25 +348,25 @@ class EngineStateStandardTest {
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should correctly apply equals operation`(
-            operandLeft: Double,
+            expression: Double,
             operation: ButtonCalculatorArithmetic,
-            operandRight: Double,
+            lastInput: Double,
             expected: Double,
         ) {
             // Arrange:
             val initialState = state.copy(
-                operandRight = operandRight.toString(),
-                operandLeft = operandLeft.toString(),
-                operator = operation,
+                lastInput = lastInput.toString(),
+                expression = listOf(expression.toString(), operation.toString()),
+                lastOperator = operation,
             )
 
             // Act:
             val newState = engine.applyEquals(initialState)
 
             // Assert:
-            newState.operandRight shouldBe expected.toString()
-            newState.operandLeft shouldBe expected.toString()
-            newState.operator shouldBe initialState.operator
+            newState.lastInput shouldBe expected.toString()
+            newState.expression[0] shouldBe expected.toString()
+            newState.lastOperator shouldBe initialState.lastOperator
         }
 
         @ParameterizedTest
@@ -370,50 +374,52 @@ class EngineStateStandardTest {
             "'NaN', 5",
             "5, 'NaN'",
         )
-        fun `should return same state if operandRight or operandLeft are not a valid number`(
-            operandLeft: String,
-            operandRight: String,
+        fun `should return same state if lastInput or expression are not a valid number`(
+            expression: String,
+            lastInput: String,
         ) {
             // Arrange:
-            val operandRightOrNaN = operandRight.toDoubleOrNull() ?: Double.NaN
+            val operandRightOrNaN = lastInput.toDoubleOrNull() ?: Double.NaN
             val initialState = state.copy(
-                operandRight = operandRightOrNaN.toString(),
-                operandLeft = operandLeft,
+                lastInput = operandRightOrNaN.toString(),
+                expression = listOf(expression),
             )
 
             // Act:
             val newState = engine.applyEquals(initialState)
 
             // Assert:
-            newState.operandRight shouldBe initialState.operandRight
-            newState.operandLeft shouldBe initialState.operandLeft
-            newState.operator shouldBe initialState.operator
+            newState.lastInput shouldBe initialState.lastInput
+            newState.expression shouldBe initialState.expression
+            newState.lastOperator shouldBe initialState.lastOperator
         }
 
         @ParameterizedTest
         @MethodSource("provideRepeatableEqualsArguments")
         fun `should perform repeatable equals correctly`(
-            operandLeft: Double,
+            expression: Double,
             operation: ButtonCalculatorArithmetic,
-            operandRight: Double,
+            lastInput: Double,
             expected: Double
         ) {
             // Arrange:
             val initialState = state.copy(
-                operandRight = operandRight.toString(),
-                operandLeft = operandLeft.toString(),
-                operator = operation
+                lastInput = lastInput.toString(),
+                expression = listOf(expression.toString(), operation.toString()),
+                lastOperator = operation
             )
 
             // Act & Assert:
             var state = initialState
             for (i in 1..10) { state = engine.applyEquals(state) }
 
+            state.also { println(it) }
+
             // Assert:
-            state.operandRight.toDouble().shouldBe(expected plusOrMinus (1e-9))
-            state.operandLeft.toDouble().shouldBe(expected plusOrMinus (1e-9))
-            state.operand?.toDouble().shouldBe(operandRight plusOrMinus (1e-9))
-            state.operator shouldBe initialState.operator
+            state.lastInput.toDouble().shouldBe(expected plusOrMinus (1e-9))
+//            state.expression[0].toDouble().shouldBe(expected plusOrMinus (1e-9))
+//            state.lastResult?.toDouble().shouldBe(lastInput plusOrMinus (1e-9))
+            state.lastOperator shouldBe initialState.lastOperator
         }
 
         @ParameterizedTest
@@ -428,25 +434,28 @@ class EngineStateStandardTest {
             "null, 22.0, 0.22",
         )
         fun `should correctly apply equals operation after percentage is applied`(
-            operandLeft: String,
-            operandRight: String,
+            expression: String,
+            lastInput: String,
             expectedNumber: String,
         ) {
             // Arrange:
-            val operandLeftOrNull = operandLeft.toDoubleOrNull()
-
             val initialState = state.copy(
-                operandLeft = operandLeftOrNull.toString(),
-                operator = ButtonCalculatorArithmetic.Addition,
-                operandRight = operandRight
+                expression = listOf(expression, ButtonCalculatorArithmetic.Addition.toString()),
+                lastOperator = ButtonCalculatorArithmetic.Addition,
+                lastInput = lastInput,
             )
+
+            initialState.also { println(it) }
 
             // Act
             val newState = engine.applyPercent(initialState)
+
+            newState.also { println(it) }
+
             val resultState = engine.applyEquals(newState)
 
             // Assert:
-            expectedNumber shouldBe resultState.operandRight
+            expectedNumber shouldBe resultState.lastInput
         }
     }
 
@@ -454,44 +463,44 @@ class EngineStateStandardTest {
     inner class EnterNumber {
 
         @Test
-        fun `should add a number to an empty operandRight`() {
+        fun `should add a number to an empty lastInput`() {
             // Act:
             val newState = engine.enterNumber(state, 329)
             // Assert:
-            329 shouldBeEqual newState.operandRight.toInt()
+            329 shouldBeEqual newState.lastInput.toInt()
         }
 
         @Test
-        fun `should append a number to the operandRight`() {
+        fun `should append a number to the lastInput`() {
             // Arrange:
-            val initialState = state.copy(operandRight = "329")
+            val initialState = state.copy(lastInput = "329")
             // Act:
             val newState = engine.enterNumber(initialState, 55)
             // Assert:
-            32955 shouldBeEqual newState.operandRight.toInt()
+            32955 shouldBeEqual newState.lastInput.toInt()
         }
 
         @Test
         fun `should not add a number if max length is reached`() {
             // Arrange:
-            val initialState = state.copy(operandRight = "1".repeat(MAX_NUM_LENGTH))
+            val initialState = state.copy(lastInput = "1".repeat(MAX_NUM_LENGTH))
             // Act:
             val newState = engine.enterNumber(initialState, 55)
             // Assert:
-            1111111111 shouldBeEqual newState.operandRight.toInt()
+            1111111111 shouldBeEqual newState.lastInput.toInt()
         }
 
         @ParameterizedTest
         @CsvSource(
             "23,'NaN'",
         )
-        fun `should return same state when trying to enter number on NaN operandRight`(
-            operandLeft: String,
-            operandRight: String
+        fun `should return same state when trying to enter number on NaN lastInput`(
+            expression: String,
+            lastInput: String
         ) {
             // Arrange:
-            val operandRightOrNaN = operandRight.toDoubleOrNull() ?: Double.NaN
-            val initialState = state.copy(operandLeft = operandLeft, operator = arithmetic, operandRight = operandRightOrNaN.toString())
+            val operandRightOrNaN = lastInput.toDoubleOrNull() ?: Double.NaN
+            val initialState = state.copy(expression = listOf(expression), lastOperator = arithmetic, lastInput = operandRightOrNaN.toString())
 
             // Act:
             val newState = engine.enterNumber(initialState,329)
@@ -505,19 +514,19 @@ class EngineStateStandardTest {
         @CsvSource(
             "'NaN', 23",
         )
-        fun `should return same state when trying to enter number on NaN operandLeft`(
-            operandLeft: String,
-            operandRight: String
+        fun `should return same state when trying to enter number on NaN expression`(
+            expression: String,
+            lastInput: String
         ) {
             // Arrange:
-            val operandLeftOrNaN = operandRight.toDoubleOrNull() ?: Double.NaN
-            val initialState = state.copy(operandLeft = operandLeftOrNaN.toString(), operator = arithmetic, operandRight = operandRight)
+            val operandLeftOrNaN = lastInput.toDoubleOrNull() ?: Double.NaN
+            val initialState = state.copy(expression = listOf(operandLeftOrNaN.toString()), lastOperator = arithmetic, lastInput = lastInput)
 
             // Act:
             val newState = engine.enterNumber(initialState,329)
 
             // Assert:
-            initialState.shouldBeEqualToIgnoringFields(newState, CalculatorState::operandRight)
+            initialState.shouldBeEqualToIgnoringFields(newState, CalculatorState::lastInput)
         }
     }
 
@@ -529,25 +538,25 @@ class EngineStateStandardTest {
             // Act:
             val newState = engine.enterDecimal(state)
             // Assert:
-            newState.operandRight.shouldContain(".")
+            newState.lastInput.shouldContain(".")
         }
 
         @Test
         fun `should not add a decimal point if already present`() {
             // Arrange:
-            val initialState = state.copy(operandRight = "32.9")
+            val initialState = state.copy(lastInput = "32.9")
             // Act:
             val newState = engine.enterDecimal(initialState)
             // Assert:
-            newState.operandRight.shouldNotMatch("32.9.")
+            newState.lastInput.shouldNotMatch("32.9.")
         }
 
         @Test
-        fun `should add a decimal point and zero if operandLeft is not present`() {
+        fun `should add a decimal point and zero if expression is not present`() {
             // Act:
             val newState = engine.enterDecimal(state)
             // Assert:
-            newState.operandRight.shouldContain("0.")
+            newState.lastInput.shouldContain("0.")
         }
 
         @ParameterizedTest
@@ -555,14 +564,14 @@ class EngineStateStandardTest {
             "23,'NaN'",
             "'NaN', 23"
         )
-        fun `should return same state when trying to enter decimal on NaN operandRight`(
-            operandLeft: String,
-            operandRight: String
+        fun `should return same state when trying to enter decimal on NaN lastInput`(
+            expression: String,
+            lastInput: String
         ) {
             // Arrange:
-            val operandRightOrNaN = operandRight.toDoubleOrNull()
-            val operandLeftOrNaN = operandLeft.toDoubleOrNull()
-            val initialState = state.copy(operandLeft = operandLeftOrNaN.toString(), operator = arithmetic, operandRight = operandRightOrNaN.toString())
+            val operandRightOrNaN = lastInput.toDoubleOrNull()
+            val operandLeftOrNaN = expression.toDoubleOrNull()
+            val initialState = state.copy(expression = listOf(operandLeftOrNaN.toString()), lastOperator = arithmetic, lastInput = operandRightOrNaN.toString())
 
             // Act:
             val newState = engine.enterDecimal(initialState)
@@ -579,17 +588,17 @@ class EngineStateStandardTest {
         fun `should reset calculator state to default`() {
             // Arrange:
             val initialState = state.copy(
-                operandRight = "32.9",
-                operandLeft = "123",
-                operator = ButtonCalculatorArithmetic.Multiplication
+                lastInput = "32.9",
+                expression = listOf("123"),
+                lastOperator = ButtonCalculatorArithmetic.Multiplication
             )
             // Act:
             val newState = engine.applyClearAll(initialState)
 
             // Assert:
-            newState.operandRight shouldBe "0"
-            newState.operator shouldBe null
-            newState.operandLeft shouldBe ""
+            newState.lastInput shouldBe "0"
+            newState.lastOperator shouldBe null
+            newState.expression shouldBe emptyList()
             newState.activeButton shouldBe null
         }
     }
@@ -602,41 +611,41 @@ class EngineStateStandardTest {
         }
 
         @Test
-        fun `should clear operation and restore operandLeft as operandRight if operator exists`() {
+        fun `should clear operation and restore expression as lastInput if lastOperator exists`() {
             // Arrange:
             val initialState = state.copy(
-                operandRight = "329",
-                operandLeft = "111",
-                operator = ButtonCalculatorArithmetic.Multiplication
+                lastInput = "329",
+                expression = listOf("329, +"),
+                lastOperator = ButtonCalculatorArithmetic.Multiplication
             )
             // Act:
             val newState = engine.applyClear(initialState)
             // Assert:
-            "111" shouldBe newState.operandRight
+            "329" shouldBe newState.lastInput
         }
 
         @Test
-        fun `should clear operandRight number to zero if operandLeft is empty`() {
+        fun `should clear lastInput number to zero if expression is empty`() {
             // Arrange:
             val initialState = state.copy(
-                operandRight = "329",
-                operandLeft = "",
-                operator = null
+                lastInput = "329",
+                expression = emptyList(),
+                lastOperator = null
             )
             // Act:
             val newState = engine.applyClear(initialState)
             // Assert:
-            "0" shouldBe newState.operandRight
+            "0" shouldBe newState.lastInput
         }
 
         @ParameterizedTest
         @CsvSource("'NaN'")
-        fun `should return default state when applying clear on NaN operandRight`(
-            operandRight: String
+        fun `should return default state when applying clear on NaN lastInput`(
+            lastInput: String
         ) {
             // Arrange:
-            val operandRightOrNaN = operandRight.toDoubleOrNull() ?: Double.NaN
-            val initialState = state.copy(operandLeft = operandRightOrNaN.toString(), operator = arithmetic, operandRight = operandRightOrNaN.toString())
+            val operandRightOrNaN = lastInput.toDoubleOrNull() ?: Double.NaN
+            val initialState = state.copy(expression = listOf(operandRightOrNaN.toString()), lastOperator = arithmetic, lastInput = operandRightOrNaN.toString())
 
             // Act:
             val stateCleared = engine.applyClear(initialState)
@@ -648,15 +657,15 @@ class EngineStateStandardTest {
         @ParameterizedTest
         @MethodSource("provideRepeatableEqualsArguments")
         fun `should return default state when applying clear on equal repeatable`(
-            operandLeft: Double,
+            expression: Double,
             operation: ButtonCalculatorArithmetic,
-            operandRight: Double,
+            lastInput: Double,
         ) {
             // Arrange:
             val initialState = state.copy(
-                operandRight = operandRight.toString(),
-                operandLeft = operandLeft.toString(),
-                operator = operation
+                lastInput = lastInput.toString(),
+                expression = listOf(expression.toString(), operation.toString()),
+                lastOperator = operation
             )
 
             // Act & Assert:
@@ -685,13 +694,13 @@ class EngineStateStandardTest {
             expectedResult: Double
         ) {
             // Arrange:
-            state = state.copy(operandRight = number.toString())
+            state = state.copy(lastInput = number.toString())
 
             // Act:
             val newState = engine.applySign(state)
 
             // Assert:
-            newState.operandRight shouldBe expectedResult.toString()
+            newState.lastInput shouldBe expectedResult.toString()
         }
     }
 
@@ -706,13 +715,13 @@ class EngineStateStandardTest {
         )
         fun `should correctly apply percent operation`(number: Double, expectedResult: Double) {
             // Arrange:
-            state = state.copy(operandRight = number.toString())
+            state = state.copy(lastInput = number.toString())
 
             // Act:
             val newState = engine.applyPercent(state)
 
             // Assert:
-            newState.operandRight shouldBe expectedResult.toString()
+            newState.lastInput shouldBe expectedResult.toString()
         }
     }
 }

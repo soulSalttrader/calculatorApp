@@ -22,7 +22,7 @@ object TestArgumentsEngineState {
 
     fun provideRepeatableEqualsArguments(): Stream<Arguments> {
         return Stream.of(
-            // operandLeft | operation | operandRight | expected
+            // previousInput | lastOperator | lastInput | expected
             Arguments.of(100.0, ButtonCalculatorArithmetic.Addition, 0.0, 100.0),
             Arguments.of(50.0, ButtonCalculatorArithmetic.Subtraction, 0.0, 50.0),
             Arguments.of(42.0, ButtonCalculatorArithmetic.Multiplication, 1.0, 42.0),
