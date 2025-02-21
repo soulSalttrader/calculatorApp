@@ -71,7 +71,7 @@ class EngineMathStandardTest {
     }
 
     @Nested
-    inner class ApplyPercent {
+    inner class ApplyPercentage {
 
         // Arrange:
         private fun provideWholeNumbers(): Stream<Arguments> {

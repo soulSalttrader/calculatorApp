@@ -13,8 +13,8 @@ class CommandFactoryControl(
             is ButtonCalculatorControl.Decimal -> CommandEnterDecimal(engineState)
             is ButtonCalculatorControl.AllClear -> CommandApplyClearAll(engineState)
             is ButtonCalculatorControl.Clear -> CommandApplyClear(engineState)
-            is ButtonCalculatorControl.Percent -> CommandApplyPercent(engineState)
-            is ButtonCalculatorControl.PlusMinus -> CommandApplySign(engineState)
+            is ButtonCalculatorControl.Percentage -> CommandApplyPercent(engineState)
+            is ButtonCalculatorControl.Sign -> CommandApplySign(engineState)
         }
     }
 }

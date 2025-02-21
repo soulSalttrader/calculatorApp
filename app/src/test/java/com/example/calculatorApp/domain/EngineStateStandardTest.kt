@@ -696,7 +696,7 @@ class EngineStateStandardTest {
     }
 
     @Nested
-    inner class ApplyPercent {
+    inner class ApplyPercentage {
         @ParameterizedTest
         @CsvSource(
             "500.0, 5.0",

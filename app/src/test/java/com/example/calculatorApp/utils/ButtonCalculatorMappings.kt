@@ -34,15 +34,15 @@ object ButtonCalculatorMappings {
         ButtonCalculatorControl.Decimal to Onyx,
         ButtonCalculatorControl.AllClear to SilverGrey,
         ButtonCalculatorControl.Clear to SilverGrey,
-        ButtonCalculatorControl.PlusMinus to SilverGrey,
-        ButtonCalculatorControl.Percent to SilverGrey
+        ButtonCalculatorControl.Sign to SilverGrey,
+        ButtonCalculatorControl.Percentage to SilverGrey
     )
 
     val controlSymbolMap: Map<ButtonCalculatorControl, SymbolButton> = mapOf(
         ButtonCalculatorControl.AllClear to SymbolButton.ALL_CLEAR,
         ButtonCalculatorControl.Clear to SymbolButton.CLEAR,
-        ButtonCalculatorControl.PlusMinus to SymbolButton.PLUS_MINUS,
-        ButtonCalculatorControl.Percent to SymbolButton.PERCENT,
+        ButtonCalculatorControl.Sign to SymbolButton.PLUS_MINUS,
+        ButtonCalculatorControl.Percentage to SymbolButton.PERCENT,
         ButtonCalculatorControl.Decimal to SymbolButton.DECIMAL
     )
 
@@ -83,8 +83,8 @@ object ButtonCalculatorMappings {
 
         ButtonCalculatorControl.AllClear to ButtonCalculatorControl.AllClear,
         ButtonCalculatorControl.Clear to ButtonCalculatorControl.Clear,
-        ButtonCalculatorControl.PlusMinus to ButtonCalculatorControl.PlusMinus,
-        ButtonCalculatorControl.Percent to ButtonCalculatorControl.Percent,
+        ButtonCalculatorControl.Sign to ButtonCalculatorControl.Sign,
+        ButtonCalculatorControl.Percentage to ButtonCalculatorControl.Percentage,
         ButtonCalculatorControl.Decimal to ButtonCalculatorControl.Decimal,
 
         ButtonCalculatorNumber.Zero to ButtonCalculatorNumber.Zero,

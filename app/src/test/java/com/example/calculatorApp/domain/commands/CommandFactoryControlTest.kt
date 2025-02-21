@@ -56,7 +56,7 @@ class CommandFactoryControlTest {
         @Test
         fun `should create CommandApplyPercent when Percent button is pressed`() {
             // Arrange:
-            val button = ButtonCalculatorControl.Percent
+            val button = ButtonCalculatorControl.Percentage
             // Act:
             val command = factory.create(button)
             // Assert:
@@ -66,7 +66,7 @@ class CommandFactoryControlTest {
         @Test
         fun `should create CommandApplySign when PlusMinus button is pressed`() {
             // Arrange:
-            val button = ButtonCalculatorControl.PlusMinus
+            val button = ButtonCalculatorControl.Sign
             // Act:
             val command = factory.create(button)
             // Assert:
