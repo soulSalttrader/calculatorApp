@@ -1,6 +1,6 @@
 package com.example.calculatorApp.domain
 
-import com.example.calculatorApp.model.elements.button.ButtonCalculatorArithmetic
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 
 class EngineMathStandard : EngineMath {
 
@@ -9,15 +9,15 @@ class EngineMathStandard : EngineMath {
 
     override fun applyPercent(
         operandLeft: Double?,
-        operator: ButtonCalculatorArithmetic?,
+        operator: ButtonCalculatorBinary?,
         operandRight: Double
     ): Double {
         return when (operator) {
-            ButtonCalculatorArithmetic.Addition,
-            ButtonCalculatorArithmetic.Subtraction -> (operandLeft ?: 1.0) * (operandRight / 100)
+            ButtonCalculatorBinary.Addition,
+            ButtonCalculatorBinary.Subtraction -> (operandLeft ?: 1.0) * (operandRight / 100)
 
-            ButtonCalculatorArithmetic.Multiplication,
-            ButtonCalculatorArithmetic.Division -> operandRight / 100
+            ButtonCalculatorBinary.Multiplication,
+            ButtonCalculatorBinary.Division -> operandRight / 100
 
             else -> operandRight / 100
         }
@@ -25,15 +25,15 @@ class EngineMathStandard : EngineMath {
 
     override fun applyArithmetic(
         operandLeft: Double,
-        operator: ButtonCalculatorArithmetic,
+        operator: ButtonCalculatorBinary,
         operandRight: Double,
     ): Double {
 
         return  when (operator) {
-            is ButtonCalculatorArithmetic.Addition -> operandLeft + operandRight
-            is ButtonCalculatorArithmetic.Subtraction -> operandLeft - operandRight
-            is ButtonCalculatorArithmetic.Multiplication -> operandLeft * operandRight
-            is ButtonCalculatorArithmetic.Division -> safeDivide(operandLeft, operandRight)
+            is ButtonCalculatorBinary.Addition -> operandLeft + operandRight
+            is ButtonCalculatorBinary.Subtraction -> operandLeft - operandRight
+            is ButtonCalculatorBinary.Multiplication -> operandLeft * operandRight
+            is ButtonCalculatorBinary.Division -> safeDivide(operandLeft, operandRight)
             else -> throw IllegalArgumentException("Unknown operation.")
         }
     }

@@ -1,10 +1,9 @@
 package com.example.calculatorApp.domain
 
 import com.example.calculatorApp.arguments.TestArgumentsEngineState
-import com.example.calculatorApp.model.elements.button.ButtonCalculatorArithmetic
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.state.CalculatorState
 import com.example.calculatorApp.utils.Constants.MAX_NUM_LENGTH
-import com.example.calculatorApp.utils.SymbolButtonExtensions.toButton
 import io.kotest.matchers.doubles.plusOrMinus
 import io.kotest.matchers.doubles.shouldBeNaN
 import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
@@ -25,7 +24,7 @@ class EngineStateStandardTest {
 
     private lateinit var state: CalculatorState
     private lateinit var engine: EngineState
-    private lateinit var arithmetic: ButtonCalculatorArithmetic
+    private lateinit var arithmetic: ButtonCalculatorBinary
     private val engineMath = EngineMathStandard()
 
     @BeforeEach
@@ -39,7 +38,7 @@ class EngineStateStandardTest {
         )
 
         engine = EngineStateStandard(engineMath)
-        arithmetic = ButtonCalculatorArithmetic.Multiplication
+        arithmetic = ButtonCalculatorBinary.Multiplication
     }
 
     @Nested
@@ -80,7 +79,7 @@ class EngineStateStandardTest {
                 lastInput = lastInput,
                 lastOperator = arithmetic,
                 lastResult = lastInput,
-                activeButton = ButtonCalculatorArithmetic.Equals
+                activeButton = ButtonCalculatorBinary.Equals
             )
 
             // Act:
@@ -175,13 +174,13 @@ class EngineStateStandardTest {
         ) {
             // Arrange:
             val initialState = state.copy(
-                expression = listOf (expression, ButtonCalculatorArithmetic.Division.symbol.label),
-                lastOperator = ButtonCalculatorArithmetic.Division,
+                expression = listOf (expression, ButtonCalculatorBinary.Division.symbol.label),
+                lastOperator = ButtonCalculatorBinary.Division,
                 lastInput = lastInput
             )
 
             // Act:
-            val stateNaN = engine.handleArithmetic(initialState, ButtonCalculatorArithmetic.Division)
+            val stateNaN = engine.handleArithmetic(initialState, ButtonCalculatorBinary.Division)
 
             // Assert:
             stateNaN.expression[0] shouldBe Double.NaN.toString()
@@ -199,7 +198,7 @@ class EngineStateStandardTest {
         @MethodSource("provideArguments")
         fun `should correctly apply equals operation and update state`(
             expression: Double,
-            operation: ButtonCalculatorArithmetic,
+            operation: ButtonCalculatorBinary,
             lastInput: Double,
             expected: Double,
         ) {
@@ -299,7 +298,7 @@ class EngineStateStandardTest {
         @Test
         fun `should replace arithmetic operation if one already exists`() {
             // Arrange:
-            val initialState = state.copy(lastOperator = ButtonCalculatorArithmetic.Addition)
+            val initialState = state.copy(lastOperator = ButtonCalculatorBinary.Addition)
             // Act:
             val newState = engine.enterArithmetic(initialState, arithmetic)
             // Assert
@@ -349,7 +348,7 @@ class EngineStateStandardTest {
         @MethodSource("provideArguments")
         fun `should correctly apply equals operation`(
             expression: Double,
-            operation: ButtonCalculatorArithmetic,
+            operation: ButtonCalculatorBinary,
             lastInput: Double,
             expected: Double,
         ) {
@@ -398,7 +397,7 @@ class EngineStateStandardTest {
         @MethodSource("provideRepeatableEqualsArguments")
         fun `should perform repeatable equals correctly`(
             expression: Double,
-            operation: ButtonCalculatorArithmetic,
+            operation: ButtonCalculatorBinary,
             lastInput: Double,
             expected: Double
         ) {
@@ -440,8 +439,8 @@ class EngineStateStandardTest {
         ) {
             // Arrange:
             val initialState = state.copy(
-                expression = listOf(expression, ButtonCalculatorArithmetic.Addition.toString()),
-                lastOperator = ButtonCalculatorArithmetic.Addition,
+                expression = listOf(expression, ButtonCalculatorBinary.Addition.toString()),
+                lastOperator = ButtonCalculatorBinary.Addition,
                 lastInput = lastInput,
             )
 
@@ -590,7 +589,7 @@ class EngineStateStandardTest {
             val initialState = state.copy(
                 lastInput = "32.9",
                 expression = listOf("123"),
-                lastOperator = ButtonCalculatorArithmetic.Multiplication
+                lastOperator = ButtonCalculatorBinary.Multiplication
             )
             // Act:
             val newState = engine.applyClearAll(initialState)
@@ -616,7 +615,7 @@ class EngineStateStandardTest {
             val initialState = state.copy(
                 lastInput = "329",
                 expression = listOf("329, +"),
-                lastOperator = ButtonCalculatorArithmetic.Multiplication
+                lastOperator = ButtonCalculatorBinary.Multiplication
             )
             // Act:
             val newState = engine.applyClear(initialState)
@@ -658,7 +657,7 @@ class EngineStateStandardTest {
         @MethodSource("provideRepeatableEqualsArguments")
         fun `should return default state when applying clear on equal repeatable`(
             expression: Double,
-            operation: ButtonCalculatorArithmetic,
+            operation: ButtonCalculatorBinary,
             lastInput: Double,
         ) {
             // Arrange:

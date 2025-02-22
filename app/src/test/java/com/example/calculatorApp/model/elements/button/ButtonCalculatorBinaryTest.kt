@@ -17,26 +17,26 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
 
-class ButtonCalculatorArithmeticTest {
+class ButtonCalculatorBinaryTest {
 
     @Nested
     inner class GetCategory {
 
         // Arrange: Setup test data (button instance)
-        private fun provideArguments(): Array<ButtonCalculatorArithmetic> {
+        private fun provideArguments(): Array<ButtonCalculatorBinary> {
             return arithmetics
         }
 
         @ParameterizedTest
         @MethodSource("provideArguments")
-        fun `should get the right category for each arithmetic button`(button: ButtonCalculatorArithmetic) {
+        fun `should get the right category for each arithmetic button`(button: ButtonCalculatorBinary) {
             // Act & Assert: Check if the button's category matches the expected category
             ButtonCategory.Arithmetic shouldBe button.getCategory()
         }
 
         @ParameterizedTest
         @MethodSource("provideArguments")
-        fun `should throw exception when category is not found`(button: ButtonCalculatorArithmetic) {
+        fun `should throw exception when category is not found`(button: ButtonCalculatorBinary) {
             // Arrange: Create an empty style collection (default is empty)
             val emptyStyleCollection = ElementCategoryStyleCollectionImpl<ElementColorStyle>()
 
@@ -63,7 +63,7 @@ class ButtonCalculatorArithmeticTest {
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should get the right backgroundColor for each arithmetic button`(
-            button: ButtonCalculatorArithmetic,
+            button: ButtonCalculatorBinary,
             @ConvertWith(ColorToLongConverter::class) expectedColor: Long,
         ) {
             // Arrange:
@@ -87,7 +87,7 @@ class ButtonCalculatorArithmeticTest {
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should get the right textColor for each arithmetic button`(
-            button: ButtonCalculatorArithmetic,
+            button: ButtonCalculatorBinary,
             @ConvertWith(ColorToLongConverter::class) expectedColor: Long,
         ) {
             // Arrange:
@@ -112,7 +112,7 @@ class ButtonCalculatorArithmeticTest {
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should correctly map symbols to buttons`(
-            button: ButtonCalculatorArithmetic,
+            button: ButtonCalculatorBinary,
             expectedSymbol: SymbolButton,
         ) {
             // Act & Assert: Check if the button's symbol matches the expected symbol

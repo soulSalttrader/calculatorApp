@@ -1,7 +1,7 @@
 package com.example.calculatorApp.domain
 
 import com.example.calculatorApp.arguments.TestArgumentsEngineMath
-import com.example.calculatorApp.model.elements.button.ButtonCalculatorArithmetic
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.doubles.plusOrMinus
 import io.kotest.matchers.doubles.shouldBeNaN
@@ -94,7 +94,7 @@ class EngineMathStandardTest {
         @MethodSource("provideWholeNumbers")
         fun `should convert a whole number to percentage`(
             operandLeft: Double?,
-            operator: ButtonCalculatorArithmetic?,
+            operator: ButtonCalculatorBinary?,
             operandRight: Double,
             expectedNumber: Double,
         ) {
@@ -106,7 +106,7 @@ class EngineMathStandardTest {
         @MethodSource("provideDecimalNumbers")
         fun `should convert a decimal number to percentage`(
             operandLeft: Double,
-            operator: ButtonCalculatorArithmetic?,
+            operator: ButtonCalculatorBinary?,
             operandRight: Double,
             expectedNumber: Double,
         ) {
@@ -118,7 +118,7 @@ class EngineMathStandardTest {
         @MethodSource("provideZeroNumbers")
         fun `should return zero when input is zero`(
             operandLeft: Double,
-            operator: ButtonCalculatorArithmetic?,
+            operator: ButtonCalculatorBinary?,
             operandRight: Double,
             expectedNumber: Double,
         ) {
@@ -153,7 +153,7 @@ class EngineMathStandardTest {
         @MethodSource("provideAdditionArguments")
         fun `should add two numbers correctly`(
             operandLeft: Double,
-            operation: ButtonCalculatorArithmetic.Addition,
+            operation: ButtonCalculatorBinary.Addition,
             operandRight: Double,
             expectedDouble: Double,
         ) {
@@ -165,7 +165,7 @@ class EngineMathStandardTest {
         @MethodSource("provideSubtractionArguments")
         fun `should subtract two numbers correctly`(
             operandLeft: Double,
-            operation: ButtonCalculatorArithmetic.Subtraction,
+            operation: ButtonCalculatorBinary.Subtraction,
             operandRight: Double,
             expectedDouble: Double,
         ) {
@@ -177,7 +177,7 @@ class EngineMathStandardTest {
         @MethodSource("provideMultiplicationArguments")
         fun `should multiply two numbers correctly`(
             operandLeft: Double,
-            operation: ButtonCalculatorArithmetic.Multiplication,
+            operation: ButtonCalculatorBinary.Multiplication,
             operandRight: Double,
             expectedDouble: Double,
         ) {
@@ -189,7 +189,7 @@ class EngineMathStandardTest {
         @MethodSource("provideDivisionArguments")
         fun `should divide two numbers correctly`(
             operandLeft: Double,
-            operation: ButtonCalculatorArithmetic.Division,
+            operation: ButtonCalculatorBinary.Division,
             operandRight: Double,
             expectedDouble: Double,
         ) {
@@ -207,7 +207,7 @@ class EngineMathStandardTest {
             // Arrange:
             val operandLeft = 1.0
             val operandRight = 2.0
-            val unknownOperation = ButtonCalculatorArithmetic.Equals
+            val unknownOperation = ButtonCalculatorBinary.Equals
 
             // Act:
             val exception = shouldThrow<IllegalArgumentException> {

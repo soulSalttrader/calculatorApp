@@ -1,16 +1,16 @@
 package com.example.calculatorApp.domain
 
-import com.example.calculatorApp.model.elements.button.ButtonCalculatorArithmetic
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.state.CalculatorState
 import com.example.calculatorApp.model.symbols.SymbolButton
 import com.example.calculatorApp.utils.Constants.MAX_NUM_LENGTH
 
 class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
 
-        override fun handleArithmetic(state: CalculatorState, arithmetic: ButtonCalculatorArithmetic): CalculatorState {
+        override fun handleArithmetic(state: CalculatorState, arithmetic: ButtonCalculatorBinary): CalculatorState {
         return state.modifyWith(
             { state.lastInput == "NaN" || state.expression.contains("NaN") } to { this },
-            { state.activeButton == ButtonCalculatorArithmetic.Equals } to { state.copy(lastOperator = arithmetic, lastInput = "", lastResult = null) },
+            { state.activeButton == ButtonCalculatorBinary.Equals } to { state.copy(lastOperator = arithmetic, lastInput = "", lastResult = null) },
             { state.lastOperator != null && state.lastInput.isNotBlank() } to {
                 val newState = applyArithmetic(state)
                 enterArithmetic(newState, arithmetic)
@@ -19,7 +19,7 @@ class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
         )
     }
 
-    override fun enterArithmetic(state: CalculatorState, arithmetic: ButtonCalculatorArithmetic): CalculatorState {
+    override fun enterArithmetic(state: CalculatorState, arithmetic: ButtonCalculatorBinary): CalculatorState {
         return state.modifyWith(
             { state.lastOperator != null } to { state.copy(lastOperator = arithmetic) },
             { state.lastInput.isNotBlank() } to { state.copy(expression = listOf(state.lastInput, arithmetic.symbol.label), lastInput = "", lastOperator = arithmetic) },
@@ -30,12 +30,12 @@ class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
         return state.modifyWith(
             { state.expression.dropLast(1).lastOrNull()?.toDoubleOrNull() == null } to { this },
             { state.lastInput.toDoubleOrNull() == null } to { this },
-            { state.lastOperator !is ButtonCalculatorArithmetic } to { this },
+            { state.lastOperator !is ButtonCalculatorBinary } to { this },
             { true } to {
                 val operandLeft = state.expression.dropLast(1).lastOrNull()?.toDoubleOrNull() ?: 0.0
                 val operandRight = state.lastInput.toDouble()
 
-                val operation = state.lastOperator as ButtonCalculatorArithmetic
+                val operation = state.lastOperator as ButtonCalculatorBinary
                 val result = engineMath.applyArithmetic(operandLeft, operation, operandRight)
 
                 state.copy(
@@ -52,21 +52,21 @@ class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
         return state.modifyWith(
             { state.expression.dropLast(1).lastOrNull()?.toDoubleOrNull() == null } to { this },
             { state.lastInput.toDoubleOrNull() == null && state.subResult == null } to { this },
-            { state.lastOperator !is ButtonCalculatorArithmetic } to { this },
+            { state.lastOperator !is ButtonCalculatorBinary } to { this },
             { true } to {
                 val operandLeft = state.expression.dropLast(1).lastOrNull()?.toDoubleOrNull() ?: 0.0
                 val operandRight = state.subResult?.toDoubleOrNull() ?: state.lastInput.toDouble()
 
                 if (operandLeft.isNaN() || operandRight.isNaN()) return@to state
 
-                val operation = state.lastOperator as ButtonCalculatorArithmetic
+                val operation = state.lastOperator as ButtonCalculatorBinary
                 val result = engineMath.applyArithmetic(operandLeft, operation, operandRight)
 
                 state.copy(
                     lastInput = result.toString(),
                     expression = listOf(result.toString(), operation.symbol.label),
                     subResult = operandRight.toString(), // Save the last entered number
-                    activeButton = ButtonCalculatorArithmetic.Equals
+                    activeButton = ButtonCalculatorBinary.Equals
                 )
             }
         )
@@ -101,7 +101,7 @@ class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
     override fun applyClear(state: CalculatorState): CalculatorState {
         return state.modifyWith(
 //            { true } to { clearAll() },
-            { state.activeButton == ButtonCalculatorArithmetic.Equals } to { applyClearAll(state) },
+            { state.activeButton == ButtonCalculatorBinary.Equals } to { applyClearAll(state) },
             { state.expression.lastOrNull()?.toDoubleOrNull()?.isNaN() == true } to { applyClearAll(state) },
             { state.lastInput.dropLast(1).toDoubleOrNull()?.isNaN() == true } to { applyClearAll(state) },
             { state.expression.isNotEmpty() } to { state.copy(expression = expression.dropLast(1)) },
@@ -134,7 +134,7 @@ class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
             { state.expression.isNotEmpty() } to {
                 val operandLeft = state.expression.dropLast(1).lastOrNull()?.toDoubleOrNull()
                 val operandRight = state.lastInput.toDoubleOrNull()!!
-                val operator = state.lastOperator as ButtonCalculatorArithmetic
+                val operator = state.lastOperator as ButtonCalculatorBinary
                 val result = engineMath.applyPercent(operandLeft, operator, operandRight)
 
                 state.copy(lastInput = result.toString())

@@ -2,7 +2,7 @@ package com.example.calculatorApp.domain.commands
 
 import com.example.calculatorApp.domain.actions.CalculatorAction
 import com.example.calculatorApp.model.elements.button.Button
-import com.example.calculatorApp.model.elements.button.ButtonCalculatorArithmetic
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
 
@@ -22,7 +22,7 @@ class CommandFactoryStandard(
 
         return when (button) {
             is ButtonCalculatorNumber -> numberCommandFactory.create(button)
-            is ButtonCalculatorArithmetic -> arithmeticCommandFactory.create(button)
+            is ButtonCalculatorBinary -> arithmeticCommandFactory.create(button)
             is ButtonCalculatorControl -> controlCommandFactory.create(button)
             else -> throw IllegalArgumentException("Unknown button.")
         }

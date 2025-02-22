@@ -1,7 +1,7 @@
 package com.example.calculatorApp.domain.commands
 
 import com.example.calculatorApp.domain.EngineState
-import com.example.calculatorApp.model.elements.button.ButtonCalculatorArithmetic
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.utils.ButtonCalculatorList
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.clearMocks
@@ -28,16 +28,16 @@ class CommandFactoryArithmeticTest {
     inner class Create {
 
         // Arrange:
-        fun provideArguments(): Array<ButtonCalculatorArithmetic> {
+        fun provideArguments(): Array<ButtonCalculatorBinary> {
             return ButtonCalculatorList.arithmetics
-                .filterNot { button -> button == ButtonCalculatorArithmetic.Equals }
+                .filterNot { button -> button == ButtonCalculatorBinary.Equals }
                 .toTypedArray()
         }
 
         @Test
         fun `should create CommandApplyArithmetic when Equals button is pressed`() {
             // Arrange:
-            val equalButton = ButtonCalculatorArithmetic.Equals
+            val equalButton = ButtonCalculatorBinary.Equals
 
             // Act:
             val command = factory.create(equalButton)
@@ -50,7 +50,7 @@ class CommandFactoryArithmeticTest {
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should create CommandChain with applyArithmetic and EnterArithmetic for other Arithmetic buttons`(
-            button: ButtonCalculatorArithmetic
+            button: ButtonCalculatorBinary
         ) {
             // Act:
             val command = factory.create(button)

@@ -1,16 +1,16 @@
 package com.example.calculatorApp.domain.commands
 
 import com.example.calculatorApp.domain.EngineState
-import com.example.calculatorApp.model.elements.button.ButtonCalculatorArithmetic
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 
 class CommandFactoryArithmetic(
     private val engineState: EngineState
-) : CommandFactorySub<ButtonCalculatorArithmetic> {
+) : CommandFactorySub<ButtonCalculatorBinary> {
 
-    override fun create(button: ButtonCalculatorArithmetic): Command {
+    override fun create(button: ButtonCalculatorBinary): Command {
 
         return when (button) {
-            is ButtonCalculatorArithmetic.Equals -> CommandApplyEquals(engineState)
+            is ButtonCalculatorBinary.Equals -> CommandApplyEquals(engineState)
             else -> CommandHandlerArithmetic(engineState, button)
         }
     }

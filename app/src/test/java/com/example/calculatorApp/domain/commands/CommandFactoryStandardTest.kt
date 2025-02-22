@@ -2,7 +2,7 @@ package com.example.calculatorApp.domain.commands
 
 import com.example.calculatorApp.domain.actions.CalculatorAction
 import com.example.calculatorApp.model.elements.button.Button
-import com.example.calculatorApp.model.elements.button.ButtonCalculatorArithmetic
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
 import com.example.calculatorApp.utils.ButtonCalculatorList
@@ -35,7 +35,7 @@ class CommandFactoryStandardTest {
     inner class Create {
 
         // Arrange:
-        private fun provideArithmetics(): Array<ButtonCalculatorArithmetic> {
+        private fun provideArithmetics(): Array<ButtonCalculatorBinary> {
             return ButtonCalculatorList.arithmetics
         }
 
@@ -52,7 +52,7 @@ class CommandFactoryStandardTest {
         @ParameterizedTest
         @MethodSource("provideArithmetics")
         fun `should create CommandApplyArithmetic or CommandChain through arithmeticCommandFactory when ButtonCalculatorArithmetic button is pressed`(
-            button: ButtonCalculatorArithmetic
+            button: ButtonCalculatorBinary
         ) {
             // Prepare the expected CommandEnterArithmetic
             val expectedCommand = mockk<CommandEnterArithmetic>()

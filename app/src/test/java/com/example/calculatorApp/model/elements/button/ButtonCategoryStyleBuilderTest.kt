@@ -17,13 +17,13 @@ class ButtonCategoryStyleBuilderTest {
     inner class ArithmeticStyle {
         // Arrange:
         private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsButtonStyleBuilder.provideButtonStyle().filter { it.get()[0] is ButtonCalculatorArithmetic }
+            return TestArgumentsButtonStyleBuilder.provideButtonStyle().filter { it.get()[0] is ButtonCalculatorBinary }
         }
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should apply arithmetic style correctly`(
-            button: ButtonCalculatorArithmetic,
+            button: ButtonCalculatorBinary,
             styles: ElementCategoryStyleCollection<ElementColorStyle>,
             expectedStyle: ElementColorStyle,
         ) {

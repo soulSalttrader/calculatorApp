@@ -1,7 +1,7 @@
 package com.example.calculatorApp.domain.commands
 
 import com.example.calculatorApp.domain.EngineState
-import com.example.calculatorApp.model.elements.button.ButtonCalculatorArithmetic
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.state.CalculatorState
 import io.mockk.clearMocks
 import io.mockk.confirmVerified
@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test
 class CommandEnterArithmeticTest {
 
     private val engineState: EngineState = mockk(relaxed = true)
-    private val arithmetic = ButtonCalculatorArithmetic.Multiplication
+    private val arithmetic = ButtonCalculatorBinary.Multiplication
     private lateinit var state: CalculatorState
     private lateinit var command: CommandEnterArithmetic
 

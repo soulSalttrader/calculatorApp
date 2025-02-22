@@ -7,13 +7,13 @@ import com.example.calculatorApp.model.elements.ElementColorStyle
 import com.example.calculatorApp.model.symbols.Symbol
 import com.example.calculatorApp.model.symbols.SymbolButton
 
-sealed class ButtonCalculatorArithmetic(override val symbol: Symbol) : Button {
+sealed class ButtonCalculatorBinary(override val symbol: Symbol) : Button {
 
-    data object Addition : ButtonCalculatorArithmetic(SymbolButton.ADDITION)
-    data object Subtraction : ButtonCalculatorArithmetic(SymbolButton.SUBTRACTION)
-    data object Multiplication : ButtonCalculatorArithmetic(SymbolButton.MULTIPLICATION)
-    data object Division : ButtonCalculatorArithmetic(SymbolButton.DIVISION)
-    data object Equals : ButtonCalculatorArithmetic(SymbolButton.EQUALS)
+    data object Addition : ButtonCalculatorBinary(SymbolButton.ADDITION)
+    data object Subtraction : ButtonCalculatorBinary(SymbolButton.SUBTRACTION)
+    data object Multiplication : ButtonCalculatorBinary(SymbolButton.MULTIPLICATION)
+    data object Division : ButtonCalculatorBinary(SymbolButton.DIVISION)
+    data object Equals : ButtonCalculatorBinary(SymbolButton.EQUALS)
 
     override fun getCategory(): ElementCategory<ElementColorStyle> = ButtonCategory.Arithmetic
     override fun getBackgroundColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).backgroundColor
