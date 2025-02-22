@@ -4,6 +4,7 @@ import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
 import com.example.calculatorApp.model.symbols.SymbolButton
 import com.example.calculatorApp.ui.theme.Onyx
 import com.example.calculatorApp.ui.theme.SilverGrey
@@ -29,20 +30,26 @@ object ButtonCalculatorMappings {
         ButtonCalculatorBinary.Equals to SymbolButton.EQUALS
     )
 
+    val unaryColorMap: Map<ButtonCalculatorUnary, Any> = mapOf(
+        ButtonCalculatorUnary.Sign to SilverGrey,
+        ButtonCalculatorUnary.Percentage to SilverGrey,
+    )
+
+    val unarySymbolMap: Map<ButtonCalculatorUnary, SymbolButton> = mapOf(
+        ButtonCalculatorUnary.Sign to SymbolButton.PLUS_MINUS,
+        ButtonCalculatorUnary.Percentage to SymbolButton.PERCENT,
+    )
+
     // Map for ButtonCalculatorControl to color and symbol
     val controlColorMap: Map<ButtonCalculatorControl, Any> = mapOf(
         ButtonCalculatorControl.Decimal to Onyx,
         ButtonCalculatorControl.AllClear to SilverGrey,
         ButtonCalculatorControl.Clear to SilverGrey,
-        ButtonCalculatorControl.Sign to SilverGrey,
-        ButtonCalculatorControl.Percentage to SilverGrey
     )
 
     val controlSymbolMap: Map<ButtonCalculatorControl, SymbolButton> = mapOf(
         ButtonCalculatorControl.AllClear to SymbolButton.ALL_CLEAR,
         ButtonCalculatorControl.Clear to SymbolButton.CLEAR,
-        ButtonCalculatorControl.Sign to SymbolButton.PLUS_MINUS,
-        ButtonCalculatorControl.Percentage to SymbolButton.PERCENT,
         ButtonCalculatorControl.Decimal to SymbolButton.DECIMAL
     )
 
@@ -81,10 +88,11 @@ object ButtonCalculatorMappings {
         ButtonCalculatorBinary.Division to ButtonCalculatorBinary.Division,
         ButtonCalculatorBinary.Equals to ButtonCalculatorBinary.Equals,
 
+        ButtonCalculatorUnary.Sign to ButtonCalculatorUnary.Sign,
+        ButtonCalculatorUnary.Percentage to ButtonCalculatorUnary.Percentage,
+
         ButtonCalculatorControl.AllClear to ButtonCalculatorControl.AllClear,
         ButtonCalculatorControl.Clear to ButtonCalculatorControl.Clear,
-        ButtonCalculatorControl.Sign to ButtonCalculatorControl.Sign,
-        ButtonCalculatorControl.Percentage to ButtonCalculatorControl.Percentage,
         ButtonCalculatorControl.Decimal to ButtonCalculatorControl.Decimal,
 
         ButtonCalculatorNumber.Zero to ButtonCalculatorNumber.Zero,

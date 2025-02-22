@@ -11,8 +11,6 @@ sealed class ButtonCalculatorControl(override val symbol: Symbol) : Button {
 
     data object AllClear : ButtonCalculatorControl(SymbolButton.ALL_CLEAR)
     data object Clear : ButtonCalculatorControl(SymbolButton.CLEAR)
-    data object Sign : ButtonCalculatorControl(SymbolButton.PLUS_MINUS)
-    data object Percentage : ButtonCalculatorControl(SymbolButton.PERCENT)
     data object Decimal : ButtonCalculatorControl(SymbolButton.DECIMAL)
 
     override fun getCategory(): ElementCategory<ElementColorStyle> = ButtonCategory.Control

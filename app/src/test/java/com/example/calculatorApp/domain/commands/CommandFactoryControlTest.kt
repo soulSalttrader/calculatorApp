@@ -2,6 +2,7 @@ package com.example.calculatorApp.domain.commands
 
 import com.example.calculatorApp.domain.EngineState
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.clearMocks
 import io.mockk.mockk
@@ -52,25 +53,6 @@ class CommandFactoryControlTest {
             // Assert:
             command.shouldBeInstanceOf<CommandApplyClear>()
 
-        }
-        @Test
-        fun `should create CommandApplyPercent when Percent button is pressed`() {
-            // Arrange:
-            val button = ButtonCalculatorControl.Percentage
-            // Act:
-            val command = factory.create(button)
-            // Assert:
-            command.shouldBeInstanceOf<CommandApplyPercent>()
-
-        }
-        @Test
-        fun `should create CommandApplySign when PlusMinus button is pressed`() {
-            // Arrange:
-            val button = ButtonCalculatorControl.Sign
-            // Act:
-            val command = factory.create(button)
-            // Assert:
-            command.shouldBeInstanceOf<CommandApplySign>()
         }
     }
 }

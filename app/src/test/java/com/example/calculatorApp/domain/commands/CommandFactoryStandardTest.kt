@@ -21,6 +21,7 @@ import org.junit.jupiter.params.provider.MethodSource
 class CommandFactoryStandardTest {
 
     private val arithmeticFactory: CommandFactoryArithmetic = mockk()
+    private val unaryFactory: CommandFactoryUnary = mockk()
     private val controlFactory: CommandFactoryControl = mockk()
     private val numberFactory: CommandFactoryNumber = mockk()
     private lateinit var factory: CommandFactoryStandard
@@ -28,7 +29,7 @@ class CommandFactoryStandardTest {
     @BeforeEach
     fun setUp() {
         clearMocks(arithmeticFactory, controlFactory, numberFactory)
-        factory = CommandFactoryStandard(arithmeticFactory, controlFactory, numberFactory)
+        factory = CommandFactoryStandard(arithmeticFactory, unaryFactory, controlFactory, numberFactory)
     }
 
     @Nested
