@@ -14,7 +14,7 @@ sealed class ButtonCalculatorBinary(override val symbol: Symbol) : Button {
     data object Multiplication : ButtonCalculatorBinary(SymbolButton.MULTIPLICATION)
     data object Division : ButtonCalculatorBinary(SymbolButton.DIVISION)
 
-    override fun getCategory(): ElementCategory<ElementColorStyle> = ButtonCategory.Arithmetic
+    override fun getCategory(): ElementCategory<ElementColorStyle> = ButtonCategory.Binary
     override fun getBackgroundColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).backgroundColor
     override fun getTextColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).textColor
 

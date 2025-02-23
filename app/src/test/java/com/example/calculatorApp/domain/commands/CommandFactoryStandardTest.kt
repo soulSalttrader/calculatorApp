@@ -5,6 +5,7 @@ import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
 import com.example.calculatorApp.utils.ButtonCalculatorList
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
@@ -20,7 +21,7 @@ import org.junit.jupiter.params.provider.MethodSource
 
 class CommandFactoryStandardTest {
 
-    private val arithmeticFactory: CommandFactoryArithmetic = mockk()
+    private val binaryFactory: CommandFactoryBinary = mockk()
     private val unaryFactory: CommandFactoryUnary = mockk()
     private val controlFactory: CommandFactoryControl = mockk()
     private val numberFactory: CommandFactoryNumber = mockk()
@@ -28,8 +29,8 @@ class CommandFactoryStandardTest {
 
     @BeforeEach
     fun setUp() {
-        clearMocks(arithmeticFactory, controlFactory, numberFactory)
-        factory = CommandFactoryStandard(arithmeticFactory, unaryFactory, controlFactory, numberFactory)
+        clearMocks(binaryFactory, controlFactory, numberFactory)
+        factory = CommandFactoryStandard(binaryFactory, unaryFactory, controlFactory, numberFactory)
     }
 
     @Nested
@@ -37,7 +38,12 @@ class CommandFactoryStandardTest {
 
         // Arrange:
         private fun provideArithmetics(): Array<ButtonCalculatorBinary> {
-            return ButtonCalculatorList.arithmetics
+            return ButtonCalculatorList.binary
+        }
+
+        // Arrange:
+        private fun provideUnary(): Array<ButtonCalculatorUnary> {
+            return ButtonCalculatorList.unary
         }
 
         // Arrange:
@@ -52,14 +58,14 @@ class CommandFactoryStandardTest {
 
         @ParameterizedTest
         @MethodSource("provideArithmetics")
-        fun `should create CommandApplyArithmetic or CommandChain through arithmeticCommandFactory when ButtonCalculatorArithmetic button is pressed`(
+        fun `should create CommandApplyBinary or CommandChain through binaryCommandFactory when ButtonCalculatorBinary button is pressed`(
             button: ButtonCalculatorBinary
         ) {
-            // Prepare the expected CommandEnterArithmetic
-            val expectedCommand = mockk<CommandEnterArithmetic>()
+            // Prepare the expected CommandEnterBinary
+            val expectedCommand = mockk<CommandEnterBinary>()
 
             // Mock the `create` method for CommandFactoryArithmetic to return the expected command
-            every { arithmeticFactory.create(button) } returns expectedCommand
+            every { binaryFactory.create(button) } returns expectedCommand
 
             // Create the action to simulate the button press
             val action = CalculatorAction.ButtonPressed(button)
@@ -71,8 +77,33 @@ class CommandFactoryStandardTest {
             command shouldBe expectedCommand
 
             // Verify that `create` was called with the correct argument
-            verify { arithmeticFactory.create(button) }
+            verify { binaryFactory.create(button) }
         }
+
+        @ParameterizedTest
+        @MethodSource("provideUnary")
+        fun `should create corresponding unary command through unaryCommandFactory when ButtonCalculatorUnary button is pressed`(
+            button: ButtonCalculatorUnary
+        ) {
+            // Prepare the expected CommandEnterControl
+            val expectedCommand = mockk<CommandApplySign>()
+
+            // Mock the `create` method for CommandFactoryArithmetic to return the expected command
+            every { unaryFactory.create(button) } returns expectedCommand
+
+            // Create the action to simulate the button press
+            val action = CalculatorAction.ButtonPressed(button)
+
+            // Act: Call the method
+            val command = factory.createCommand(action)
+
+            // Assert: Ensure the returned command is the one expected
+            command shouldBe expectedCommand
+
+            // Verify that `create` was called with the correct argument
+            verify { unaryFactory.create(button) }
+        }
+
 
         @ParameterizedTest
         @MethodSource("provideControls")

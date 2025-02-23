@@ -14,7 +14,7 @@ import java.util.stream.Stream
 class ButtonCategoryStyleBuilderTest {
 
     @Nested
-    inner class ArithmeticStyle {
+    inner class BinaryStyle {
         // Arrange:
         private fun provideArguments(): Stream<Arguments> {
             return TestArgumentsButtonStyleBuilder.provideButtonStyle().filter { it.get()[0] is ButtonCalculatorBinary }

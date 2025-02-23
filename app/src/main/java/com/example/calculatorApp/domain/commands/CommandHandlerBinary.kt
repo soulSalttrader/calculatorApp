@@ -4,12 +4,12 @@ import com.example.calculatorApp.domain.EngineState
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.state.CalculatorState
 
-class CommandEnterArithmetic(
+class CommandHandlerBinary(
     private val engineState: EngineState,
-    private val arithmetic: ButtonCalculatorBinary,
+    private val operation: ButtonCalculatorBinary,
 ) : Command {
 
     override fun execute(state: CalculatorState): CalculatorState {
-        return engineState.enterArithmetic(state, arithmetic)
+        return engineState.handleArithmetic(state, operation)
     }
 }

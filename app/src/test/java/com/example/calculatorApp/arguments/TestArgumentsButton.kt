@@ -6,7 +6,7 @@ import com.example.calculatorApp.ui.theme.Onyx
 import com.example.calculatorApp.ui.theme.SilverGrey
 import com.example.calculatorApp.ui.theme.VividGamboge
 import com.example.calculatorApp.utils.ButtonCalculatorList.allButtons
-import com.example.calculatorApp.utils.ButtonCalculatorList.arithmetics
+import com.example.calculatorApp.utils.ButtonCalculatorList.binary
 import com.example.calculatorApp.utils.ButtonCalculatorList.controls
 import com.example.calculatorApp.utils.ButtonCalculatorList.numbers
 import com.example.calculatorApp.utils.ButtonCalculatorList.unary
@@ -25,13 +25,13 @@ object TestArgumentsButton : TestArguments {
         buttons.map { button -> Arguments.of(button, buttonMapping(button)) }.stream()
 
     fun provideArithmeticColors() = provideButtonColors(
-        buttons = arithmetics,
-        colorMapping = { ButtonCalculatorMappings.arithmeticColorMap[it] ?: VividGamboge }
+        buttons = binary,
+        colorMapping = { ButtonCalculatorMappings.binaryColorMap[it] ?: VividGamboge }
     )
 
     fun provideArithmeticSymbols() = provideButtonSymbols(
-        buttons = arithmetics,
-        symbolMapping = { ButtonCalculatorMappings.arithmeticSymbolMap[it] }
+        buttons = binary,
+        symbolMapping = { ButtonCalculatorMappings.binarySymbolMap[it] }
     )
 
     fun provideUnaryColors() = provideButtonColors(

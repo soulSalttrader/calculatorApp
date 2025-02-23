@@ -1,7 +1,6 @@
 package com.example.calculatorApp.domain.commands
 
 import com.example.calculatorApp.domain.EngineState
-import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.state.CalculatorState
 import io.mockk.clearMocks
 import io.mockk.confirmVerified
@@ -11,31 +10,30 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-class CommandEnterArithmeticTest {
+class CommandApplyBinaryTest {
 
     private val engineState: EngineState = mockk(relaxed = true)
-    private val arithmetic = ButtonCalculatorBinary.Multiplication
     private lateinit var state: CalculatorState
-    private lateinit var command: CommandEnterArithmetic
+    private lateinit var command: CommandApplyBinary
 
     @BeforeEach
     fun setUp() {
         // Arrange:
         clearMocks(engineState)
         state = CalculatorState()
-        command = CommandEnterArithmetic(engineState, arithmetic)
+        command = CommandApplyBinary(engineState)
     }
 
     @Nested
     inner class Execute {
 
         @Test
-        fun `should call enterArithmetic on engine`() {
+        fun `should call applyArithmetic on engine`() {
             // Act:
             command.execute(state)
 
             // Assert:
-            verify(exactly = 1) { engineState.enterArithmetic(state, arithmetic) }
+            verify(exactly = 1) { engineState.applyArithmetic(state) }
             confirmVerified(engineState)
         }
     }

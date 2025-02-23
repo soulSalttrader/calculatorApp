@@ -128,7 +128,7 @@ class EngineMathStandardTest {
     }
 
     @Nested
-    inner class ApplyArithmetic {
+    inner class ApplyBinary {
         // Arrange:
         private fun provideAdditionArguments(): Stream<Arguments> {
             return TestArgumentsEngineMath.provideAdditionArguments()

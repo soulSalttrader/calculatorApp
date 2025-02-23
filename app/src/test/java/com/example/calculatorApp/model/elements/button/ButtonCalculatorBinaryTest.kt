@@ -6,7 +6,7 @@ import com.example.calculatorApp.model.elements.ElementCategoryStyleCollectionIm
 import com.example.calculatorApp.model.elements.ElementColorStyle
 import com.example.calculatorApp.model.styles.StylesButton
 import com.example.calculatorApp.model.symbols.SymbolButton
-import com.example.calculatorApp.utils.ButtonCalculatorList.arithmetics
+import com.example.calculatorApp.utils.ButtonCalculatorList.binary
 import com.example.calculatorApp.utils.ColorToLongConverter
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
@@ -24,14 +24,14 @@ class ButtonCalculatorBinaryTest {
 
         // Arrange: Setup test data (button instance)
         private fun provideArguments(): Array<ButtonCalculatorBinary> {
-            return arithmetics
+            return binary
         }
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should get the right category for each arithmetic button`(button: ButtonCalculatorBinary) {
             // Act & Assert: Check if the button's category matches the expected category
-            ButtonCategory.Arithmetic shouldBe button.getCategory()
+            ButtonCategory.Binary shouldBe button.getCategory()
         }
 
         @ParameterizedTest

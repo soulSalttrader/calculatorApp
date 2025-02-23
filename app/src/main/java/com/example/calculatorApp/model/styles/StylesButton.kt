@@ -13,6 +13,9 @@ object StylesButton {
         .arithmeticStyle(
             baseStyle = ElementColorStyleImpl(backgroundColor = VividGamboge, textColor = White),
         )
+        .unaryStyle(
+            baseStyle = ElementColorStyleImpl(backgroundColor = SilverGrey, textColor = Onyx),
+        )
         .controlStyle(
             baseStyle = ElementColorStyleImpl(backgroundColor = SilverGrey, textColor = Onyx),
             decimalStyle = ElementColorStyleImpl(backgroundColor = Onyx, textColor = White),

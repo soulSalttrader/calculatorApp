@@ -12,8 +12,8 @@ import com.example.calculatorApp.ui.theme.VividGamboge
 
 object ButtonCalculatorMappings {
 
-    // Map for ButtonCalculatorArithmetic to Color (future-proofing)
-    val arithmeticColorMap: Map<ButtonCalculatorBinary, Any> = mapOf(
+    // Map for ButtonCalculatorBinary to Color (future-proofing)
+    val binaryColorMap: Map<ButtonCalculatorBinary, Any> = mapOf(
         ButtonCalculatorBinary.Addition to VividGamboge,
         ButtonCalculatorBinary.Subtraction to VividGamboge,
         ButtonCalculatorBinary.Multiplication to VividGamboge,
@@ -21,8 +21,8 @@ object ButtonCalculatorMappings {
 
     )
 
-    // Map for ButtonCalculatorArithmetic to SymbolButton
-    val arithmeticSymbolMap: Map<ButtonCalculatorBinary, SymbolButton> = mapOf(
+    // Map for ButtonCalculatorBinary to SymbolButton
+    val binarySymbolMap: Map<ButtonCalculatorBinary, SymbolButton> = mapOf(
         ButtonCalculatorBinary.Addition to SymbolButton.ADDITION,
         ButtonCalculatorBinary.Subtraction to SymbolButton.SUBTRACTION,
         ButtonCalculatorBinary.Multiplication to SymbolButton.MULTIPLICATION,

@@ -17,7 +17,7 @@ sealed class ButtonCalculatorUnary (
     fun isPrefix(): Boolean = this in listOf(Sign, Percentage)
     fun isSuffix(): Boolean = this in emptyList<ButtonCalculatorUnary>()
 
-    override fun getCategory(): ElementCategory<ElementColorStyle> = ButtonCategory.Control
+    override fun getCategory(): ElementCategory<ElementColorStyle> = ButtonCategory.Unary
     override fun getBackgroundColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).backgroundColor
     override fun getTextColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).textColor
 

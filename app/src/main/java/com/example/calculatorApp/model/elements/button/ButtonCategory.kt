@@ -5,7 +5,8 @@ import com.example.calculatorApp.model.elements.ElementColorStyle
 
 sealed class ButtonCategory<BaseStyle : ElementColorStyle> : ElementCategory<BaseStyle> {
 
-    data object Arithmetic : ButtonCategory<ElementColorStyle>()
+    data object Binary : ButtonCategory<ElementColorStyle>()
+    data object Unary : ButtonCategory<ElementColorStyle>()
     data object Control : ButtonCategory<ElementColorStyle>()
     data object Number : ButtonCategory<ElementColorStyle>()
 }

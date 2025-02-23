@@ -10,7 +10,7 @@ import com.example.calculatorApp.ui.theme.SilverGrey
 import com.example.calculatorApp.ui.theme.VividGamboge
 import com.example.calculatorApp.ui.theme.White
 import com.example.calculatorApp.utils.ButtonCalculatorList.allButtons
-import com.example.calculatorApp.utils.ButtonCalculatorList.arithmetics
+import com.example.calculatorApp.utils.ButtonCalculatorList.binary
 import com.example.calculatorApp.utils.ButtonCalculatorList.controls
 import com.example.calculatorApp.utils.ButtonCalculatorList.numbers
 import com.example.calculatorApp.utils.ButtonCalculatorList.unary
@@ -29,7 +29,7 @@ object TestArgumentsButtonStyleBuilder : TestArguments {
         val testedStyle = style ?: StylesButton.iButtonStyle
 
         val expectedStyles = mapOf(
-            *arithmetics.map { it to arithmeticsBaseStyle }.toTypedArray(),
+            *binary.map { it to arithmeticsBaseStyle }.toTypedArray(),
             *unary.map { it to controlsBaseStyle }.toTypedArray(),
             *controls.map { it to controlsBaseStyle }.toTypedArray(),
             *numbers.map { it to numbersBaseStyle }.toTypedArray(),

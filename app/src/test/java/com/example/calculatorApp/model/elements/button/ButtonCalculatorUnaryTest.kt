@@ -31,7 +31,7 @@ class ButtonCalculatorUnaryTest {
         @MethodSource("provideArguments")
         fun `should get the right category for each unary button`(button: ButtonCalculatorUnary) {
             // Act & Assert: Check if the button's category matches the expected category
-            ButtonCategory.Control shouldBe button.getCategory()
+            ButtonCategory.Unary shouldBe button.getCategory()
         }
 
         @ParameterizedTest

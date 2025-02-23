@@ -43,7 +43,7 @@ class EngineStateStandardTest {
     }
 
     @Nested
-    inner class HandleArithmetic {
+    inner class HandleBinary {
 
         @ParameterizedTest
         @CsvSource(
@@ -189,7 +189,7 @@ class EngineStateStandardTest {
     }
 
     @Nested
-    inner class ApplyArithmetic {
+    inner class ApplyBinary {
 
         fun provideArguments(): Stream<Arguments> {
             return TestArgumentsEngineState.provideArithmeticArguments()
@@ -286,7 +286,7 @@ class EngineStateStandardTest {
     }
 
     @Nested
-    inner class EnterArithmetic {
+    inner class EnterBinary {
 
         @Test
         fun `should set arithmetic operation when there is no existing lastOperator`() {

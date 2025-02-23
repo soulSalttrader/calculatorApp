@@ -8,7 +8,7 @@ import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
 
 class CommandFactoryStandard(
-    private val arithmeticCommandFactory: CommandFactoryArithmetic,
+    private val binaryCommandFactory: CommandFactoryBinary,
     private val unaryCommandFactory: CommandFactoryUnary,
     private val controlCommandFactory: CommandFactoryControl,
     private val numberCommandFactory: CommandFactoryNumber,
@@ -25,7 +25,7 @@ class CommandFactoryStandard(
         return when (button) {
             is ButtonCalculatorNumber -> numberCommandFactory.create(button)
             is ButtonCalculatorUnary -> unaryCommandFactory.create(button)
-            is ButtonCalculatorBinary -> arithmeticCommandFactory.create(button)
+            is ButtonCalculatorBinary -> binaryCommandFactory.create(button)
             is ButtonCalculatorControl -> controlCommandFactory.create(button)
             else -> throw IllegalArgumentException("Unknown button.")
         }

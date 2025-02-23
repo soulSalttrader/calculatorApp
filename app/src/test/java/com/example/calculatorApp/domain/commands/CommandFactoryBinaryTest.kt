@@ -13,15 +13,15 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 
-class CommandFactoryArithmeticTest {
+class CommandFactoryBinaryTest {
 
     private val engine: EngineState = mockk()
-    private lateinit var factory: CommandFactoryArithmetic
+    private lateinit var factory: CommandFactoryBinary
 
     @BeforeEach
     fun setUp() {
         clearMocks(engine)
-        factory = CommandFactoryArithmetic(engine)
+        factory = CommandFactoryBinary(engine)
     }
 
     @Nested
@@ -29,7 +29,7 @@ class CommandFactoryArithmeticTest {
 
         // Arrange:
         fun provideArguments(): Array<ButtonCalculatorBinary> {
-            return ButtonCalculatorList.arithmetics
+            return ButtonCalculatorList.binary
         }
 
         @Disabled("Deprecated")
