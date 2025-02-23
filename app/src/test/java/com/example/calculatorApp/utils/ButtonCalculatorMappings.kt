@@ -36,8 +36,8 @@ object ButtonCalculatorMappings {
     )
 
     val unarySymbolMap: Map<ButtonCalculatorUnary, SymbolButton> = mapOf(
-        ButtonCalculatorUnary.Sign to SymbolButton.PLUS_MINUS,
-        ButtonCalculatorUnary.Percentage to SymbolButton.PERCENT,
+        ButtonCalculatorUnary.Sign to SymbolButton.SIGN,
+        ButtonCalculatorUnary.Percentage to SymbolButton.PERCENTAGE,
     )
 
     // Map for ButtonCalculatorControl to color and symbol

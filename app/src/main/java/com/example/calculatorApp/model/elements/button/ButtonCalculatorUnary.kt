@@ -11,8 +11,8 @@ sealed class ButtonCalculatorUnary (
     override val symbol: Symbol,
 ) : Button {
 
-    data object Sign : ButtonCalculatorUnary(PLUS_MINUS)
-    data object Percentage : ButtonCalculatorUnary(PERCENT)
+    data object Sign : ButtonCalculatorUnary(SIGN)
+    data object Percentage : ButtonCalculatorUnary(PERCENTAGE)
 
     fun isPrefix(): Boolean = this in listOf(Sign, Percentage)
     fun isSuffix(): Boolean = this in emptyList<ButtonCalculatorUnary>()

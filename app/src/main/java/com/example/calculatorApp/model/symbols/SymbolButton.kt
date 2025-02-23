@@ -14,8 +14,8 @@ enum class SymbolButton(
     ADDITION("+"),
 
     // unary
-    PLUS_MINUS("±"),
-    PERCENT("%"),
+    SIGN("±"),
+    PERCENTAGE("%"),
 
     // control
     ALL_CLEAR("AC"),
