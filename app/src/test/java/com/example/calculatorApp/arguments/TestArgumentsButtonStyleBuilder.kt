@@ -13,6 +13,7 @@ import com.example.calculatorApp.utils.ButtonCalculatorList.allButtons
 import com.example.calculatorApp.utils.ButtonCalculatorList.binary
 import com.example.calculatorApp.utils.ButtonCalculatorList.controls
 import com.example.calculatorApp.utils.ButtonCalculatorList.numbers
+import com.example.calculatorApp.utils.ButtonCalculatorList.parenthesis
 import com.example.calculatorApp.utils.ButtonCalculatorList.unary
 import org.junit.jupiter.params.provider.Arguments
 import java.util.stream.Stream
@@ -20,19 +21,23 @@ import java.util.stream.Stream
 object TestArgumentsButtonStyleBuilder : TestArguments {
 
     fun provideButtonStyle(style: ElementCategoryStyleCollection<ElementColorStyle>? = null): Stream<Arguments> {
+        val binaryBaseStyle = ElementColorStyleImpl(backgroundColor = VividGamboge, textColor = White)
+        val unaryBaseStyle = ElementColorStyleImpl(backgroundColor = SilverGrey, textColor = Onyx)
         val controlsBaseStyle = ElementColorStyleImpl(backgroundColor = SilverGrey, textColor = Onyx)
         val numbersBaseStyle = ElementColorStyleImpl(backgroundColor = Onyx, textColor = White)
-        val arithmeticsBaseStyle = ElementColorStyleImpl(backgroundColor = VividGamboge, textColor = White)
+        val parenthesisBaseStyle = ElementColorStyleImpl(backgroundColor = Onyx, textColor = White)
+
         val decimalStyle = ElementColorStyleImpl(backgroundColor = Onyx, textColor = White)
         val equalsStyle = ElementColorStyleImpl(backgroundColor = VividGamboge, textColor = White)
 
         val testedStyle = style ?: StylesButton.iButtonStyle
 
         val expectedStyles = mapOf(
-            *binary.map { it to arithmeticsBaseStyle }.toTypedArray(),
-            *unary.map { it to controlsBaseStyle }.toTypedArray(),
+            *binary.map { it to binaryBaseStyle }.toTypedArray(),
+            *unary.map { it to unaryBaseStyle }.toTypedArray(),
             *controls.map { it to controlsBaseStyle }.toTypedArray(),
             *numbers.map { it to numbersBaseStyle }.toTypedArray(),
+            *parenthesis.map { it to parenthesisBaseStyle }.toTypedArray(),
 
             // base style overridden for control buttons
             ButtonCalculatorControl.Decimal to decimalStyle,

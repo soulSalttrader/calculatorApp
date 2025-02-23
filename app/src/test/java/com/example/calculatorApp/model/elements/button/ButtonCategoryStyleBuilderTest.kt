@@ -40,9 +40,8 @@ class ButtonCategoryStyleBuilderTest {
                 expectedStyle.textColor shouldBe actualTextColor
             }
         }
-
-
     }
+
     @Nested
     inner class ControlStyle {
         // Arrange:

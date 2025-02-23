@@ -22,7 +22,10 @@ object StylesButton {
             equalsStyle = ElementColorStyleImpl(backgroundColor = VividGamboge, textColor = White),
         )
         .numberStyle(
-            baseStyle = ElementColorStyleImpl(backgroundColor = Onyx, textColor = White)
+            baseStyle = ElementColorStyleImpl(backgroundColor = Onyx, textColor = White),
+        )
+        .parenthesisStyle(
+            baseStyle = ElementColorStyleImpl(backgroundColor = Onyx, textColor = White),
         )
         .build()
 }

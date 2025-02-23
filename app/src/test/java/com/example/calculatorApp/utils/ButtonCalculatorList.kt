@@ -4,6 +4,7 @@ import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorParenthesis
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
 
 object ButtonCalculatorList {
@@ -23,10 +24,15 @@ object ButtonCalculatorList {
         .mapNotNull { it.objectInstance }
         .toTypedArray()
 
+    val parenthesis: Array<ButtonCalculatorParenthesis> = ButtonCalculatorParenthesis::class.sealedSubclasses
+        .mapNotNull { it.objectInstance }
+        .toTypedArray()
+
     val allButtons: Array<Button> = arrayOf(
         *binary,
         *unary,
         *controls,
         *numbers,
+        *parenthesis,
     )
 }

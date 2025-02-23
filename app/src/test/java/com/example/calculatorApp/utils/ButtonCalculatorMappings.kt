@@ -4,6 +4,7 @@ import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorParenthesis
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
 import com.example.calculatorApp.model.symbols.SymbolButton
 import com.example.calculatorApp.ui.theme.Onyx
@@ -82,6 +83,16 @@ object ButtonCalculatorMappings {
         ButtonCalculatorNumber.Nine to SymbolButton.NINE
     )
 
+    val parenthesisColorMap: Map<ButtonCalculatorParenthesis, Any> = mapOf(
+        ButtonCalculatorParenthesis.OpenParenthesis to Onyx,
+        ButtonCalculatorParenthesis.CloseParenthesis to Onyx,
+    )
+
+    val parenthesisSymbolMap: Map<ButtonCalculatorParenthesis, SymbolButton> = mapOf(
+        ButtonCalculatorParenthesis.OpenParenthesis to SymbolButton.OPEN_PARENT,
+        ButtonCalculatorParenthesis.CloseParenthesis to SymbolButton.CLOSE_PARENT,
+    )
+
     val buttonButtonMap: Map<Button, Button> = mapOf(
         ButtonCalculatorBinary.Addition to ButtonCalculatorBinary.Addition,
         ButtonCalculatorBinary.Subtraction to ButtonCalculatorBinary.Subtraction,
@@ -106,5 +117,8 @@ object ButtonCalculatorMappings {
         ButtonCalculatorNumber.Seven to ButtonCalculatorNumber.Seven,
         ButtonCalculatorNumber.Eight to ButtonCalculatorNumber.Eight,
         ButtonCalculatorNumber.Nine to ButtonCalculatorNumber.Nine,
+
+        ButtonCalculatorParenthesis.CloseParenthesis to ButtonCalculatorParenthesis.CloseParenthesis,
+        ButtonCalculatorParenthesis.OpenParenthesis to ButtonCalculatorParenthesis.OpenParenthesis,
     )
 }

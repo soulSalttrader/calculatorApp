@@ -9,6 +9,7 @@ import com.example.calculatorApp.utils.ButtonCalculatorList.allButtons
 import com.example.calculatorApp.utils.ButtonCalculatorList.binary
 import com.example.calculatorApp.utils.ButtonCalculatorList.controls
 import com.example.calculatorApp.utils.ButtonCalculatorList.numbers
+import com.example.calculatorApp.utils.ButtonCalculatorList.parenthesis
 import com.example.calculatorApp.utils.ButtonCalculatorList.unary
 import com.example.calculatorApp.utils.ButtonCalculatorMappings
 import org.junit.jupiter.params.provider.Arguments
@@ -62,6 +63,16 @@ object TestArgumentsButton : TestArguments {
     fun provideNumberSymbols() = provideButtonSymbols(
         buttons = numbers,
         symbolMapping = { ButtonCalculatorMappings.numberSymbolMap[it] }
+    )
+
+    fun provideParenthesisColors() = provideButtonColors(
+        buttons = parenthesis,
+        colorMapping = { ButtonCalculatorMappings.parenthesisColorMap[it] ?: SilverGrey }
+    )
+
+    fun provideParenthesisSymbols() = provideButtonSymbols(
+        buttons = parenthesis,
+        symbolMapping = { ButtonCalculatorMappings.parenthesisSymbolMap[it] }
     )
 
     fun provideButtonButton() = provideButtonButtons(

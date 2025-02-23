@@ -7,18 +7,20 @@ enum class SymbolButton(
     @DrawableRes override val iconRes: Int? = null
 ) : Symbol {
 
-    // control
-    ALL_CLEAR("AC"),
-    CLEAR("C"),
-    PLUS_MINUS("±"),
-    PERCENT("%"),
-    DECIMAL(","),
-
-    // arithmetic
+    // binary
     DIVISION("÷"),
     MULTIPLICATION("×"),
     SUBTRACTION("-"),
     ADDITION("+"),
+
+    // unary
+    PLUS_MINUS("±"),
+    PERCENT("%"),
+
+    // control
+    ALL_CLEAR("AC"),
+    CLEAR("C"),
+    DECIMAL(","),
     EQUALS("="),
 
     // number
@@ -31,5 +33,9 @@ enum class SymbolButton(
     SIX("6"),
     SEVEN("7"),
     EIGHT("8"),
-    NINE("9");
+    NINE("9"),
+
+    // parenthesis
+    OPEN_PARENT("("),
+    CLOSE_PARENT(")");
 }

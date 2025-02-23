@@ -30,6 +30,10 @@ class ButtonCategoryStyleBuilder : ElementCategoryStyleBuilder<ElementCategory<E
         categories[ButtonCategory.Number] = ButtonCategoryStyleNumber(baseStyle)
     }
 
+    fun parenthesisStyle(baseStyle: ElementColorStyle) = apply {
+        categories[ButtonCategory.Parenthesis] = ButtonCategoryStyleParenthesis(baseStyle)
+    }
+
     override fun build(): ElementCategoryStyleCollection<ElementColorStyle> {
         return ElementCategoryStyleCollectionImpl(categories)
     }

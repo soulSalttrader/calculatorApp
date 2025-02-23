@@ -9,4 +9,5 @@ sealed class ButtonCategory<BaseStyle : ElementColorStyle> : ElementCategory<Bas
     data object Unary : ButtonCategory<ElementColorStyle>()
     data object Control : ButtonCategory<ElementColorStyle>()
     data object Number : ButtonCategory<ElementColorStyle>()
+    data object Parenthesis : ButtonCategory<ElementColorStyle>()
 }
