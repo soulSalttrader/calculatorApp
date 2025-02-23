@@ -119,4 +119,43 @@ class ButtonCalculatorUnaryTest {
             expectedSymbol shouldBe button.symbol
         }
     }
+
+
+    @Nested
+    inner class IsPrefix {
+
+        // Arrange: Setup test data (button instance and expected value)
+        private fun provideArguments(): Stream<Arguments> {
+            return TestArgumentsButton.provideIsPrefix()
+        }
+
+        @ParameterizedTest
+        @MethodSource("provideArguments")
+        fun `should return true for prefix unary operation`(
+            button: ButtonCalculatorUnary,
+            expected: Boolean,
+        ) {
+            // Act & Asset::
+            expected shouldBe button.isPrefix()
+        }
+    }
+
+    @Nested
+    inner class IsSuffix {
+
+        // Arrange: Setup test data (button instance and expected value)
+        private fun provideArguments(): Stream<Arguments> {
+            return TestArgumentsButton.provideIsSuffix()
+        }
+
+        @ParameterizedTest
+        @MethodSource("provideArguments")
+        fun `should return true for suffix unary operation`(
+            button: ButtonCalculatorUnary,
+            expected: Boolean,
+        ) {
+            // Act & Asset::
+            expected shouldBe button.isSuffix()
+        }
+    }
 }

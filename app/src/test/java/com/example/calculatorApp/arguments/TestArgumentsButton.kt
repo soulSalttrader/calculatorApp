@@ -1,7 +1,5 @@
 package com.example.calculatorApp.arguments
 
-import com.example.calculatorApp.model.elements.button.Button
-import com.example.calculatorApp.model.symbols.SymbolButton
 import com.example.calculatorApp.ui.theme.Onyx
 import com.example.calculatorApp.ui.theme.SilverGrey
 import com.example.calculatorApp.ui.theme.VividGamboge
@@ -16,67 +14,73 @@ import org.junit.jupiter.params.provider.Arguments
 
 object TestArgumentsButton : TestArguments {
 
-    private fun <T> provideButtonColors(buttons: Array<T>, colorMapping: (T) -> Any) =
-        buttons.map { button -> Arguments.of(button, colorMapping(button)) }.stream()
+    private fun <T, R> provideButtonProperties(
+        buttons: Array<T>,
+        propertyMapping: (T) -> R
+    ) = buttons.map { button -> Arguments.of(button, propertyMapping(button)) }.stream()
 
-    private fun <T> provideButtonSymbols(buttons: Array<T>, symbolMapping: (T) -> SymbolButton?) =
-        buttons.map { button -> Arguments.of(button, symbolMapping(button)) }.stream()
-
-    private fun <T> provideButtonButtons(buttons: Array<T>, buttonMapping: (T) -> Button?) =
-        buttons.map { button -> Arguments.of(button, buttonMapping(button)) }.stream()
-
-    fun provideArithmeticColors() = provideButtonColors(
+    fun provideArithmeticColors() = provideButtonProperties(
         buttons = binary,
-        colorMapping = { ButtonCalculatorMappings.binaryColorMap[it] ?: VividGamboge }
+        propertyMapping = { ButtonCalculatorMappings.binaryColorMap[it] ?: VividGamboge }
     )
 
-    fun provideArithmeticSymbols() = provideButtonSymbols(
+    fun provideArithmeticSymbols() = provideButtonProperties(
         buttons = binary,
-        symbolMapping = { ButtonCalculatorMappings.binarySymbolMap[it] }
+        propertyMapping = { ButtonCalculatorMappings.binarySymbolMap[it] }
     )
 
-    fun provideUnaryColors() = provideButtonColors(
+    fun provideUnaryColors() = provideButtonProperties(
         buttons = unary,
-        colorMapping = { ButtonCalculatorMappings.unaryColorMap[it] ?: SilverGrey }
+        propertyMapping = { ButtonCalculatorMappings.unaryColorMap[it] ?: SilverGrey }
     )
 
-    fun provideUnarySymbols() = provideButtonSymbols(
+    fun provideUnarySymbols() = provideButtonProperties(
         buttons = unary,
-        symbolMapping = { ButtonCalculatorMappings.unarySymbolMap[it] }
+        propertyMapping = { ButtonCalculatorMappings.unarySymbolMap[it] }
     )
 
-    fun provideControlColors() = provideButtonColors(
+    fun provideIsPrefix() = provideButtonProperties(
+        buttons = unary,
+        propertyMapping = { ButtonCalculatorMappings.unaryIsPrefix[it] }
+    )
+
+    fun provideIsSuffix() = provideButtonProperties(
+        buttons = unary,
+        propertyMapping = { ButtonCalculatorMappings.unaryIsSuffix[it] }
+    )
+
+    fun provideControlColors() = provideButtonProperties(
         buttons = controls,
-        colorMapping = { ButtonCalculatorMappings.controlColorMap[it] ?: SilverGrey }
+        propertyMapping = { ButtonCalculatorMappings.controlColorMap[it] ?: SilverGrey }
     )
 
-    fun provideControlSymbols() = provideButtonSymbols(
+    fun provideControlSymbols() = provideButtonProperties(
         buttons = controls,
-        symbolMapping = { ButtonCalculatorMappings.controlSymbolMap[it] }
+        propertyMapping = { ButtonCalculatorMappings.controlSymbolMap[it] }
     )
 
-    fun provideNumberColors() = provideButtonColors(
+    fun provideNumberColors() = provideButtonProperties(
         buttons = numbers,
-        colorMapping = { ButtonCalculatorMappings.numberColorMap[it] ?: Onyx }
+        propertyMapping = { ButtonCalculatorMappings.numberColorMap[it] ?: Onyx }
     )
 
-    fun provideNumberSymbols() = provideButtonSymbols(
+    fun provideNumberSymbols() = provideButtonProperties(
         buttons = numbers,
-        symbolMapping = { ButtonCalculatorMappings.numberSymbolMap[it] }
+        propertyMapping = { ButtonCalculatorMappings.numberSymbolMap[it] }
     )
 
-    fun provideParenthesisColors() = provideButtonColors(
+    fun provideParenthesisColors() = provideButtonProperties(
         buttons = parenthesis,
-        colorMapping = { ButtonCalculatorMappings.parenthesisColorMap[it] ?: SilverGrey }
+        propertyMapping = { ButtonCalculatorMappings.parenthesisColorMap[it] ?: SilverGrey }
     )
 
-    fun provideParenthesisSymbols() = provideButtonSymbols(
+    fun provideParenthesisSymbols() = provideButtonProperties(
         buttons = parenthesis,
-        symbolMapping = { ButtonCalculatorMappings.parenthesisSymbolMap[it] }
+        propertyMapping = { ButtonCalculatorMappings.parenthesisSymbolMap[it] }
     )
 
-    fun provideButtonButton() = provideButtonButtons(
+    fun provideButtonButton() = provideButtonProperties(
         buttons = allButtons,
-        buttonMapping = { ButtonCalculatorMappings.buttonButtonMap[it] }
+        propertyMapping = { ButtonCalculatorMappings.buttonButtonMap[it] }
     )
 }
