@@ -2,6 +2,7 @@ package com.example.calculatorApp.domain
 
 import com.example.calculatorApp.arguments.TestArgumentsEngineState
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.state.CalculatorState
 import com.example.calculatorApp.utils.Constants.MAX_NUM_LENGTH
 import io.kotest.matchers.doubles.plusOrMinus
@@ -79,7 +80,7 @@ class EngineStateStandardTest {
                 lastInput = lastInput,
                 lastOperator = arithmetic,
                 lastResult = lastInput,
-                activeButton = ButtonCalculatorBinary.Equals
+                activeButton = ButtonCalculatorControl.Equals
             )
 
             // Act:

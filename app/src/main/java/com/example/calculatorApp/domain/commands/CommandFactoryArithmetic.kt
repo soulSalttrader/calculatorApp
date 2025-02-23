@@ -8,10 +8,6 @@ class CommandFactoryArithmetic(
 ) : CommandFactorySub<ButtonCalculatorBinary> {
 
     override fun create(button: ButtonCalculatorBinary): Command {
-
-        return when (button) {
-            is ButtonCalculatorBinary.Equals -> CommandApplyEquals(engineState)
-            else -> CommandHandlerArithmetic(engineState, button)
-        }
+        return CommandHandlerArithmetic(engineState, button)
     }
 }

@@ -34,7 +34,6 @@ class EngineMathStandard : EngineMath {
             is ButtonCalculatorBinary.Subtraction -> operandLeft - operandRight
             is ButtonCalculatorBinary.Multiplication -> operandLeft * operandRight
             is ButtonCalculatorBinary.Division -> safeDivide(operandLeft, operandRight)
-            else -> throw IllegalArgumentException("Unknown operation.")
         }
     }
 

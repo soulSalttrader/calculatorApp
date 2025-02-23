@@ -2,12 +2,12 @@ package com.example.calculatorApp.domain
 
 import com.example.calculatorApp.arguments.TestArgumentsEngineMath
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.doubles.plusOrMinus
 import io.kotest.matchers.doubles.shouldBeNaN
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -202,20 +202,14 @@ class EngineMathStandardTest {
             }
         }
 
+        @Disabled("Deprecated: No longer relevant.")
         @Test
         fun `should throw an exception for an unknown operation`() {
             // Arrange:
-            val operandLeft = 1.0
-            val operandRight = 2.0
-            val unknownOperation = ButtonCalculatorBinary.Equals
 
             // Act:
-            val exception = shouldThrow<IllegalArgumentException> {
-                engineMath.applyArithmetic(operandLeft, unknownOperation, operandRight)
-            }
 
             // Assert: Validate the exception message
-            exception.message shouldBe "Unknown operation."
         }
     }
 }

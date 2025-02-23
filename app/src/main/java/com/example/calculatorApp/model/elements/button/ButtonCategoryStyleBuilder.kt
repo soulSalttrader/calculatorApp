@@ -14,10 +14,11 @@ class ButtonCategoryStyleBuilder : ElementCategoryStyleBuilder<ElementCategory<E
 
     fun controlStyle(
         baseStyle: ElementColorStyle,
-        decimalStyle: ElementColorStyle? = null
+        decimalStyle: ElementColorStyle? = null,
+        equalsStyle: ElementColorStyle? = null,
     ) = apply {
         categories[ButtonCategory.Control] = ButtonCategoryStyleControl(
-            baseStyle, decimalStyle ?: baseStyle
+            baseStyle, decimalStyle ?: baseStyle, equalsStyle ?: baseStyle
         )
     }
 

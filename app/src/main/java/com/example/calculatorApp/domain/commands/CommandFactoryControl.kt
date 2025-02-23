@@ -13,6 +13,7 @@ class CommandFactoryControl(
             is ButtonCalculatorControl.Decimal -> CommandEnterDecimal(engineState)
             is ButtonCalculatorControl.AllClear -> CommandApplyClearAll(engineState)
             is ButtonCalculatorControl.Clear -> CommandApplyClear(engineState)
+            is ButtonCalculatorControl.Equals -> CommandApplyEquals(engineState)
         }
     }
 }

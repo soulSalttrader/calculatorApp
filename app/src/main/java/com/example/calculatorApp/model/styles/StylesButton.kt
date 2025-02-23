@@ -15,7 +15,8 @@ object StylesButton {
         )
         .controlStyle(
             baseStyle = ElementColorStyleImpl(backgroundColor = SilverGrey, textColor = Onyx),
-            decimalStyle = ElementColorStyleImpl(backgroundColor = Onyx, textColor = White)
+            decimalStyle = ElementColorStyleImpl(backgroundColor = Onyx, textColor = White),
+            equalsStyle = ElementColorStyleImpl(backgroundColor = VividGamboge, textColor = White),
         )
         .numberStyle(
             baseStyle = ElementColorStyleImpl(backgroundColor = Onyx, textColor = White)

@@ -13,6 +13,7 @@ import com.example.calculatorApp.utils.ButtonCalculatorList.allButtons
 import com.example.calculatorApp.utils.ButtonCalculatorList.arithmetics
 import com.example.calculatorApp.utils.ButtonCalculatorList.controls
 import com.example.calculatorApp.utils.ButtonCalculatorList.numbers
+import com.example.calculatorApp.utils.ButtonCalculatorList.unary
 import org.junit.jupiter.params.provider.Arguments
 import java.util.stream.Stream
 
@@ -23,16 +24,19 @@ object TestArgumentsButtonStyleBuilder : TestArguments {
         val numbersBaseStyle = ElementColorStyleImpl(backgroundColor = Onyx, textColor = White)
         val arithmeticsBaseStyle = ElementColorStyleImpl(backgroundColor = VividGamboge, textColor = White)
         val decimalStyle = ElementColorStyleImpl(backgroundColor = Onyx, textColor = White)
+        val equalsStyle = ElementColorStyleImpl(backgroundColor = VividGamboge, textColor = White)
 
         val testedStyle = style ?: StylesButton.iButtonStyle
 
         val expectedStyles = mapOf(
+            *arithmetics.map { it to arithmeticsBaseStyle }.toTypedArray(),
+            *unary.map { it to controlsBaseStyle }.toTypedArray(),
             *controls.map { it to controlsBaseStyle }.toTypedArray(),
             *numbers.map { it to numbersBaseStyle }.toTypedArray(),
-            *arithmetics.map { it to arithmeticsBaseStyle }.toTypedArray(),
 
             // base style overridden for control buttons
             ButtonCalculatorControl.Decimal to decimalStyle,
+            ButtonCalculatorControl.Equals to equalsStyle,
         )
 
         return allButtons.map { button ->

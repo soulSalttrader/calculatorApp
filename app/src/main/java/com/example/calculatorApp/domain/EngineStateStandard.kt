@@ -1,6 +1,7 @@
 package com.example.calculatorApp.domain
 
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.state.CalculatorState
 import com.example.calculatorApp.model.symbols.SymbolButton
 import com.example.calculatorApp.utils.Constants.MAX_NUM_LENGTH
@@ -10,7 +11,7 @@ class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
         override fun handleArithmetic(state: CalculatorState, arithmetic: ButtonCalculatorBinary): CalculatorState {
         return state.modifyWith(
             { state.lastInput == "NaN" || state.expression.contains("NaN") } to { this },
-            { state.activeButton == ButtonCalculatorBinary.Equals } to { state.copy(lastOperator = arithmetic, lastInput = "", lastResult = null) },
+            { state.activeButton == ButtonCalculatorControl.Equals } to { state.copy(lastOperator = arithmetic, lastInput = "", lastResult = null) },
             { state.lastOperator != null && state.lastInput.isNotBlank() } to {
                 val newState = applyArithmetic(state)
                 enterArithmetic(newState, arithmetic)
@@ -66,7 +67,7 @@ class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
                     lastInput = result.toString(),
                     expression = listOf(result.toString(), operation.symbol.label),
                     subResult = operandRight.toString(), // Save the last entered number
-                    activeButton = ButtonCalculatorBinary.Equals
+                    activeButton = ButtonCalculatorControl.Equals
                 )
             }
         )
@@ -101,7 +102,7 @@ class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
     override fun applyClear(state: CalculatorState): CalculatorState {
         return state.modifyWith(
 //            { true } to { clearAll() },
-            { state.activeButton == ButtonCalculatorBinary.Equals } to { applyClearAll(state) },
+            { state.activeButton == ButtonCalculatorControl.Equals } to { applyClearAll(state) },
             { state.expression.lastOrNull()?.toDoubleOrNull()?.isNaN() == true } to { applyClearAll(state) },
             { state.lastInput.dropLast(1).toDoubleOrNull()?.isNaN() == true } to { applyClearAll(state) },
             { state.expression.isNotEmpty() } to { state.copy(expression = expression.dropLast(1)) },

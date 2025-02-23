@@ -18,7 +18,7 @@ object ButtonCalculatorMappings {
         ButtonCalculatorBinary.Subtraction to VividGamboge,
         ButtonCalculatorBinary.Multiplication to VividGamboge,
         ButtonCalculatorBinary.Division to VividGamboge,
-        ButtonCalculatorBinary.Equals to VividGamboge
+
     )
 
     // Map for ButtonCalculatorArithmetic to SymbolButton
@@ -27,7 +27,6 @@ object ButtonCalculatorMappings {
         ButtonCalculatorBinary.Subtraction to SymbolButton.SUBTRACTION,
         ButtonCalculatorBinary.Multiplication to SymbolButton.MULTIPLICATION,
         ButtonCalculatorBinary.Division to SymbolButton.DIVISION,
-        ButtonCalculatorBinary.Equals to SymbolButton.EQUALS
     )
 
     val unaryColorMap: Map<ButtonCalculatorUnary, Any> = mapOf(
@@ -45,12 +44,14 @@ object ButtonCalculatorMappings {
         ButtonCalculatorControl.Decimal to Onyx,
         ButtonCalculatorControl.AllClear to SilverGrey,
         ButtonCalculatorControl.Clear to SilverGrey,
+        ButtonCalculatorControl.Equals to VividGamboge,
     )
 
     val controlSymbolMap: Map<ButtonCalculatorControl, SymbolButton> = mapOf(
         ButtonCalculatorControl.AllClear to SymbolButton.ALL_CLEAR,
         ButtonCalculatorControl.Clear to SymbolButton.CLEAR,
-        ButtonCalculatorControl.Decimal to SymbolButton.DECIMAL
+        ButtonCalculatorControl.Decimal to SymbolButton.DECIMAL,
+        ButtonCalculatorControl.Equals to SymbolButton.EQUALS
     )
 
     // Map for ButtonCalculatorNumber to Color (future-proofing)
@@ -86,7 +87,6 @@ object ButtonCalculatorMappings {
         ButtonCalculatorBinary.Subtraction to ButtonCalculatorBinary.Subtraction,
         ButtonCalculatorBinary.Multiplication to ButtonCalculatorBinary.Multiplication,
         ButtonCalculatorBinary.Division to ButtonCalculatorBinary.Division,
-        ButtonCalculatorBinary.Equals to ButtonCalculatorBinary.Equals,
 
         ButtonCalculatorUnary.Sign to ButtonCalculatorUnary.Sign,
         ButtonCalculatorUnary.Percentage to ButtonCalculatorUnary.Percentage,
@@ -94,6 +94,7 @@ object ButtonCalculatorMappings {
         ButtonCalculatorControl.AllClear to ButtonCalculatorControl.AllClear,
         ButtonCalculatorControl.Clear to ButtonCalculatorControl.Clear,
         ButtonCalculatorControl.Decimal to ButtonCalculatorControl.Decimal,
+        ButtonCalculatorControl.Equals to ButtonCalculatorControl.Equals,
 
         ButtonCalculatorNumber.Zero to ButtonCalculatorNumber.Zero,
         ButtonCalculatorNumber.One to ButtonCalculatorNumber.One,

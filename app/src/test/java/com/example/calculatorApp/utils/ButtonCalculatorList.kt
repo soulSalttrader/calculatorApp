@@ -4,6 +4,7 @@ import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
 
 object ButtonCalculatorList {
     val arithmetics: Array<ButtonCalculatorBinary> = ButtonCalculatorBinary::class.sealedSubclasses
@@ -18,9 +19,14 @@ object ButtonCalculatorList {
         .mapNotNull { it.objectInstance }
         .toTypedArray()
 
+    val unary: Array<ButtonCalculatorUnary> = ButtonCalculatorUnary::class.sealedSubclasses
+        .mapNotNull { it.objectInstance }
+        .toTypedArray()
+
     val allButtons: Array<Button> = arrayOf(
         *arithmetics,
         *controls,
         *numbers,
+        *unary,
     )
 }

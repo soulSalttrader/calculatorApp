@@ -30,20 +30,16 @@ class CommandFactoryArithmeticTest {
         // Arrange:
         fun provideArguments(): Array<ButtonCalculatorBinary> {
             return ButtonCalculatorList.arithmetics
-                .filterNot { button -> button == ButtonCalculatorBinary.Equals }
-                .toTypedArray()
         }
 
+        @Disabled("Deprecated")
         @Test
         fun `should create CommandApplyArithmetic when Equals button is pressed`() {
             // Arrange:
-            val equalButton = ButtonCalculatorBinary.Equals
 
             // Act:
-            val command = factory.create(equalButton)
 
             // Assert:
-            command.shouldBeInstanceOf<CommandApplyEquals>()
         }
 
         @Disabled("deprecated")
