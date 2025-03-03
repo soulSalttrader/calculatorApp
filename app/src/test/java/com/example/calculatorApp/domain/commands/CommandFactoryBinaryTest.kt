@@ -2,6 +2,7 @@ package com.example.calculatorApp.domain.commands
 
 import com.example.calculatorApp.domain.EngineState
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.utils.ButtonCalculatorList
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.clearMocks
@@ -27,32 +28,44 @@ class CommandFactoryBinaryTest {
     @Nested
     inner class Create {
 
-        // Arrange:
-        fun provideArguments(): Array<ButtonCalculatorBinary> {
-            return ButtonCalculatorList.binary
-        }
-
-        @Disabled("Deprecated")
         @Test
-        fun `should create CommandApplyArithmetic when Equals button is pressed`() {
+        fun `should create CommandHandlerBinary when Addition button is pressed`() {
             // Arrange:
-
-            // Act:
-
-            // Assert:
-        }
-
-        @Disabled("deprecated")
-        @ParameterizedTest
-        @MethodSource("provideArguments")
-        fun `should create CommandChain with applyArithmetic and EnterArithmetic for other Arithmetic buttons`(
-            button: ButtonCalculatorBinary
-        ) {
+            val button = ButtonCalculatorBinary.Addition
             // Act:
             val command = factory.create(button)
-
             // Assert:
-            command.shouldBeInstanceOf<CommandChain>()
+            command.shouldBeInstanceOf<CommandHandlerBinary>()
+        }
+
+        @Test
+        fun `should create CommandHandlerBinary when Subtraction button is pressed`() {
+            // Arrange:
+            val button = ButtonCalculatorBinary.Subtraction
+            // Act:
+            val command = factory.create(button)
+            // Assert:
+            command.shouldBeInstanceOf<CommandHandlerBinary>()
+        }
+
+        @Test
+        fun `should create CommandHandlerBinary when Multiplication button is pressed`() {
+            // Arrange:
+            val button = ButtonCalculatorBinary.Multiplication
+            // Act:
+            val command = factory.create(button)
+            // Assert:
+            command.shouldBeInstanceOf<CommandHandlerBinary>()
+        }
+
+        @Test
+        fun `should create CommandHandlerBinary when Division button is pressed`() {
+            // Arrange:
+            val button = ButtonCalculatorBinary.Division
+            // Act:
+            val command = factory.create(button)
+            // Assert:
+            command.shouldBeInstanceOf<CommandHandlerBinary>()
         }
     }
 }
