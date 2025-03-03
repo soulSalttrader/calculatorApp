@@ -42,12 +42,12 @@ object ButtonCalculatorMappings {
 
     val unaryIsPrefix: Map<ButtonCalculatorUnary, Boolean> = mapOf(
         ButtonCalculatorUnary.Sign to true,
-        ButtonCalculatorUnary.Percentage to true,
+        ButtonCalculatorUnary.Percentage to false,
     )
 
     val unaryIsSuffix: Map<ButtonCalculatorUnary, Boolean> = mapOf(
         ButtonCalculatorUnary.Sign to false,
-        ButtonCalculatorUnary.Percentage to false,
+        ButtonCalculatorUnary.Percentage to true,
     )
 
     // Map for ButtonCalculatorControl to color and symbol
