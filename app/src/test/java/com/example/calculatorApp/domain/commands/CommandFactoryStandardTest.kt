@@ -131,11 +131,11 @@ class CommandFactoryStandardTest {
 
         @ParameterizedTest
         @MethodSource("provideNumbers")
-        fun `should create CommandEnterNumber through numberCommandFactory when ButtonCalculatorNumber button is pressed`(
+        fun `should create CommandHandlerControl through numberCommandFactory when ButtonCalculatorNumber button is pressed`(
             button: ButtonCalculatorNumber
         ) {
-            // Prepare the expected CommandEnterNumber
-            val expectedCommand = mockk<CommandEnterNumber>()
+            // Prepare the expected CommandHandlerControl
+            val expectedCommand = mockk<CommandHandlerControl>()
 
             // Mock the `create` method for CommandFactoryNumber to return the expected command
             every { numberFactory.create(button) } returns expectedCommand

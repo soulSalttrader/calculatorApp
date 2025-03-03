@@ -3,6 +3,7 @@ package com.example.calculatorApp.domain
 import com.example.calculatorApp.arguments.TestArgumentsEngineState
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
 import com.example.calculatorApp.model.state.CalculatorState
 import com.example.calculatorApp.utils.Constants.MAX_NUM_LENGTH
 import io.kotest.matchers.doubles.plusOrMinus
@@ -359,16 +360,13 @@ class EngineStateStandardTest {
         private lateinit var control: ButtonCalculatorControl
         private lateinit var arithmetic: ButtonCalculatorBinary
 
-        @BeforeEach
-        fun setUp() {
-
-        }
         @Nested
         inner class EnterDecimal {
 
             @BeforeEach
             fun setUp() {
                 control = ButtonCalculatorControl.Decimal
+                arithmetic = ButtonCalculatorBinary.Multiplication
             }
 
             @Test
@@ -660,80 +658,87 @@ class EngineStateStandardTest {
     }
 
     @Nested
-    inner class EnterNumber {
+    inner class HandleNumber {
 
         private lateinit var arithmetic: ButtonCalculatorBinary
+        private lateinit var number1: ButtonCalculatorNumber
+        private lateinit var number2: ButtonCalculatorNumber
 
         @BeforeEach
         fun setUp() {
+            number1 = ButtonCalculatorNumber.Nine
+            number2 = ButtonCalculatorNumber.Three
             arithmetic = ButtonCalculatorBinary.Multiplication
         }
+        @Nested
+        inner class EnterNumber {
 
-        @Test
-        fun `should add a number to an empty lastInput`() {
-            // Act:
-            val newState = engine.enterNumber(state, 329)
-            // Assert:
-            329 shouldBeEqual newState.lastInput.toInt()
-        }
+            @Test
+            fun `should add a number to an empty lastInput`() {
+                // Act:
+                val newState = engine.handleNumber(state, number1)
+                // Assert:
+                number1.symbol.label.toInt() shouldBeEqual newState.lastInput.toInt()
+            }
 
-        @Test
-        fun `should append a number to the lastInput`() {
-            // Arrange:
-            val initialState = state.copy(lastInput = "329")
-            // Act:
-            val newState = engine.enterNumber(initialState, 55)
-            // Assert:
-            32955 shouldBeEqual newState.lastInput.toInt()
-        }
+            @Test
+            fun `should append a number to the lastInput`() {
+                // Arrange:
+                val initialState = state.copy(lastInput = number1.symbol.label)
+                // Act:
+                val newState = engine.handleNumber(initialState, number2)
+                // Assert:
+                (number1.symbol.label + number2.symbol.label) shouldBeEqual newState.lastInput
+            }
 
-        @Test
-        fun `should not add a number if max length is reached`() {
-            // Arrange:
-            val initialState = state.copy(lastInput = "1".repeat(MAX_NUM_LENGTH))
-            // Act:
-            val newState = engine.enterNumber(initialState, 55)
-            // Assert:
-            1111111111 shouldBeEqual newState.lastInput.toInt()
-        }
+            @Test
+            fun `should not add a number if max length is reached`() {
+                // Arrange:
+                val initialState = state.copy(lastInput = "1".repeat(MAX_NUM_LENGTH))
+                // Act:
+                val newState = engine.handleNumber(initialState, number1)
+                // Assert:
+                1111111111 shouldBeEqual newState.lastInput.toInt()
+            }
 
-        @ParameterizedTest
-        @CsvSource(
-            "23,'NaN'",
-        )
-        fun `should return same state when trying to enter number on NaN lastInput`(
-            expression: String,
-            lastInput: String
-        ) {
-            // Arrange:
-            val operandRightOrNaN = lastInput.toDoubleOrNull() ?: Double.NaN
-            val initialState = state.copy(expression = listOf(expression), lastOperator = arithmetic, lastInput = operandRightOrNaN.toString())
+            @ParameterizedTest
+            @CsvSource(
+                "23,'NaN'",
+            )
+            fun `should return same state when trying to enter number on NaN lastInput`(
+                expression: String,
+                lastInput: String
+            ) {
+                // Arrange:
+                val operandRightOrNaN = lastInput.toDoubleOrNull() ?: Double.NaN
+                val initialState = state.copy(expression = listOf(expression), lastOperator = arithmetic, lastInput = operandRightOrNaN.toString())
 
-            // Act:
-            val newState = engine.enterNumber(initialState,329)
+                // Act:
+                val newState = engine.handleNumber(initialState,number1)
 
-            // Assert:
-            initialState shouldBe newState
-        }
+                // Assert:
+                initialState shouldBe newState
+            }
 
 
-        @ParameterizedTest
-        @CsvSource(
-            "'NaN', 23",
-        )
-        fun `should return same state when trying to enter number on NaN expression`(
-            expression: String,
-            lastInput: String
-        ) {
-            // Arrange:
-            val operandLeftOrNaN = lastInput.toDoubleOrNull() ?: Double.NaN
-            val initialState = state.copy(expression = listOf(operandLeftOrNaN.toString()), lastOperator = arithmetic, lastInput = lastInput)
+            @ParameterizedTest
+            @CsvSource(
+                "'NaN', 23",
+            )
+            fun `should return same state when trying to enter number on NaN expression`(
+                expression: String,
+                lastInput: String
+            ) {
+                // Arrange:
+                val operandLeftOrNaN = lastInput.toDoubleOrNull() ?: Double.NaN
+                val initialState = state.copy(expression = listOf(operandLeftOrNaN.toString()), lastOperator = arithmetic, lastInput = lastInput)
 
-            // Act:
-            val newState = engine.enterNumber(initialState,329)
+                // Act:
+                val newState = engine.handleNumber(initialState,number1)
 
-            // Assert:
-            initialState.shouldBeEqualToIgnoringFields(newState, CalculatorState::lastInput)
+                // Assert:
+                initialState.shouldBeEqualToIgnoringFields(newState, CalculatorState::lastInput)
+            }
         }
     }
 

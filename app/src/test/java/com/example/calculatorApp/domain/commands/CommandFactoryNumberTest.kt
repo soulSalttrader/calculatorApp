@@ -38,7 +38,7 @@ class CommandFactoryNumberTest {
             // Act:
             val command = factory.create(button)
             // Assert:
-            command.shouldBeInstanceOf<CommandEnterNumber>()
+            command.shouldBeInstanceOf<CommandHandlerNumber>()
         }
     }
 }

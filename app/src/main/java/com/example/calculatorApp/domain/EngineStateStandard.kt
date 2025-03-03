@@ -1,8 +1,8 @@
 package com.example.calculatorApp.domain
 
-import android.util.Log
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
 import com.example.calculatorApp.model.state.CalculatorState
 import com.example.calculatorApp.model.symbols.SymbolButton
 import com.example.calculatorApp.utils.Constants.MAX_NUM_LENGTH
@@ -37,6 +37,21 @@ class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
         )
     }
 
+    override fun handleNumber(state: CalculatorState, number: ButtonCalculatorNumber): CalculatorState {
+        return state.modifyWith(
+            { state.lastInput.toDoubleOrNull()?.isNaN() == true } to { this },
+            { state.expression.isEmpty() && state.lastInput == "0" } to {
+                state.copy(lastInput = number.symbol.label)
+            },
+            { state.lastInput.length >= MAX_NUM_LENGTH } to { this },
+            { true } to {
+                state.copy(
+                    lastInput = state.lastInput + number.symbol.label,
+                )
+            }
+        )
+    }
+
     override fun enterArithmetic(state: CalculatorState, arithmetic: ButtonCalculatorBinary): CalculatorState {
         return state.modifyWith(
             { state.lastOperator != null } to { state.copy(lastOperator = arithmetic) },
@@ -61,23 +76,6 @@ class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
                     lastResult = result.toString(),
                     expression = state.expression.dropLast(1),
                     lastOperator = null
-                )
-            }
-        )
-    }
-
-
-
-    override fun enterNumber(state: CalculatorState, number: Int): CalculatorState {
-        return state.modifyWith(
-            { state.lastInput.toDoubleOrNull()?.isNaN() == true } to { this },
-            { state.expression.isEmpty() && state.lastInput == "0" } to {
-                state.copy(lastInput = number.toString())
-            },
-            { state.lastInput.length >= MAX_NUM_LENGTH } to { this },
-            { true } to {
-                state.copy(
-                    lastInput = state.lastInput + number.toString(),
                 )
             }
         )
