@@ -7,7 +7,6 @@ import io.kotest.matchers.doubles.shouldBeNaN
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -200,16 +199,6 @@ class EngineMathStandardTest {
             result.apply {
                 if (expectedDouble.isNaN()) shouldBeNaN() else this shouldBe expectedDouble
             }
-        }
-
-        @Disabled("Deprecated: No longer relevant.")
-        @Test
-        fun `should throw an exception for an unknown operation`() {
-            // Arrange:
-
-            // Act:
-
-            // Assert: Validate the exception message
         }
     }
 }

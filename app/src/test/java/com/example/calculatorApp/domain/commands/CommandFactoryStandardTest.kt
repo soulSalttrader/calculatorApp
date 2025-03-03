@@ -58,11 +58,11 @@ class CommandFactoryStandardTest {
 
         @ParameterizedTest
         @MethodSource("provideArithmetics")
-        fun `should create CommandApplyBinary or CommandChain through binaryCommandFactory when ButtonCalculatorBinary button is pressed`(
+        fun `should create corresponding binary command through binaryCommandFactory when ButtonCalculatorBinary button is pressed`(
             button: ButtonCalculatorBinary
         ) {
-            // Prepare the expected CommandEnterBinary
-            val expectedCommand = mockk<CommandEnterBinary>()
+            // Prepare the expected CommandHandlerBinary
+            val expectedCommand = mockk<CommandHandlerBinary>()
 
             // Mock the `create` method for CommandFactoryArithmetic to return the expected command
             every { binaryFactory.create(button) } returns expectedCommand
@@ -131,7 +131,7 @@ class CommandFactoryStandardTest {
 
         @ParameterizedTest
         @MethodSource("provideNumbers")
-        fun `should create CommandHandlerControl through numberCommandFactory when ButtonCalculatorNumber button is pressed`(
+        fun `should create CommandHandlerNumber through numberCommandFactory when ButtonCalculatorNumber button is pressed`(
             button: ButtonCalculatorNumber
         ) {
             // Prepare the expected CommandHandlerNumber

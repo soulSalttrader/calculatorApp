@@ -36,7 +36,7 @@ class CommandHandlerBinaryTest {
             command.execute(state)
 
             // Assert:
-            verify(exactly = 1) { engineState.handleArithmetic(state, binary) }
+            verify(exactly = 1) { engineState.handleBinary(state, binary) }
             confirmVerified(engineState)
         }
     }

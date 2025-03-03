@@ -11,32 +11,32 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-class CommandEnterBinaryTest {
-
-    private val engineState: EngineState = mockk(relaxed = true)
-    private val arithmetic = ButtonCalculatorBinary.Multiplication
-    private lateinit var state: CalculatorState
-    private lateinit var command: CommandEnterBinary
-
-    @BeforeEach
-    fun setUp() {
-        // Arrange:
-        clearMocks(engineState)
-        state = CalculatorState()
-        command = CommandEnterBinary(engineState, arithmetic)
-    }
-
-    @Nested
-    inner class Execute {
-
-        @Test
-        fun `should call enterArithmetic on engine`() {
-            // Act:
-            command.execute(state)
-
-            // Assert:
-            verify(exactly = 1) { engineState.enterArithmetic(state, arithmetic) }
-            confirmVerified(engineState)
-        }
-    }
-}
+//class CommandEnterBinaryTest {
+//
+//    private val engineState: EngineState = mockk(relaxed = true)
+//    private val arithmetic = ButtonCalculatorBinary.Multiplication
+//    private lateinit var state: CalculatorState
+//    private lateinit var command: CommandEnterBinary
+//
+//    @BeforeEach
+//    fun setUp() {
+//        // Arrange:
+//        clearMocks(engineState)
+//        state = CalculatorState()
+//        command = CommandEnterBinary(engineState, arithmetic)
+//    }
+//
+//    @Nested
+//    inner class Execute {
+//
+//        @Test
+//        fun `should call enterArithmetic on engine`() {
+//            // Act:
+//            command.execute(state)
+//
+//            // Assert:
+//            verify(exactly = 1) { engineState.enterArithmetic(state, arithmetic) }
+//            confirmVerified(engineState)
+//        }
+//    }
+//}

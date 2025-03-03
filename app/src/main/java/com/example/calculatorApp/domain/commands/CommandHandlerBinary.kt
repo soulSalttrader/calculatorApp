@@ -10,6 +10,6 @@ class CommandHandlerBinary(
 ) : Command {
 
     override fun execute(state: CalculatorState): CalculatorState {
-        return engineState.handleArithmetic(state, operation)
+        return engineState.handleBinary(state, operation)
     }
 }

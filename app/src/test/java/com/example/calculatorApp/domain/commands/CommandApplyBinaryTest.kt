@@ -10,31 +10,31 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-class CommandApplyBinaryTest {
-
-    private val engineState: EngineState = mockk(relaxed = true)
-    private lateinit var state: CalculatorState
-    private lateinit var command: CommandApplyBinary
-
-    @BeforeEach
-    fun setUp() {
-        // Arrange:
-        clearMocks(engineState)
-        state = CalculatorState()
-        command = CommandApplyBinary(engineState)
-    }
-
-    @Nested
-    inner class Execute {
-
-        @Test
-        fun `should call applyArithmetic on engine`() {
-            // Act:
-            command.execute(state)
-
-            // Assert:
-            verify(exactly = 1) { engineState.applyArithmetic(state) }
-            confirmVerified(engineState)
-        }
-    }
-}
+//class CommandApplyBinaryTest {
+//
+//    private val engineState: EngineState = mockk(relaxed = true)
+//    private lateinit var state: CalculatorState
+//    private lateinit var command: CommandApplyBinary
+//
+//    @BeforeEach
+//    fun setUp() {
+//        // Arrange:
+//        clearMocks(engineState)
+//        state = CalculatorState()
+//        command = CommandApplyBinary(engineState)
+//    }
+//
+//    @Nested
+//    inner class Execute {
+//
+//        @Test
+//        fun `should call applyArithmetic on engine`() {
+//            // Act:
+//            command.execute(state)
+//
+//            // Assert:
+//            verify(exactly = 1) { engineState.applyArithmetic(state) }
+//            confirmVerified(engineState)
+//        }
+//    }
+//}

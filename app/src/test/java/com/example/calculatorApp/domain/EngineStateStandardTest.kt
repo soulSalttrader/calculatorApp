@@ -14,7 +14,10 @@ import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotMatch
+import io.mockk.every
+import io.mockk.mockk
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -45,11 +48,11 @@ class EngineStateStandardTest {
     @Nested
     inner class HandleBinary {
 
-        private lateinit var arithmetic: ButtonCalculatorBinary
+        private lateinit var binary: ButtonCalculatorBinary
 
         @BeforeEach
         fun setUp() {
-            arithmetic = ButtonCalculatorBinary.Multiplication
+            binary = ButtonCalculatorBinary.Multiplication
         }
 
         @ParameterizedTest
@@ -65,7 +68,7 @@ class EngineStateStandardTest {
             val initialState = state.copy(expression = listOf(expression), lastInput = operandRightOrNaN.toString())
 
             // Act:
-            val stateNaN = engine.handleArithmetic(initialState, arithmetic)
+            val stateNaN = engine.handleBinary(initialState, binary)
 
             // Assert:
             stateNaN shouldBe initialState
@@ -83,60 +86,25 @@ class EngineStateStandardTest {
         ) {
             // Arrange:
             val initialState = CalculatorState(
-                expression = listOf (expression, arithmetic.toString()),
+                expression = listOf (expression, binary.toString()),
                 lastInput = lastInput,
-                lastOperator = arithmetic,
+                lastOperator = binary,
                 lastResult = lastInput,
                 activeButton = ButtonCalculatorControl.Equals
             )
 
             // Act:
-            val newState = engine.handleArithmetic(initialState, arithmetic)
+            val newState = engine.handleBinary(initialState, binary)
 
             // Assert:
             newState.shouldBeEqualToIgnoringFields(
                 initialState.copy(
-                    lastOperator = arithmetic,
+                    lastOperator = binary,
                     lastInput = "",
                     lastResult = null,
                 ),
                 CalculatorState::activeButton
             )
-        }
-
-        @ParameterizedTest
-        @CsvSource(
-            "5, 7",
-            "-1, 0.7",
-            "0, 0"
-        )
-        fun `should apply the previous arithmetic operation before updating the lastOperator`(
-            expression: String,
-            lastInput: String,
-        ) {
-            // Arrange:
-            val initialState = state.copy(
-                expression = listOf (expression, arithmetic.toString()),
-                lastOperator = arithmetic,
-                lastInput = lastInput,
-                lastResult = lastInput,
-                activeButton = arithmetic,
-            )
-
-            val expectedState = engine.applyArithmetic(initialState)
-                .copy(
-                    expression = listOf(engine.applyArithmetic(initialState).lastInput, arithmetic.symbol.label),
-                    lastOperator = arithmetic,
-                    lastInput = "",
-                    activeButton = arithmetic
-                )
-
-            // Act:
-            val newState = engine.handleArithmetic(initialState, arithmetic)
-
-
-            // Assert:
-            newState shouldBe expectedState
         }
 
         @ParameterizedTest
@@ -157,14 +125,13 @@ class EngineStateStandardTest {
 
             val expectedState = initialState.copy(
                     expression = listOf(expression),
-                    lastOperator = engine.enterArithmetic(initialState, arithmetic).lastOperator,
+                    lastOperator = engine.handleBinary(initialState, binary).lastOperator,
                     lastInput = lastInput,
-                    activeButton = engine.enterArithmetic(initialState, arithmetic).activeButton,
+                    activeButton = engine.handleBinary(initialState, binary).activeButton,
                 )
 
             // Act:
-            val newState = engine.handleArithmetic(initialState, arithmetic)
-
+            val newState = engine.handleBinary(initialState, binary)
 
             // Assert:
             newState shouldBe expectedState
@@ -188,170 +155,171 @@ class EngineStateStandardTest {
             )
 
             // Act:
-            val stateNaN = engine.handleArithmetic(initialState, ButtonCalculatorBinary.Division)
+            val stateNaN = engine.handleBinary(initialState, ButtonCalculatorBinary.Division)
 
             // Assert:
             stateNaN.expression[0] shouldBe Double.NaN.toString()
         }
-    }
 
-    @Nested
-    inner class ApplyBinary {
+        @Nested
+        inner class ApplyBinary {
 
-        private lateinit var arithmetic: ButtonCalculatorBinary
+            private lateinit var binary: ButtonCalculatorBinary
 
-        @BeforeEach
-        fun setUp() {
-            arithmetic = ButtonCalculatorBinary.Multiplication
-        }
+            @BeforeEach
+            fun setUp() {
+                binary = ButtonCalculatorBinary.Multiplication
+            }
 
-        fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsEngineState.provideArithmeticArguments()
-        }
+            fun provideArguments(): Stream<Arguments> {
+                return TestArgumentsEngineState.provideArithmeticArguments()
+            }
 
-        @ParameterizedTest
-        @MethodSource("provideArguments")
-        fun `should correctly apply equals operation and update state`(
-            expression: Double,
-            operation: ButtonCalculatorBinary,
-            lastInput: Double,
-            expected: Double,
-        ) {
-            // Arrange:
-            val initialState = state.copy(
-                lastInput = lastInput.toString(),
-                expression = listOf(expression.toString(), operation.toString()),
-                lastOperator = operation
+            @ParameterizedTest
+            @MethodSource("provideArguments")
+            fun `should correctly apply equals operation and update state`(
+                expression: Double,
+                operation: ButtonCalculatorBinary,
+                lastInput: Double,
+                expected: Double,
+            ) {
+                // Arrange:
+                val initialState = state.copy(
+                    lastInput = lastInput.toString(),
+                    expression = listOf(expression.toString(), operation.symbol.label),
+                    lastOperator = operation
+                )
+
+                // Act:
+                val newState = engine.handleBinary(initialState, operation)
+
+                newState.also { println(it) }
+
+                // Assert:
+                newState.lastInput shouldBe ""
+                newState.lastResult shouldBe expected.toString()
+                newState.expression shouldBe listOf("$expected", operation.symbol.label)
+                newState.lastOperator shouldBe operation
+            }
+
+            @ParameterizedTest
+            @CsvSource(
+                "'NaN', 5", // Invalid expression (NaN)
             )
+            fun `should return same state if previousNumber is not a valid number`(
+                expression: String,
+                lastInput: String,
+            ) {
+                // Arrange:
+                val operandRightOrNaN = expression.toDoubleOrNull() ?: Double.NaN
+                val initialState = state.copy(
+                    lastInput = lastInput,
+                    expression = listOf(operandRightOrNaN.toString()),
+                    lastOperator = binary
+                )
 
-            // Act:
-            val newState = engine.applyArithmetic(initialState)
+                // Act:
+                val newState = engine.handleBinary(initialState, binary)
 
-            newState.also { println(it) }
+                // Assert:
+                newState shouldBe initialState
+            }
 
-            // Assert:
-            newState.lastInput shouldBe expected.toString()
-            newState.lastResult shouldBe expected.toString()
-            newState.expression shouldBe listOf("$expression")
-            newState.lastOperator shouldBe null
-        }
-
-        @ParameterizedTest
-        @CsvSource(
-            "'NaN', 5", // Invalid expression (NaN)
-        )
-        fun `should return same state if previousNumber is not a valid number`(
-            expression: String,
-            lastInput: String,
-        ) {
-            // Arrange:
-            val operandRightOrNaN = expression.toDoubleOrNull() ?: Double.NaN
-            val initialState = state.copy(
-                lastInput = lastInput,
-                expression = listOf(operandRightOrNaN.toString()),
-                lastOperator = arithmetic
+            @ParameterizedTest
+            @CsvSource(
+                "5, 'NaN'",  // Invalid lastInput (NaN)
             )
+            fun `should return same state if lastInput is not a valid number`(
+                expression: String,
+                lastInput: String,
+            ) {
+                // Arrange:
+                val operandRightOrNaN = lastInput.toDoubleOrNull() ?: Double.NaN
+                val initialState = state.copy(
+                    lastInput = operandRightOrNaN.toString(),
+                    expression = listOf(expression),
+                    lastOperator = binary
+                )
 
-            // Act:
-            val newState = engine.applyArithmetic(initialState)
+                // Act:
+                val newState = engine.handleBinary(initialState, binary)
 
-            // Assert:
-            newState shouldBe initialState
+                // Assert:
+                newState shouldBe initialState
+            }
+
+            @Disabled("Deprecated: binary is not nullable.")
+            @Test
+            fun `should return same state if operation is null`() {
+                // Arrange:
+                val initialState = state.copy(
+                    lastInput = "5",
+                    expression = emptyList(),
+                    lastOperator = null
+                )
+
+                // Act:
+                val newState = engine.handleBinary(initialState, binary)
+
+                // Assert:
+                newState shouldBe initialState
+            }
         }
 
-        @ParameterizedTest
-        @CsvSource(
-            "5, 'NaN'",  // Invalid lastInput (NaN)
-        )
-        fun `should return same state if lastInput is not a valid number`(
-            expression: String,
-            lastInput: String,
-        ) {
-            // Arrange:
-            val operandRightOrNaN = lastInput.toDoubleOrNull() ?: Double.NaN
-            val initialState = state.copy(
-                lastInput = operandRightOrNaN.toString(),
-                expression = listOf(expression),
-                lastOperator = arithmetic
-            )
+        @Nested
+        inner class EnterBinary {
 
-            // Act:
-            val newState = engine.applyArithmetic(initialState)
+            private lateinit var binary: ButtonCalculatorBinary
 
-            // Assert:
-            newState shouldBe initialState
-        }
+            @BeforeEach
+            fun setUp() {
+                binary = ButtonCalculatorBinary.Multiplication
+            }
 
-        @Test
-        fun `should return same state if operation is null`() {
-            // Arrange:
-            val initialState = state.copy(
-                lastInput = "5",
-                expression = emptyList(),
-                lastOperator = null
-            )
+            @Test
+            fun `should set binary operation when there is no existing lastOperator`() {
+                // Act:
+                val newState = engine.handleBinary(state, binary)
+                // Assert:
+                binary shouldBe newState.lastOperator
+            }
 
-            // Act:
-            val newState = engine.applyArithmetic(initialState)
+            @Test
+            fun `should replace binary operation if one already exists`() {
+                // Arrange:
+                val initialState = state.copy(lastOperator = ButtonCalculatorBinary.Addition)
+                // Act:
+                val newState = engine.handleBinary(initialState, binary)
+                // Assert
+                binary shouldBe newState.lastOperator
+            }
 
-            // Assert:
-            newState shouldBe initialState
-        }
-    }
+            @Test
+            fun `should move lastInput to expression and set binary lastOperator`() {
+                // Arrange:
+                val initialState = state.copy(lastInput = "329")
+                // Act:
+                val newState = engine.handleBinary(initialState, binary)
+                // Assert
+                binary shouldBe newState.lastOperator
+                initialState.expression.isEmpty() shouldBe newState.lastInput.isEmpty()
+            }
 
-    @Nested
-    inner class EnterBinary {
+            @ParameterizedTest
+            @CsvSource("'NaN'")
+            fun `should return same state when trying to enter binary on NaN lastInput`(
+                lastInput: String
+            ) {
+                // Arrange:
+                val operandRightOrNaN = lastInput.toDoubleOrNull() ?: Double.NaN
+                val initialState = state.copy(lastOperator = binary, lastInput = operandRightOrNaN.toString())
 
-        private lateinit var arithmetic: ButtonCalculatorBinary
+                // Act:
+                val invalidState = engine.handleBinary(initialState,binary)
 
-        @BeforeEach
-        fun setUp() {
-            arithmetic = ButtonCalculatorBinary.Multiplication
-        }
-
-        @Test
-        fun `should set arithmetic operation when there is no existing lastOperator`() {
-            // Act:
-            val newState = engine.enterArithmetic(state, arithmetic)
-            // Assert:
-            arithmetic shouldBe newState.lastOperator
-        }
-
-        @Test
-        fun `should replace arithmetic operation if one already exists`() {
-            // Arrange:
-            val initialState = state.copy(lastOperator = ButtonCalculatorBinary.Addition)
-            // Act:
-            val newState = engine.enterArithmetic(initialState, arithmetic)
-            // Assert
-            arithmetic shouldBe newState.lastOperator
-        }
-
-        @Test
-        fun `should move lastInput to expression and set arithmetic lastOperator`() {
-            // Arrange:
-            val initialState = state.copy(lastInput = "329")
-            // Act:
-            val newState = engine.enterArithmetic(initialState, arithmetic)
-            // Assert
-            arithmetic shouldBe newState.lastOperator
-            initialState.expression.isEmpty() shouldBe newState.lastInput.isEmpty()
-        }
-
-        @ParameterizedTest
-        @CsvSource("'NaN'")
-        fun `should return same state when trying to enter arithmetic on NaN lastInput`(
-            lastInput: String
-        ) {
-            // Arrange:
-            val operandRightOrNaN = lastInput.toDoubleOrNull() ?: Double.NaN
-            val initialState = state.copy(lastOperator = arithmetic, lastInput = operandRightOrNaN.toString())
-
-            // Act:
-            val invalidState = engine.enterArithmetic(initialState,arithmetic)
-
-            // Assert:
-            invalidState.lastInput.toDouble().shouldBeNaN()
+                // Assert:
+                invalidState.lastInput.toDouble().shouldBeNaN()
+            }
         }
     }
 
@@ -422,7 +390,7 @@ class EngineStateStandardTest {
     inner class HandleControl {
 
         private lateinit var control: ButtonCalculatorControl
-        private lateinit var arithmetic: ButtonCalculatorBinary
+        private lateinit var binary: ButtonCalculatorBinary
 
         @Nested
         inner class EnterDecimal {
@@ -430,7 +398,7 @@ class EngineStateStandardTest {
             @BeforeEach
             fun setUp() {
                 control = ButtonCalculatorControl.Decimal
-                arithmetic = ButtonCalculatorBinary.Multiplication
+                binary = ButtonCalculatorBinary.Multiplication
             }
 
             @Test
@@ -471,7 +439,7 @@ class EngineStateStandardTest {
                 // Arrange:
                 val operandRightOrNaN = lastInput.toDoubleOrNull()
                 val operandLeftOrNaN = expression.toDoubleOrNull()
-                val initialState = state.copy(expression = listOf(operandLeftOrNaN.toString()), lastOperator = arithmetic, lastInput = operandRightOrNaN.toString())
+                val initialState = state.copy(expression = listOf(operandLeftOrNaN.toString()), lastOperator = binary, lastInput = operandRightOrNaN.toString())
 
                 // Act:
                 val newState = engine.handleControl(initialState, control)
@@ -511,7 +479,7 @@ class EngineStateStandardTest {
             @BeforeEach
             fun setUp() {
                 control = ButtonCalculatorControl.Clear
-                arithmetic = ButtonCalculatorBinary.Multiplication
+                binary = ButtonCalculatorBinary.Multiplication
             }
 
             private fun provideRepeatableEqualsArguments(): Stream<Arguments> {
@@ -553,7 +521,7 @@ class EngineStateStandardTest {
             ) {
                 // Arrange:
                 val operandRightOrNaN = lastInput.toDoubleOrNull() ?: Double.NaN
-                val initialState = state.copy(expression = listOf(operandRightOrNaN.toString()), lastOperator = arithmetic, lastInput = operandRightOrNaN.toString())
+                val initialState = state.copy(expression = listOf(operandRightOrNaN.toString()), lastOperator = binary, lastInput = operandRightOrNaN.toString())
 
                 // Act:
                 val stateCleared = engine.handleControl(initialState, control)
@@ -595,7 +563,7 @@ class EngineStateStandardTest {
             @BeforeEach
             fun setUp() {
                 control = ButtonCalculatorControl.Equals
-                arithmetic = ButtonCalculatorBinary.Multiplication
+                binary = ButtonCalculatorBinary.Multiplication
             }
 
             private fun provideArguments(): Stream<Arguments> {
@@ -723,7 +691,7 @@ class EngineStateStandardTest {
     @Nested
     inner class HandleNumber {
 
-        private lateinit var arithmetic: ButtonCalculatorBinary
+        private lateinit var binary: ButtonCalculatorBinary
         private lateinit var number1: ButtonCalculatorNumber
         private lateinit var number2: ButtonCalculatorNumber
 
@@ -731,7 +699,7 @@ class EngineStateStandardTest {
         fun setUp() {
             number1 = ButtonCalculatorNumber.Nine
             number2 = ButtonCalculatorNumber.Three
-            arithmetic = ButtonCalculatorBinary.Multiplication
+            binary = ButtonCalculatorBinary.Multiplication
         }
         @Nested
         inner class EnterNumber {
@@ -774,7 +742,7 @@ class EngineStateStandardTest {
             ) {
                 // Arrange:
                 val operandRightOrNaN = lastInput.toDoubleOrNull() ?: Double.NaN
-                val initialState = state.copy(expression = listOf(expression), lastOperator = arithmetic, lastInput = operandRightOrNaN.toString())
+                val initialState = state.copy(expression = listOf(expression), lastOperator = binary, lastInput = operandRightOrNaN.toString())
 
                 // Act:
                 val newState = engine.handleNumber(initialState,number1)
@@ -794,7 +762,7 @@ class EngineStateStandardTest {
             ) {
                 // Arrange:
                 val operandLeftOrNaN = lastInput.toDoubleOrNull() ?: Double.NaN
-                val initialState = state.copy(expression = listOf(operandLeftOrNaN.toString()), lastOperator = arithmetic, lastInput = lastInput)
+                val initialState = state.copy(expression = listOf(operandLeftOrNaN.toString()), lastOperator = binary, lastInput = lastInput)
 
                 // Act:
                 val newState = engine.handleNumber(initialState,number1)

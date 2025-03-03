@@ -7,13 +7,8 @@ import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
 import com.example.calculatorApp.model.state.CalculatorState
 
 interface EngineState : Engine {
-
-    fun handleArithmetic(state: CalculatorState, arithmetic: ButtonCalculatorBinary): CalculatorState
+    fun handleBinary(state: CalculatorState, binary: ButtonCalculatorBinary): CalculatorState
     fun handleUnary(state: CalculatorState, unary: ButtonCalculatorUnary): CalculatorState
     fun handleControl(state: CalculatorState, control: ButtonCalculatorControl): CalculatorState
     fun handleNumber(state: CalculatorState, number: ButtonCalculatorNumber): CalculatorState
-
-
-    fun applyArithmetic(state: CalculatorState): CalculatorState
-    fun enterArithmetic(state: CalculatorState, arithmetic: ButtonCalculatorBinary): CalculatorState
 }
