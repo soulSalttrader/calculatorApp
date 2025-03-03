@@ -10,31 +10,31 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-class CommandApplyEqualsTest {
-
-    private val engineState: EngineState = mockk(relaxed = true)
-    private lateinit var state: CalculatorState
-    private lateinit var command: CommandApplyEquals
-
-    @BeforeEach
-    fun setUp() {
-        // Arrange:
-        clearMocks(engineState)
-        state = CalculatorState()
-        command = CommandApplyEquals(engineState)
-    }
-
-    @Nested
-    inner class Execute {
-
-        @Test
-        fun `should call applyEquals on engine`() {
-            // Act:
-            command.execute(state)
-
-            // Assert:
-            verify(exactly = 1) { engineState.applyEquals(state) }
-            confirmVerified(engineState)
-        }
-    }
-}
+//class CommandApplyEqualsTest {
+//
+//    private val engineState: EngineState = mockk(relaxed = true)
+//    private lateinit var state: CalculatorState
+//    private lateinit var command: CommandApplyEquals
+//
+//    @BeforeEach
+//    fun setUp() {
+//        // Arrange:
+//        clearMocks(engineState)
+//        state = CalculatorState()
+//        command = CommandApplyEquals(engineState)
+//    }
+//
+//    @Nested
+//    inner class Execute {
+//
+//        @Test
+//        fun `should call applyEquals on engine`() {
+//            // Act:
+//            command.execute(state)
+//
+//            // Assert:
+//            verify(exactly = 1) { engineState.applyEquals(state) }
+//            confirmVerified(engineState)
+//        }
+//    }
+//}

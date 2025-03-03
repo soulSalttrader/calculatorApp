@@ -8,12 +8,11 @@ class CommandFactoryControl(
 ) : CommandFactorySub<ButtonCalculatorControl> {
 
     override fun create(button: ButtonCalculatorControl): Command {
-
         return when (button) {
-            is ButtonCalculatorControl.Decimal -> CommandEnterDecimal(engineState)
-            is ButtonCalculatorControl.AllClear -> CommandApplyClearAll(engineState)
-            is ButtonCalculatorControl.Clear -> CommandApplyClear(engineState)
-            is ButtonCalculatorControl.Equals -> CommandApplyEquals(engineState)
+            is ButtonCalculatorControl.Decimal,
+            is ButtonCalculatorControl.AllClear,
+            is ButtonCalculatorControl.Clear,
+            is ButtonCalculatorControl.Equals -> CommandHandlerControl(engineState, button)
         }
     }
 }

@@ -25,7 +25,6 @@ class EngineStateStandardTest {
 
     private lateinit var state: CalculatorState
     private lateinit var engine: EngineState
-    private lateinit var arithmetic: ButtonCalculatorBinary
     private val engineMath = EngineMathStandard()
 
     @BeforeEach
@@ -39,11 +38,17 @@ class EngineStateStandardTest {
         )
 
         engine = EngineStateStandard(engineMath)
-        arithmetic = ButtonCalculatorBinary.Multiplication
     }
 
     @Nested
     inner class HandleBinary {
+
+        private lateinit var arithmetic: ButtonCalculatorBinary
+
+        @BeforeEach
+        fun setUp() {
+            arithmetic = ButtonCalculatorBinary.Multiplication
+        }
 
         @ParameterizedTest
         @CsvSource(
@@ -191,6 +196,13 @@ class EngineStateStandardTest {
     @Nested
     inner class ApplyBinary {
 
+        private lateinit var arithmetic: ButtonCalculatorBinary
+
+        @BeforeEach
+        fun setUp() {
+            arithmetic = ButtonCalculatorBinary.Multiplication
+        }
+
         fun provideArguments(): Stream<Arguments> {
             return TestArgumentsEngineState.provideArithmeticArguments()
         }
@@ -288,6 +300,13 @@ class EngineStateStandardTest {
     @Nested
     inner class EnterBinary {
 
+        private lateinit var arithmetic: ButtonCalculatorBinary
+
+        @BeforeEach
+        fun setUp() {
+            arithmetic = ButtonCalculatorBinary.Multiplication
+        }
+
         @Test
         fun `should set arithmetic operation when there is no existing lastOperator`() {
             // Act:
@@ -335,132 +354,320 @@ class EngineStateStandardTest {
     }
 
     @Nested
-    inner class ApplyEquals {
+    inner class HandleControl {
 
-        private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsEngineState.provideArithmeticArguments()
+        private lateinit var control: ButtonCalculatorControl
+        private lateinit var arithmetic: ButtonCalculatorBinary
+
+        @BeforeEach
+        fun setUp() {
+
         }
+        @Nested
+        inner class EnterDecimal {
 
-        private fun provideRepeatableEqualsArguments(): Stream<Arguments> {
-            return TestArgumentsEngineState.provideRepeatableEqualsArguments()
-        }
+            @BeforeEach
+            fun setUp() {
+                control = ButtonCalculatorControl.Decimal
+            }
 
-        @ParameterizedTest
-        @MethodSource("provideArguments")
-        fun `should correctly apply equals operation`(
-            expression: Double,
-            operation: ButtonCalculatorBinary,
-            lastInput: Double,
-            expected: Double,
-        ) {
-            // Arrange:
-            val initialState = state.copy(
-                lastInput = lastInput.toString(),
-                expression = listOf(expression.toString(), operation.toString()),
-                lastOperator = operation,
+            @Test
+            fun `should add a decimal point if not already present`() {
+                // Act:
+                val newState = engine.handleControl(state, control)
+                // Assert:
+                newState.lastInput.shouldContain(".")
+            }
+
+            @Test
+            fun `should not add a decimal point if already present`() {
+                // Arrange:
+                val initialState = state.copy(lastInput = "32.9")
+                // Act:
+                val newState = engine.handleControl(initialState, control)
+                // Assert:
+                newState.lastInput.shouldNotMatch("32.9.")
+            }
+
+            @Test
+            fun `should add a decimal point and zero if expression is not present`() {
+                // Act:
+                val newState = engine.handleControl(state, control)
+                // Assert:
+                newState.lastInput.shouldContain("0.")
+            }
+
+            @ParameterizedTest
+            @CsvSource(
+                "23,'NaN'",
+                "'NaN', 23"
             )
+            fun `should return same state when trying to enter decimal on NaN lastInput`(
+                expression: String,
+                lastInput: String
+            ) {
+                // Arrange:
+                val operandRightOrNaN = lastInput.toDoubleOrNull()
+                val operandLeftOrNaN = expression.toDoubleOrNull()
+                val initialState = state.copy(expression = listOf(operandLeftOrNaN.toString()), lastOperator = arithmetic, lastInput = operandRightOrNaN.toString())
 
-            // Act:
-            val newState = engine.applyEquals(initialState)
+                // Act:
+                val newState = engine.handleControl(initialState, control)
 
-            // Assert:
-            newState.lastInput shouldBe expected.toString()
-            newState.expression[0] shouldBe expected.toString()
-            newState.lastOperator shouldBe initialState.lastOperator
+                // Assert:
+                newState shouldBe initialState
+            }
         }
 
-        @ParameterizedTest
-        @CsvSource(
-            "'NaN', 5",
-            "5, 'NaN'",
-        )
-        fun `should return same state if lastInput or expression are not a valid number`(
-            expression: String,
-            lastInput: String,
-        ) {
-            // Arrange:
-            val operandRightOrNaN = lastInput.toDoubleOrNull() ?: Double.NaN
-            val initialState = state.copy(
-                lastInput = operandRightOrNaN.toString(),
-                expression = listOf(expression),
-            )
+        @Nested
+        inner class ApplyClearAll {
 
-            // Act:
-            val newState = engine.applyEquals(initialState)
+            @Test
+            fun `should reset calculator state to default`() {
+                // Arrange:
+                val button = ButtonCalculatorControl.AllClear
 
-            // Assert:
-            newState.lastInput shouldBe initialState.lastInput
-            newState.expression shouldBe initialState.expression
-            newState.lastOperator shouldBe initialState.lastOperator
+                val initialState = state.copy(
+                    lastInput = "32.9",
+                    expression = listOf("123"),
+                    lastOperator = ButtonCalculatorBinary.Multiplication
+                )
+                // Act:
+                val newState = engine.handleControl(initialState, button)
+
+                // Assert:
+                newState.lastInput shouldBe "0"
+                newState.lastOperator shouldBe null
+                newState.expression shouldBe emptyList()
+                newState.activeButton shouldBe null
+            }
         }
 
-        @ParameterizedTest
-        @MethodSource("provideRepeatableEqualsArguments")
-        fun `should perform repeatable equals correctly`(
-            expression: Double,
-            operation: ButtonCalculatorBinary,
-            lastInput: Double,
-            expected: Double
-        ) {
-            // Arrange:
-            val initialState = state.copy(
-                lastInput = lastInput.toString(),
-                expression = listOf(expression.toString(), operation.toString()),
-                lastOperator = operation
+        @Nested
+        inner class ApplyClear {
+
+            @BeforeEach
+            fun setUp() {
+                control = ButtonCalculatorControl.Clear
+                arithmetic = ButtonCalculatorBinary.Multiplication
+            }
+
+            private fun provideRepeatableEqualsArguments(): Stream<Arguments> {
+                return TestArgumentsEngineState.provideRepeatableEqualsArguments()
+            }
+
+            @Test
+            fun `should clear operation and restore expression as lastInput if lastOperator exists`() {
+                // Arrange:
+                val initialState = state.copy(
+                    lastInput = "329",
+                    expression = listOf("329, +"),
+                    lastOperator = ButtonCalculatorBinary.Multiplication
+                )
+                // Act:
+                val newState = engine.handleControl(initialState, control)
+                // Assert:
+                "329" shouldBe newState.lastInput
+            }
+
+            @Test
+            fun `should clear lastInput number to zero if expression is empty`() {
+                // Arrange:
+                val initialState = state.copy(
+                    lastInput = "329",
+                    expression = emptyList(),
+                    lastOperator = null
+                )
+                // Act:
+                val newState = engine.handleControl(initialState, control)
+                // Assert:
+                "0" shouldBe newState.lastInput
+            }
+
+            @ParameterizedTest
+            @CsvSource("'NaN'")
+            fun `should return default state when applying clear on NaN lastInput`(
+                lastInput: String
+            ) {
+                // Arrange:
+                val operandRightOrNaN = lastInput.toDoubleOrNull() ?: Double.NaN
+                val initialState = state.copy(expression = listOf(operandRightOrNaN.toString()), lastOperator = arithmetic, lastInput = operandRightOrNaN.toString())
+
+                // Act:
+                val stateCleared = engine.handleControl(initialState, control)
+
+                // Assert:
+                state shouldBe stateCleared
+            }
+
+            @ParameterizedTest
+            @MethodSource("provideRepeatableEqualsArguments")
+            fun `should return default state when applying clear on equal repeatable`(
+                expression: Double,
+                operation: ButtonCalculatorBinary,
+                lastInput: Double,
+            ) {
+                // Arrange:
+                val equals = ButtonCalculatorControl.Equals
+
+                val initialState = state.copy(
+                    lastInput = lastInput.toString(),
+                    expression = listOf(expression.toString(), operation.toString()),
+                    lastOperator = operation
+                )
+
+                // Act & Assert:
+                var stateEqual = initialState
+                for (i in 1..10) { stateEqual = engine.handleControl(stateEqual, equals) }
+
+                val stateCleared = engine.handleControl(stateEqual, control)
+
+                // Assert:
+                state.shouldBeEqualToIgnoringFields(stateCleared, CalculatorState::activeButton)
+            }
+        }
+
+        @Nested
+        inner class ApplyEquals {
+
+            @BeforeEach
+            fun setUp() {
+                control = ButtonCalculatorControl.Equals
+                arithmetic = ButtonCalculatorBinary.Multiplication
+            }
+
+            private fun provideArguments(): Stream<Arguments> {
+                return TestArgumentsEngineState.provideArithmeticArguments()
+            }
+
+            private fun provideRepeatableEqualsArguments(): Stream<Arguments> {
+                return TestArgumentsEngineState.provideRepeatableEqualsArguments()
+            }
+
+            @ParameterizedTest
+            @MethodSource("provideArguments")
+            fun `should correctly apply equals operation`(
+                expression: Double,
+                operation: ButtonCalculatorBinary,
+                lastInput: Double,
+                expected: Double,
+            ) {
+                // Arrange:
+                val initialState = state.copy(
+                    lastInput = lastInput.toString(),
+                    expression = listOf(expression.toString(), operation.toString()),
+                    lastOperator = operation,
+                )
+
+                // Act:
+                val newState = engine.handleControl(initialState, control)
+
+                // Assert:
+                newState.lastInput shouldBe expected.toString()
+                newState.expression[0] shouldBe expected.toString()
+                newState.lastOperator shouldBe initialState.lastOperator
+            }
+
+            @ParameterizedTest
+            @CsvSource(
+                "'NaN', 5",
+                "5, 'NaN'",
             )
+            fun `should return same state if lastInput or expression are not a valid number`(
+                expression: String,
+                lastInput: String,
+            ) {
+                // Arrange:
+                val operandRightOrNaN = lastInput.toDoubleOrNull() ?: Double.NaN
+                val initialState = state.copy(
+                    lastInput = operandRightOrNaN.toString(),
+                    expression = listOf(expression),
+                )
 
-            // Act & Assert:
-            var state = initialState
-            for (i in 1..10) { state = engine.applyEquals(state) }
+                // Act:
+                val newState = engine.handleControl(initialState, control)
 
-            state.also { println(it) }
+                // Assert:
+                newState.lastInput shouldBe initialState.lastInput
+                newState.expression shouldBe initialState.expression
+                newState.lastOperator shouldBe initialState.lastOperator
+            }
 
-            // Assert:
-            state.lastInput.toDouble().shouldBe(expected plusOrMinus (1e-9))
+            @ParameterizedTest
+            @MethodSource("provideRepeatableEqualsArguments")
+            fun `should perform repeatable equals correctly`(
+                expression: Double,
+                operation: ButtonCalculatorBinary,
+                lastInput: Double,
+                expected: Double
+            ) {
+                // Arrange:
+                val initialState = state.copy(
+                    lastInput = lastInput.toString(),
+                    expression = listOf(expression.toString(), operation.toString()),
+                    lastOperator = operation
+                )
+
+                // Act & Assert:
+                var state = initialState
+                for (i in 1..10) { state = engine.handleControl(state, control) }
+
+                state.also { println(it) }
+
+                // Assert:
+                state.lastInput.toDouble().shouldBe(expected plusOrMinus (1e-9))
 //            state.expression[0].toDouble().shouldBe(expected plusOrMinus (1e-9))
 //            state.lastResult?.toDouble().shouldBe(lastInput plusOrMinus (1e-9))
-            state.lastOperator shouldBe initialState.lastOperator
-        }
+                state.lastOperator shouldBe initialState.lastOperator
+            }
 
-        @ParameterizedTest
-        @CsvSource(
-            "22.0, 3.0, 22.66",
-            "329.0, 100.0, 658.0",
-            "1000.0, 100.0, 2000.0",
-            "-1.0, 50.0, -1.5",
-            "-329.0, 1.0, -332.29",
-            "-1000.0, 0.0, -1000.0",
-            "0.0, 0.0, 0.0",
-            "null, 22.0, 0.22",
-        )
-        fun `should correctly apply equals operation after percentage is applied`(
-            expression: String,
-            lastInput: String,
-            expectedNumber: String,
-        ) {
-            // Arrange:
-            val initialState = state.copy(
-                expression = listOf(expression, ButtonCalculatorBinary.Addition.toString()),
-                lastOperator = ButtonCalculatorBinary.Addition,
-                lastInput = lastInput,
+            @ParameterizedTest
+            @CsvSource(
+                "22.0, 3.0, 22.66",
+                "329.0, 100.0, 658.0",
+                "1000.0, 100.0, 2000.0",
+                "-1.0, 50.0, -1.5",
+                "-329.0, 1.0, -332.29",
+                "-1000.0, 0.0, -1000.0",
+                "0.0, 0.0, 0.0",
+                "null, 22.0, 0.22",
             )
+            fun `should correctly apply equals operation after percentage is applied`(
+                expression: String,
+                lastInput: String,
+                expectedNumber: String,
+            ) {
+                // Arrange:
+                val initialState = state.copy(
+                    expression = listOf(expression, ButtonCalculatorBinary.Addition.toString()),
+                    lastOperator = ButtonCalculatorBinary.Addition,
+                    lastInput = lastInput,
+                )
 
-            initialState.also { println(it) }
+                initialState.also { println(it) }
 
-            // Act
-            val newState = engine.applyPercent(initialState)
+                // Act
+                val newState = engine.applyPercent(initialState)
 
-            newState.also { println(it) }
+                newState.also { println(it) }
 
-            val resultState = engine.applyEquals(newState)
+                val resultState = engine.handleControl(newState, control)
 
-            // Assert:
-            expectedNumber shouldBe resultState.lastInput
+                // Assert:
+                expectedNumber shouldBe resultState.lastInput
+            }
         }
     }
 
     @Nested
     inner class EnterNumber {
+
+        private lateinit var arithmetic: ButtonCalculatorBinary
+
+        @BeforeEach
+        fun setUp() {
+            arithmetic = ButtonCalculatorBinary.Multiplication
+        }
 
         @Test
         fun `should add a number to an empty lastInput`() {
@@ -527,155 +734,6 @@ class EngineStateStandardTest {
 
             // Assert:
             initialState.shouldBeEqualToIgnoringFields(newState, CalculatorState::lastInput)
-        }
-    }
-
-    @Nested
-    inner class EnterDecimal {
-
-        @Test
-        fun `should add a decimal point if not already present`() {
-            // Act:
-            val newState = engine.enterDecimal(state)
-            // Assert:
-            newState.lastInput.shouldContain(".")
-        }
-
-        @Test
-        fun `should not add a decimal point if already present`() {
-            // Arrange:
-            val initialState = state.copy(lastInput = "32.9")
-            // Act:
-            val newState = engine.enterDecimal(initialState)
-            // Assert:
-            newState.lastInput.shouldNotMatch("32.9.")
-        }
-
-        @Test
-        fun `should add a decimal point and zero if expression is not present`() {
-            // Act:
-            val newState = engine.enterDecimal(state)
-            // Assert:
-            newState.lastInput.shouldContain("0.")
-        }
-
-        @ParameterizedTest
-        @CsvSource(
-            "23,'NaN'",
-            "'NaN', 23"
-        )
-        fun `should return same state when trying to enter decimal on NaN lastInput`(
-            expression: String,
-            lastInput: String
-        ) {
-            // Arrange:
-            val operandRightOrNaN = lastInput.toDoubleOrNull()
-            val operandLeftOrNaN = expression.toDoubleOrNull()
-            val initialState = state.copy(expression = listOf(operandLeftOrNaN.toString()), lastOperator = arithmetic, lastInput = operandRightOrNaN.toString())
-
-            // Act:
-            val newState = engine.enterDecimal(initialState)
-
-            // Assert:
-            newState shouldBe initialState
-        }
-    }
-
-    @Nested
-    inner class ApplyClearAll {
-
-        @Test
-        fun `should reset calculator state to default`() {
-            // Arrange:
-            val initialState = state.copy(
-                lastInput = "32.9",
-                expression = listOf("123"),
-                lastOperator = ButtonCalculatorBinary.Multiplication
-            )
-            // Act:
-            val newState = engine.applyClearAll(initialState)
-
-            // Assert:
-            newState.lastInput shouldBe "0"
-            newState.lastOperator shouldBe null
-            newState.expression shouldBe emptyList()
-            newState.activeButton shouldBe null
-        }
-    }
-
-    @Nested
-    inner class ApplyClear {
-
-        private fun provideRepeatableEqualsArguments(): Stream<Arguments> {
-            return TestArgumentsEngineState.provideRepeatableEqualsArguments()
-        }
-
-        @Test
-        fun `should clear operation and restore expression as lastInput if lastOperator exists`() {
-            // Arrange:
-            val initialState = state.copy(
-                lastInput = "329",
-                expression = listOf("329, +"),
-                lastOperator = ButtonCalculatorBinary.Multiplication
-            )
-            // Act:
-            val newState = engine.applyClear(initialState)
-            // Assert:
-            "329" shouldBe newState.lastInput
-        }
-
-        @Test
-        fun `should clear lastInput number to zero if expression is empty`() {
-            // Arrange:
-            val initialState = state.copy(
-                lastInput = "329",
-                expression = emptyList(),
-                lastOperator = null
-            )
-            // Act:
-            val newState = engine.applyClear(initialState)
-            // Assert:
-            "0" shouldBe newState.lastInput
-        }
-
-        @ParameterizedTest
-        @CsvSource("'NaN'")
-        fun `should return default state when applying clear on NaN lastInput`(
-            lastInput: String
-        ) {
-            // Arrange:
-            val operandRightOrNaN = lastInput.toDoubleOrNull() ?: Double.NaN
-            val initialState = state.copy(expression = listOf(operandRightOrNaN.toString()), lastOperator = arithmetic, lastInput = operandRightOrNaN.toString())
-
-            // Act:
-            val stateCleared = engine.applyClear(initialState)
-
-            // Assert:
-            state shouldBe stateCleared
-        }
-
-        @ParameterizedTest
-        @MethodSource("provideRepeatableEqualsArguments")
-        fun `should return default state when applying clear on equal repeatable`(
-            expression: Double,
-            operation: ButtonCalculatorBinary,
-            lastInput: Double,
-        ) {
-            // Arrange:
-            val initialState = state.copy(
-                lastInput = lastInput.toString(),
-                expression = listOf(expression.toString(), operation.toString()),
-                lastOperator = operation
-            )
-
-            // Act & Assert:
-            var stateEqual = initialState
-            for (i in 1..10) { stateEqual = engine.applyEquals(stateEqual) }
-
-            val stateCleared = engine.applyClear(stateEqual)
-
-            // Assert:
-            state.shouldBeEqualToIgnoringFields(stateCleared, CalculatorState::activeButton)
         }
     }
 

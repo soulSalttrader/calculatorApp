@@ -2,7 +2,6 @@ package com.example.calculatorApp.domain.commands
 
 import com.example.calculatorApp.domain.EngineState
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
-import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.clearMocks
 import io.mockk.mockk
@@ -25,34 +24,33 @@ class CommandFactoryControlTest {
     inner class Create {
 
         @Test
-        fun `should create CommandEnterDecimal when Decimal button is pressed`() {
+        fun `should create CommandHandlerControl when Decimal button is pressed`() {
             // Arrange:
             val button = ButtonCalculatorControl.Decimal
             // Act:
             val command = factory.create(button)
             // Assert:
-            command.shouldBeInstanceOf<CommandEnterDecimal>()
+            command.shouldBeInstanceOf<CommandHandlerControl>()
         }
 
         @Test
-        fun `should create CommandApplyClearAll when AllClear button is pressed`() {
+        fun `should create CommandHandlerControl when AllClear button is pressed`() {
             // Arrange:
             val button = ButtonCalculatorControl.AllClear
             // Act:
             val command = factory.create(button)
             // Assert:
-            command.shouldBeInstanceOf<CommandApplyClearAll>()
+            command.shouldBeInstanceOf<CommandHandlerControl>()
 
         }
         @Test
-        fun `should create CommandApplyClear when Clear button is pressed`() {
+        fun `should create CommandHandlerControl when Clear button is pressed`() {
             // Arrange:
             val button = ButtonCalculatorControl.Clear
             // Act:
             val command = factory.create(button)
             // Assert:
-            command.shouldBeInstanceOf<CommandApplyClear>()
-
+            command.shouldBeInstanceOf<CommandHandlerControl>()
         }
     }
 }

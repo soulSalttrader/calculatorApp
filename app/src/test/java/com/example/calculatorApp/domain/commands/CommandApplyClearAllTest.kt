@@ -10,31 +10,31 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-class CommandApplyClearAllTest {
-
-    private val engineState: EngineState = mockk(relaxed = true)
-    private lateinit var state: CalculatorState
-    private lateinit var command: CommandApplyClearAll
-
-    @BeforeEach
-    fun setUp() {
-        // Arrange:
-        clearMocks(engineState)
-        state = CalculatorState()
-        command = CommandApplyClearAll(engineState)
-    }
-
-    @Nested
-    inner class Execute {
-
-        @Test
-        fun `should call applyClearAll on engine`() {
-            // Act:
-            command.execute(state)
-
-            // Assert:
-            verify(exactly = 1) { engineState.applyClearAll(state) }
-            confirmVerified(engineState)
-        }
-    }
-}
+//class CommandApplyClearAllTest {
+//
+//    private val engineState: EngineState = mockk(relaxed = true)
+//    private lateinit var state: CalculatorState
+//    private lateinit var command: CommandApplyClearAll
+//
+//    @BeforeEach
+//    fun setUp() {
+//        // Arrange:
+//        clearMocks(engineState)
+//        state = CalculatorState()
+//        command = CommandApplyClearAll(engineState)
+//    }
+//
+//    @Nested
+//    inner class Execute {
+//
+//        @Test
+//        fun `should call applyClearAll on engine`() {
+//            // Act:
+//            command.execute(state)
+//
+//            // Assert:
+//            verify(exactly = 1) { engineState.applyClearAll(state) }
+//            confirmVerified(engineState)
+//        }
+//    }
+//}

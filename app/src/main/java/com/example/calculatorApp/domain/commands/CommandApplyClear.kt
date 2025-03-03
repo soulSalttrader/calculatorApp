@@ -3,9 +3,9 @@ package com.example.calculatorApp.domain.commands
 import com.example.calculatorApp.domain.EngineState
 import com.example.calculatorApp.model.state.CalculatorState
 
-class CommandApplyClear(private val engine: EngineState) : Command {
-
-    override fun execute(state: CalculatorState): CalculatorState {
-        return engine.applyClear(state)
-    }
-}
+//class CommandApplyClear(private val engine: EngineState) : Command {
+//
+//    override fun execute(state: CalculatorState): CalculatorState {
+//        return engine.applyClear(state)
+//    }
+//}

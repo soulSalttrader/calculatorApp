@@ -111,7 +111,7 @@ class CommandFactoryStandardTest {
             button: ButtonCalculatorControl
         ) {
             // Prepare the expected CommandEnterControl
-            val expectedCommand = mockk<CommandEnterDecimal>()
+            val expectedCommand = mockk<CommandHandlerControl>()
 
             // Mock the `create` method for CommandFactoryArithmetic to return the expected command
             every { controlFactory.create(button) } returns expectedCommand

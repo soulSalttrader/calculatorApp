@@ -10,31 +10,31 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-class CommandEnterDecimalTest {
-
-    private val engineState: EngineState = mockk(relaxed = true)
-    private lateinit var state: CalculatorState
-    private lateinit var command: CommandEnterDecimal
-
-    @BeforeEach
-    fun setUp() {
-        // Arrange:
-        clearMocks(engineState)
-        state = CalculatorState()
-        command = CommandEnterDecimal(engineState)
-    }
-
-    @Nested
-    inner class Execute {
-
-        @Test
-        fun `should call enterDecimal on engine`() {
-            // Act:
-            command.execute(state)
-
-            // Assert:
-            verify(exactly = 1) { engineState.enterDecimal(state) }
-            confirmVerified(engineState)
-        }
-    }
-}
+//class CommandEnterDecimalTest {
+//
+//    private val engineState: EngineState = mockk(relaxed = true)
+//    private lateinit var state: CalculatorState
+//    private lateinit var command: CommandEnterDecimal
+//
+//    @BeforeEach
+//    fun setUp() {
+//        // Arrange:
+//        clearMocks(engineState)
+//        state = CalculatorState()
+//        command = CommandEnterDecimal(engineState)
+//    }
+//
+//    @Nested
+//    inner class Execute {
+//
+//        @Test
+//        fun `should call enterDecimal on engine`() {
+//            // Act:
+//            command.execute(state)
+//
+//            // Assert:
+//            verify(exactly = 1) { engineState.enterDecimal(state) }
+//            confirmVerified(engineState)
+//        }
+//    }
+//}
