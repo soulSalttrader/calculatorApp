@@ -32,7 +32,7 @@ class CommandFactoryNumberTest {
 
         @ParameterizedTest
         @MethodSource("provideArguments")
-        fun `should create CommandEnterNumber with correct number when ButtonCalculatorNumber button is pressed`(
+        fun `should create CommandHandlerNumber with correct number when ButtonCalculatorNumber button is pressed`(
             button: ButtonCalculatorNumber
         ) {
             // Act:

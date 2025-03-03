@@ -4,6 +4,7 @@ import com.example.calculatorApp.arguments.TestArgumentsEngineState
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
 import com.example.calculatorApp.model.state.CalculatorState
 import com.example.calculatorApp.utils.Constants.MAX_NUM_LENGTH
 import io.kotest.matchers.doubles.plusOrMinus
@@ -355,6 +356,69 @@ class EngineStateStandardTest {
     }
 
     @Nested
+    inner class HandleUnary {
+
+        private lateinit var unary: ButtonCalculatorUnary
+
+        @Nested
+        inner class ApplySign {
+
+            @BeforeEach
+            fun setUp() {
+                unary = ButtonCalculatorUnary.Sign
+            }
+
+            @ParameterizedTest
+            @CsvSource(
+                "500.0, -500.0",
+                "5.0, -5.0",
+                "0.0, -0.0",
+                "-100, 100"
+            )
+            fun `should correctly applyPercent operation`(
+                number: Double,
+                expectedResult: Double
+            ) {
+                // Arrange:
+                state = state.copy(lastInput = number.toString())
+
+                // Act:
+                val newState = engine.handleUnary(state, unary)
+
+                // Assert:
+                newState.lastInput shouldBe expectedResult.toString()
+            }
+        }
+
+        @Nested
+        inner class ApplyPercentage {
+
+            @BeforeEach
+            fun setUp() {
+                unary = ButtonCalculatorUnary.Percentage
+            }
+
+            @ParameterizedTest
+            @CsvSource(
+                "500.0, 5.0",
+                "5.0, 0.05",
+                "0.0, 0.0",
+                "-100, -1"
+            )
+            fun `should correctly apply percent operation`(number: Double, expectedResult: Double) {
+                // Arrange:
+                state = state.copy(lastInput = number.toString())
+
+                // Act:
+                val newState = engine.handleUnary(state, unary)
+
+                // Assert:
+                newState.lastInput shouldBe expectedResult.toString()
+            }
+        }
+    }
+
+    @Nested
     inner class HandleControl {
 
         private lateinit var control: ButtonCalculatorControl
@@ -641,11 +705,10 @@ class EngineStateStandardTest {
                     lastOperator = ButtonCalculatorBinary.Addition,
                     lastInput = lastInput,
                 )
-
-                initialState.also { println(it) }
+                val unary = ButtonCalculatorUnary.Percentage
 
                 // Act
-                val newState = engine.applyPercent(initialState)
+                val newState = engine.handleUnary(initialState, unary)
 
                 newState.also { println(it) }
 
@@ -739,52 +802,6 @@ class EngineStateStandardTest {
                 // Assert:
                 initialState.shouldBeEqualToIgnoringFields(newState, CalculatorState::lastInput)
             }
-        }
-    }
-
-    @Nested
-    inner class ApplySign {
-
-        @ParameterizedTest
-        @CsvSource(
-            "500.0, -500.0",
-            "5.0, -5.0",
-            "0.0, -0.0",
-            "-100, 100"
-        )
-        fun `should correctly applyPercent operation`(
-            number: Double,
-            expectedResult: Double
-        ) {
-            // Arrange:
-            state = state.copy(lastInput = number.toString())
-
-            // Act:
-            val newState = engine.applySign(state)
-
-            // Assert:
-            newState.lastInput shouldBe expectedResult.toString()
-        }
-    }
-
-    @Nested
-    inner class ApplyPercentage {
-        @ParameterizedTest
-        @CsvSource(
-            "500.0, 5.0",
-            "5.0, 0.05",
-            "0.0, 0.0",
-            "-100, -1"
-        )
-        fun `should correctly apply percent operation`(number: Double, expectedResult: Double) {
-            // Arrange:
-            state = state.copy(lastInput = number.toString())
-
-            // Act:
-            val newState = engine.applyPercent(state)
-
-            // Assert:
-            newState.lastInput shouldBe expectedResult.toString()
         }
     }
 }

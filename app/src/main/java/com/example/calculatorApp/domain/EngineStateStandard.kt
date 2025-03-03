@@ -3,6 +3,7 @@ package com.example.calculatorApp.domain
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
 import com.example.calculatorApp.model.state.CalculatorState
 import com.example.calculatorApp.model.symbols.SymbolButton
 import com.example.calculatorApp.utils.Constants.MAX_NUM_LENGTH
@@ -18,6 +19,20 @@ class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
                 enterArithmetic(newState, arithmetic)
             },
             { true } to { enterArithmetic(state, arithmetic) }
+        )
+    }
+
+    override fun handleUnary(
+        state: CalculatorState,
+        unary: ButtonCalculatorUnary
+    ): CalculatorState {
+        return state.modifyWith(
+            { true } to {
+                when (unary) {
+                    is ButtonCalculatorUnary.Sign -> applySign(state)
+                    is ButtonCalculatorUnary.Percentage -> applyPercent(state)
+                }
+            }
         )
     }
 
@@ -81,7 +96,7 @@ class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
         )
     }
 
-    override fun applySign(state: CalculatorState): CalculatorState {
+    private fun applySign(state: CalculatorState): CalculatorState {
         return state.modifyWith(
             { state.expression.contains("NaN") } to { this },
             { state.lastInput == SymbolButton.ZERO.label || state.lastInput.isEmpty() } to { state.copy(lastInput = "-" + SymbolButton.ZERO.label) },
@@ -100,7 +115,7 @@ class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
         )
     }
 
-    override fun applyPercent(state: CalculatorState): CalculatorState {
+    private fun applyPercent(state: CalculatorState): CalculatorState {
         return state.modifyWith(
             { state.lastInput.toDoubleOrNull() == null } to { this },
             { state.expression.isNotEmpty() } to {

@@ -23,24 +23,24 @@ class CommandFactoryUnaryTest {
     @Nested
     inner class Create {
         @Test
-        fun `should create CommandApplyPercent when Percent button is pressed`() {
+        fun `should create CommandHandlerUnary when Percent button is pressed`() {
             // Arrange:
             val button = ButtonCalculatorUnary.Percentage
             // Act:
             val command = factory.create(button)
             // Assert:
-            command.shouldBeInstanceOf<CommandApplyPercent>()
+            command.shouldBeInstanceOf<CommandHandlerUnary>()
 
         }
 
         @Test
-        fun `should create CommandApplySign when PlusMinus button is pressed`() {
+        fun `should create CommandHandlerUnary when PlusMinus button is pressed`() {
             // Arrange:
             val button = ButtonCalculatorUnary.Sign
             // Act:
             val command = factory.create(button)
             // Assert:
-            command.shouldBeInstanceOf<CommandApplySign>()
+            command.shouldBeInstanceOf<CommandHandlerUnary>()
         }
     }
 }

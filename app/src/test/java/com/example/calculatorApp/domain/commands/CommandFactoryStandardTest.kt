@@ -85,10 +85,10 @@ class CommandFactoryStandardTest {
         fun `should create corresponding unary command through unaryCommandFactory when ButtonCalculatorUnary button is pressed`(
             button: ButtonCalculatorUnary
         ) {
-            // Prepare the expected CommandEnterControl
-            val expectedCommand = mockk<CommandApplySign>()
+            // Prepare the expected CommandHandlerUnary
+            val expectedCommand = mockk<CommandHandlerUnary>()
 
-            // Mock the `create` method for CommandFactoryArithmetic to return the expected command
+            // Mock the `create` method for CommandFactoryUnary to return the expected command
             every { unaryFactory.create(button) } returns expectedCommand
 
             // Create the action to simulate the button press
@@ -110,10 +110,10 @@ class CommandFactoryStandardTest {
         fun `should create corresponding control command through controlCommandFactory when ButtonCalculatorControl button is pressed`(
             button: ButtonCalculatorControl
         ) {
-            // Prepare the expected CommandEnterControl
+            // Prepare the expected CommandHandlerControl
             val expectedCommand = mockk<CommandHandlerControl>()
 
-            // Mock the `create` method for CommandFactoryArithmetic to return the expected command
+            // Mock the `create` method for CommandFactoryControl to return the expected command
             every { controlFactory.create(button) } returns expectedCommand
 
             // Create the action to simulate the button press
@@ -134,8 +134,8 @@ class CommandFactoryStandardTest {
         fun `should create CommandHandlerControl through numberCommandFactory when ButtonCalculatorNumber button is pressed`(
             button: ButtonCalculatorNumber
         ) {
-            // Prepare the expected CommandHandlerControl
-            val expectedCommand = mockk<CommandHandlerControl>()
+            // Prepare the expected CommandHandlerNumber
+            val expectedCommand = mockk<CommandHandlerNumber>()
 
             // Mock the `create` method for CommandFactoryNumber to return the expected command
             every { numberFactory.create(button) } returns expectedCommand
