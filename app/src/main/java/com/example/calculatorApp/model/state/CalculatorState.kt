@@ -5,18 +5,26 @@ import com.example.calculatorApp.model.symbols.SymbolButton
 
 data class CalculatorState(
     val expression: List<String> = emptyList(),
-    val lastInput: String = SymbolButton.ZERO.label,
+    val lastOperand: String = SymbolButton.ZERO.label,
     val lastResult: String? = null,
-    val subResult: String? = null,
     val lastOperator: Button? = null,
-    val pendingOperator: Button? = null,
+    val cachedOperand: String? = null,
     val activeButton: Button? = null,
     val isComputed: Boolean = false,
+    val hasError: Boolean = false,
+    val errorMessage: String? = null,
 ) {
-    fun modifyWith(vararg transformations: Pair<() -> Boolean, CalculatorState.() -> CalculatorState>): CalculatorState {
-        for ((condition, action) in transformations) {
-            if (condition()) return action()
+    fun modifyWith(
+        vararg transformations: Pair<() -> Boolean, CalculatorState.() -> CalculatorState>,
+        errorMessage: String? = null,
+    ): CalculatorState {
+        return try {
+            transformations
+                .firstOrNull { it.first() }
+                ?.second?.invoke(this)
+                ?: this
+        } catch (e: Exception) {
+            this.copy(hasError = true, errorMessage = errorMessage ?: e.message)
         }
-        return this
     }
 }
