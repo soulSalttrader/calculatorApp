@@ -10,7 +10,7 @@ import com.example.calculatorApp.ui.theme.White
 object StylesButton {
 
     val iButtonStyle = ButtonCategoryStyleBuilder()
-        .arithmeticStyle(
+        .binaryStyle(
             baseStyle = ElementColorStyleImpl(backgroundColor = VividGamboge, textColor = White),
         )
         .unaryStyle(

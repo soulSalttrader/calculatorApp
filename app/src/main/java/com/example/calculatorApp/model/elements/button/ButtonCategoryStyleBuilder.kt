@@ -8,7 +8,7 @@ import com.example.calculatorApp.model.elements.ElementColorStyle
 
 class ButtonCategoryStyleBuilder : ElementCategoryStyleBuilder<ElementCategory<ElementColorStyle>, ElementColorStyle>() {
 
-    fun arithmeticStyle(baseStyle: ElementColorStyle) = apply {
+    fun binaryStyle(baseStyle: ElementColorStyle) = apply {
         categories[ButtonCategory.Binary] = ButtonCategoryStyleBinary(baseStyle)
     }
 
