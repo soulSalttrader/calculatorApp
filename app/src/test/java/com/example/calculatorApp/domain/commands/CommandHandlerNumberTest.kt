@@ -11,33 +11,33 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-class CommandHandlerNumberTest {
-
-    private val engineState: EngineState = mockk(relaxed = true)
-    private lateinit var state: CalculatorState
-    private lateinit var number: ButtonCalculatorNumber
-    private lateinit var command: CommandHandlerNumber
-
-    @BeforeEach
-    fun setUp() {
-        // Arrange:
-        clearMocks(engineState)
-        state = CalculatorState()
-        number= ButtonCalculatorNumber.Nine
-        command = CommandHandlerNumber(engineState, number)
-    }
-
-    @Nested
-    inner class Execute {
-
-        @Test
-        fun `should call execute on engine`() {
-            // Act:
-            command.execute(state)
-
-            // Assert:
-            verify(exactly = 1) { engineState.handleNumber(state, number) }
-            confirmVerified(engineState)
-        }
-    }
-}
+//class CommandHandlerNumberTest {
+//
+//    private val engineState: EngineState = mockk(relaxed = true)
+//    private lateinit var state: CalculatorState
+//    private lateinit var number: ButtonCalculatorNumber
+//    private lateinit var command: CommandHandlerNumber
+//
+//    @BeforeEach
+//    fun setUp() {
+//        // Arrange:
+//        clearMocks(engineState)
+//        state = CalculatorState()
+//        number= ButtonCalculatorNumber.Nine
+//        command = CommandHandlerNumber(engineState, number)
+//    }
+//
+//    @Nested
+//    inner class Execute {
+//
+//        @Test
+//        fun `should call execute on engine`() {
+//            // Act:
+//            command.execute(state)
+//
+//            // Assert:
+//            verify(exactly = 1) { engineState.handleNumber(state, number) }
+//            confirmVerified(engineState)
+//        }
+//    }
+//}

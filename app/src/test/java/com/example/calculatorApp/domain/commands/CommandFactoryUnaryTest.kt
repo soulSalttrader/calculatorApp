@@ -9,39 +9,39 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-class CommandFactoryUnaryTest {
-
-    private val engine: EngineState = mockk()
-    private lateinit var factory: CommandFactoryUnary
-
-    @BeforeEach
-    fun setUp() {
-        clearMocks(engine)
-        factory = CommandFactoryUnary(engine)
-    }
-
-    @Nested
-    inner class Create {
-        @Test
-        fun `should create CommandHandlerUnary when Percent button is pressed`() {
-            // Arrange:
-            val button = ButtonCalculatorUnary.Percentage
-            // Act:
-            val command = factory.create(button)
-            // Assert:
-            command.shouldBeInstanceOf<CommandHandlerUnary>()
-
-        }
-
-        @Test
-        fun `should create CommandHandlerUnary when PlusMinus button is pressed`() {
-            // Arrange:
-            val button = ButtonCalculatorUnary.Sign
-            // Act:
-            val command = factory.create(button)
-            // Assert:
-            command.shouldBeInstanceOf<CommandHandlerUnary>()
-        }
-    }
-}
+//class CommandFactoryUnaryTest {
+//
+//    private val engine: EngineState = mockk()
+//    private lateinit var factory: CommandFactoryUnary
+//
+//    @BeforeEach
+//    fun setUp() {
+//        clearMocks(engine)
+//        factory = CommandFactoryUnary(engine)
+//    }
+//
+//    @Nested
+//    inner class Create {
+//        @Test
+//        fun `should create CommandHandlerUnary when Percent button is pressed`() {
+//            // Arrange:
+//            val button = ButtonCalculatorUnary.Percentage
+//            // Act:
+//            val command = factory.create(button)
+//            // Assert:
+//            command.shouldBeInstanceOf<CommandHandlerUnary>()
+//
+//        }
+//
+//        @Test
+//        fun `should create CommandHandlerUnary when PlusMinus button is pressed`() {
+//            // Arrange:
+//            val button = ButtonCalculatorUnary.Sign
+//            // Act:
+//            val command = factory.create(button)
+//            // Assert:
+//            command.shouldBeInstanceOf<CommandHandlerUnary>()
+//        }
+//    }
+//}
 

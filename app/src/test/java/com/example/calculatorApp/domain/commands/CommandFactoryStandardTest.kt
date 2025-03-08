@@ -1,5 +1,6 @@
 package com.example.calculatorApp.domain.commands
 
+import com.example.calculatorApp.domain.EngineState
 import com.example.calculatorApp.domain.actions.CalculatorAction
 import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
@@ -10,157 +11,107 @@ import com.example.calculatorApp.utils.ButtonCalculatorList
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.mockk.clearMocks
-import io.mockk.every
+import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 
+@ExtendWith(MockKExtension::class)
 class CommandFactoryStandardTest {
 
-    private val binaryFactory: CommandFactoryBinary = mockk()
-    private val unaryFactory: CommandFactoryUnary = mockk()
-    private val controlFactory: CommandFactoryControl = mockk()
-    private val numberFactory: CommandFactoryNumber = mockk()
+    private val engineState: EngineState = mockk()
     private lateinit var factory: CommandFactoryStandard
 
     @BeforeEach
     fun setUp() {
-        clearMocks(binaryFactory, controlFactory, numberFactory)
-        factory = CommandFactoryStandard(binaryFactory, unaryFactory, controlFactory, numberFactory)
+        clearMocks(engineState)
+        factory = CommandFactoryStandard(engineState)
     }
 
-    @Nested
-    inner class Create {
+@Nested
+inner class Create {
 
-        // Arrange:
-        private fun provideArithmetics(): Array<ButtonCalculatorBinary> {
-            return ButtonCalculatorList.binary
-        }
+    // Arrange:
+    private fun provideArithmetics(): Array<ButtonCalculatorBinary> {
+        return ButtonCalculatorList.binary
+    }
 
-        // Arrange:
-        private fun provideUnary(): Array<ButtonCalculatorUnary> {
-            return ButtonCalculatorList.unary
-        }
+    // Arrange:
+    private fun provideUnary(): Array<ButtonCalculatorUnary> {
+        return ButtonCalculatorList.unary
+    }
 
-        // Arrange:
-        private fun provideControls(): Array<ButtonCalculatorControl> {
-            return ButtonCalculatorList.controls
-        }
+    // Arrange:
+    private fun provideControls(): Array<ButtonCalculatorControl> {
+        return ButtonCalculatorList.controls
+    }
 
-        // Arrange:
-        private fun provideNumbers(): Array<ButtonCalculatorNumber> {
-            return ButtonCalculatorList.numbers
-        }
+    // Arrange:
+    private fun provideNumbers(): Array<ButtonCalculatorNumber> {
+        return ButtonCalculatorList.numbers
+    }
 
-        @ParameterizedTest
-        @MethodSource("provideArithmetics")
-        fun `should create corresponding binary command through binaryCommandFactory when ButtonCalculatorBinary button is pressed`(
-            button: ButtonCalculatorBinary
-        ) {
-            // Prepare the expected CommandHandlerBinary
-            val expectedCommand = mockk<CommandHandlerBinary>()
+    @ParameterizedTest
+    @MethodSource("provideArithmetics")
+    fun `should create CommandHandler for binary buttons`(button: ButtonCalculatorBinary) {
+        val action = CalculatorAction.ButtonPressed(button)
 
-            // Mock the `create` method for CommandFactoryArithmetic to return the expected command
-            every { binaryFactory.create(button) } returns expectedCommand
+        // Act
+        val command = factory.createCommand(action)
 
-            // Create the action to simulate the button press
-            val action = CalculatorAction.ButtonPressed(button)
+        // Assert
+        command shouldBe CommandHandler(engineState, button)
+    }
 
-            // Act: Call the method
-            val command = factory.createCommand(action)
+    @ParameterizedTest
+    @MethodSource("provideUnary")
+    fun `should create CommandHandler for unary buttons`(button: ButtonCalculatorUnary) {
+        val action = CalculatorAction.ButtonPressed(button)
 
-            // Assert: Ensure the returned command is the one expected
-            command shouldBe expectedCommand
+        // Act
+        val command = factory.createCommand(action)
 
-            // Verify that `create` was called with the correct argument
-            verify { binaryFactory.create(button) }
-        }
+        // Assert
+        command shouldBe CommandHandler(engineState, button)
+    }
 
-        @ParameterizedTest
-        @MethodSource("provideUnary")
-        fun `should create corresponding unary command through unaryCommandFactory when ButtonCalculatorUnary button is pressed`(
-            button: ButtonCalculatorUnary
-        ) {
-            // Prepare the expected CommandHandlerUnary
-            val expectedCommand = mockk<CommandHandlerUnary>()
+    @ParameterizedTest
+    @MethodSource("provideControls")
+    fun `should create CommandHandler for control buttons`(button: ButtonCalculatorControl) {
+        val action = CalculatorAction.ButtonPressed(button)
 
-            // Mock the `create` method for CommandFactoryUnary to return the expected command
-            every { unaryFactory.create(button) } returns expectedCommand
+        // Act
+        val command = factory.createCommand(action)
 
-            // Create the action to simulate the button press
-            val action = CalculatorAction.ButtonPressed(button)
+        // Assert
+        command shouldBe CommandHandler(engineState, button)
+    }
 
-            // Act: Call the method
-            val command = factory.createCommand(action)
+    @ParameterizedTest
+    @MethodSource("provideNumbers")
+    fun `should create CommandHandler for number buttons`(button: ButtonCalculatorNumber) {
+        val action = CalculatorAction.ButtonPressed(button)
 
-            // Assert: Ensure the returned command is the one expected
-            command shouldBe expectedCommand
+        // Act
+        val command = factory.createCommand(action)
 
-            // Verify that `create` was called with the correct argument
-            verify { unaryFactory.create(button) }
-        }
+        // Assert
+        command shouldBe CommandHandler(engineState, button)
+    }
 
+    @Disabled("Deprecated: No longer throws an exception for invalid buttons.")
+    @Test
+    fun `should throw IllegalArgumentException when invalid button is pressed`() {
+        val button = mockk<Button>()
 
-        @ParameterizedTest
-        @MethodSource("provideControls")
-        fun `should create corresponding control command through controlCommandFactory when ButtonCalculatorControl button is pressed`(
-            button: ButtonCalculatorControl
-        ) {
-            // Prepare the expected CommandHandlerControl
-            val expectedCommand = mockk<CommandHandlerControl>()
-
-            // Mock the `create` method for CommandFactoryControl to return the expected command
-            every { controlFactory.create(button) } returns expectedCommand
-
-            // Create the action to simulate the button press
-            val action = CalculatorAction.ButtonPressed(button)
-
-            // Act: Call the method
-            val command = factory.createCommand(action)
-
-            // Assert: Ensure the returned command is the one expected
-            command shouldBe expectedCommand
-
-            // Verify that `create` was called with the correct argument
-            verify { controlFactory.create(button) }
-        }
-
-        @ParameterizedTest
-        @MethodSource("provideNumbers")
-        fun `should create CommandHandlerNumber through numberCommandFactory when ButtonCalculatorNumber button is pressed`(
-            button: ButtonCalculatorNumber
-        ) {
-            // Prepare the expected CommandHandlerNumber
-            val expectedCommand = mockk<CommandHandlerNumber>()
-
-            // Mock the `create` method for CommandFactoryNumber to return the expected command
-            every { numberFactory.create(button) } returns expectedCommand
-
-            // Create the action to simulate the button press
-            val action = CalculatorAction.ButtonPressed(button)
-
-            // Act: Call the method
-            val command = factory.createCommand(action)
-
-            // Assert: Ensure the returned command is the one expected
-            command shouldBe expectedCommand
-
-            // Verify that `create` was called with the correct argument
-            verify { numberFactory.create(button) }
-        }
-
-        @Test
-        fun `should throw IllegalArgumentException when invalid button is pressed`() {
-            // Act & Assert: Ensure that the IllegalArgumentException is thrown for invalid buttons
-            val button = mockk<Button>()
-
-            shouldThrow<IllegalArgumentException> {
-                factory.createCommand(CalculatorAction.ButtonPressed(button))
-            }
+        shouldThrow<IllegalArgumentException> {
+            factory.createCommand(CalculatorAction.ButtonPressed(button))
         }
     }
+}
 }

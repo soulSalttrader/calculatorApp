@@ -4,5 +4,6 @@ import com.example.calculatorApp.model.elements.button.Button
 
 sealed class CalculatorAction {
 
-    data class ButtonPressed(val button: Button) : CalculatorAction()
+    abstract val button: Button
+    data class ButtonPressed(override val button: Button) : CalculatorAction()
 }
