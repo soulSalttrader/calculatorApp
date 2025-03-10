@@ -19,14 +19,14 @@ The app mimics the look and behavior of the iPhone calculator, offering a famili
 
 ## Calculator Operations
 1. Addition – Adds two numbers. The result is shown after pressing "=" or entering another operation.
-2. Subtraction – Subtracts one number from another. The result appears after "=" or the next operation. 
-3. Multiplication – Multiplies two numbers. The result is displayed after "=" or another operation. 
-4. Division – Divides one number by another. The result shows after "=" or continuing with another operation. 
-5. Repeatable Equals – Repeats the last operation when "=" is pressed again. 
+2. Subtraction – Subtracts one number from another. The result appears after "=" or the next operation.
+3. Multiplication – Multiplies two numbers. The result is displayed after "=" or another operation.
+4. Division – Divides one number by another. The result shows after "=" or continuing with another operation.
+5. Repeatable Equals – Repeats the last operation when "=" is pressed again.
 6. Change Sign – Switches a number between positive and negative.
-7. Decimal Support – Allows operations with decimal values. 
-8. Percentage – Calculates a percentage of a given number. 
-9. All Clear – Resets the calculator to default settings. 
+7. Decimal Support – Allows operations with decimal values.
+8. Percentage – Calculates a percentage of a given number.
+9. All Clear – Resets the calculator to default settings.
 10. Clear – Clears the last entered number or operation.
 
 ---
@@ -71,28 +71,37 @@ The **Button** implementation extends the **Element**, offering reusable and cus
 
 - **Symbol Interface**: Each button has a `symbol` property, which can either be a text label (e.g., `"+"`, `"C"`) or an icon (using a drawable resource ID). This `symbol` provides a way to identify and categorize buttons, allowing for consistent labeling across the UI.
 
-    - The `Symbol` interface defines two properties:
-        - `label`: A string that represents the button's label (e.g., `"AC"`, `"+"`, `"3"`).
-        - `iconRes`: An optional integer representing the resource ID of the button's icon (e.g., a drawable).
+  - The `Symbol` interface defines two properties:
+    - `label`: A string that represents the button's label (e.g., `"AC"`, `"+"`, `"3"`).
+    - `iconRes`: An optional integer representing the resource ID of the button's icon (e.g., a drawable).
 
-- **SymbolButton Enum**: The `SymbolButton` enum class is an implementation of the `Symbol` interface that provides a predefined set of symbols for different categories of buttons (e.g., control buttons like `AC`, arithmetic buttons like `+`, `-`, etc.). Each `SymbolButton` has a label and, optionally, an icon.
+- **SymbolButton Enum**: The `SymbolButton` enum class is an implementation of the `Symbol` interface that provides a predefined set of symbols for different categories of buttons (e.g., control buttons like `AC`, binary buttons like `+`, `-`, etc.). Each `SymbolButton` has a label and, optionally, an icon.
 
-- **Button Categories**: Buttons are categorized into types such as `Arithmetic`, `Control`, and `Number`. Each button category has its own unique style and behavior. Buttons can easily be extended by adding more categories (e.g., **Goniometric**, **Exponential**, etc.) for future functionality.
+- **Button Categories**: Buttons are categorized into types such as `Binary`, `Unary`, `Control`, `Number`, and `Parenthesis`. Each button category has its own unique style and behavior. Buttons can easily be extended by introducing new implementations as subclasses of existing categories (e.g., Binary, Unary, Control, Number, Parenthesis) for future functionality:
+
+    ```kotlin
+    sealed class ButtonCalculatorBinaryAdvanced(
+        override val symbol: Symbol
+    ) : ButtonCalculatorBinary(symbol) {
+    
+        data object Modulo : ButtonCalculatorBinaryAdvanced(SymbolButton.MODULO)
+        data object Power : ButtonCalculatorBinaryAdvanced(SymbolButton.POWER)
+    }
+    ```
 
 - **ButtonData**: The `ButtonData` class binds a button with its layout and style. It extends the `ElementData` interface, encapsulating both the button and its layout properties.
 
-#### Example for Arithmetic Operations:
+#### Example for Binary buttons:
 
 ```kotlin
-sealed class ButtonCalculatorArithmetic(override val symbol: Symbol) : Button {
+sealed class ButtonCalculatorBinary(override val symbol: Symbol) : Button {
 
-    data object Addition : ButtonCalculatorArithmetic(SymbolButton.ADDITION)
-    data object Subtraction : ButtonCalculatorArithmetic(SymbolButton.SUBTRACTION)
-    data object Multiplication : ButtonCalculatorArithmetic(SymbolButton.MULTIPLICATION)
-    data object Division : ButtonCalculatorArithmetic(SymbolButton.DIVISION)
-    data object Equals : ButtonCalculatorArithmetic(SymbolButton.EQUALS)
+    data object Addition : ButtonCalculatorBinary(SymbolButton.ADDITION)
+    data object Subtraction : ButtonCalculatorBinary(SymbolButton.SUBTRACTION)
+    data object Multiplication : ButtonCalculatorBinary(SymbolButton.MULTIPLICATION)
+    data object Division : ButtonCalculatorBinary(SymbolButton.DIVISION)
 
-    override fun getCategory(): ElementCategory<ElementColorStyle> = ButtonCategory.Arithmetic
+    override fun getCategory(): ElementCategory<ElementColorStyle> = ButtonCategory.Binary
     override fun getBackgroundColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).backgroundColor
     override fun getTextColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).textColor
 
@@ -115,30 +124,39 @@ For example, if you have a **Control** button category, but you want a button li
 class ButtonCategoryStyleControl(
     baseStyle: ElementColorStyle,
     decimalStyle: ElementColorStyle? = null,
+    equalsStyle: ElementColorStyle? = null,
 ) : ElementCategoryStyleBase<ElementColorStyle>(
     baseStyle,
     mapOf(
-        SymbolButton.DECIMAL.label to (decimalStyle ?: baseStyle) // Decimal button is categorized as a control button but should use number button color scheme
+        SymbolButton.DECIMAL.label to (decimalStyle ?: baseStyle), // Decimal button is categorized as a control button but should use number button color scheme
+        SymbolButton.EQUALS.label to (equalsStyle ?: baseStyle) // Equals button is categorized as a control button but should use binary button color scheme
     )
 )
 ```
 #### Creating Button Styles:
 
-Button styles can be created using the ButtonCategoryStyleBuilder, which allows you to define how buttons in different categories (like Arithmetic, Control, Number) should look. Here’s an example of creating a set of styles:
+Button styles can be created using the ButtonCategoryStyleBuilder, which allows you to define how buttons in different categories (like Binary, Unary, Control, Number, Parenthesis) should look. Here’s an example of creating a set of styles:
 
 ```kotlin
 object StylesButton {
 
     val iButtonStyle = ButtonCategoryStyleBuilder()
-        .arithmeticStyle(
+        .binaryStyle(
             baseStyle = ElementColorStyleImpl(backgroundColor = VividGamboge, textColor = White),
+        )
+        .unaryStyle(
+            baseStyle = ElementColorStyleImpl(backgroundColor = SilverGrey, textColor = Onyx),
         )
         .controlStyle(
             baseStyle = ElementColorStyleImpl(backgroundColor = SilverGrey, textColor = Onyx),
             decimalStyle = ElementColorStyleImpl(backgroundColor = Onyx, textColor = White),
+            equalsStyle = ElementColorStyleImpl(backgroundColor = VividGamboge, textColor = White),
         )
         .numberStyle(
-            baseStyle = ElementColorStyleImpl(backgroundColor = Onyx, textColor = White)
+            baseStyle = ElementColorStyleImpl(backgroundColor = Onyx, textColor = White),
+        )
+        .parenthesisStyle(
+            baseStyle = ElementColorStyleImpl(backgroundColor = Onyx, textColor = White),
         )
         .build()
 }
@@ -198,6 +216,12 @@ The **Row** implementation extends the **Element**, providing a way to group mul
 - **Row Interface**:  
   The `Row` interface defines the basic structure for a row of buttons. Each row holds a list of `ButtonData` elements, allowing for flexible button grouping and arrangement.
 
+    ```kotlin
+    interface Row : Element<ElementCategory<ElementColorStyle>, ElementCategoryStyleCollection<ElementColorStyle>, ElementColorStyle> {
+        val buttons: List<ButtonData>
+    }
+    ```
+
 - **Row Categories**:  
   Rows are categorized to support different layouts. The initial implementation focuses on `Standard` rows, but additional row categories like `Scientific` may be introduced in future updates.
 
@@ -207,10 +231,6 @@ The **Row** implementation extends the **Element**, providing a way to group mul
 #### Example of Standard Row Implementation:
 
 ```kotlin
-interface Row : Element<ElementCategory<ElementColorStyle>, ElementCategoryStyleCollection<ElementColorStyle>, ElementColorStyle> {
-    val buttons: List<ButtonData>
-}
-
 sealed class RowCalculatorStandard(override val buttons: List<ButtonData>) : Row {
 
     class Standard1(override val buttons: List<ButtonData>) : RowCalculatorStandard(buttons)
@@ -248,320 +268,256 @@ The **Engine** is responsible for handling the core logic of the calculator, inc
 
 - **EngineMath Interface**:  
   Defines core mathematical operations, including:
-    - `applySign(number: Double)`: Inverts the sign of a number.
-    - `applySign(number: Int)`: Inverts the sign of a number.
-    - `applyPercentage(number: Double)`: Converts a number into a percentage.
-    - `applyArithmetic(left: Double, right: Double, operation: ButtonCalculatorArithmetic)`: Performs arithmetic operations such as addition, subtraction, multiplication, and division.
+  - `applySign(number: Double)`: Inverts the sign of a number.
+  - `applySign(number: Int)`: Inverts the sign of a number.
+  - `applyPercentage(number: Double)`: Converts a number into a percentage.
+  - `applyBinary(left: Double, right: Double, operation: ButtonCalculatorBinary)`: Performs Binary operations such as addition, subtraction, multiplication, and division.
 
   **Implementation:**
-  ```kotlin
-  class EngineMathStandard : EngineMath {
-
-    override fun applySign(number: Double): Double = -number
-    override fun applySign(number: Int): Int = -number
-
-    override fun applyPercent(
-        operandLeft: Double?,
-        operator: ButtonCalculatorArithmetic?,
-        operandRight: Double
-    ): Double {
-        return when (operator) {
-            ButtonCalculatorArithmetic.Addition,
-            ButtonCalculatorArithmetic.Subtraction -> (operandLeft ?: 1.0) * (operandRight / 100)
-
-            ButtonCalculatorArithmetic.Multiplication,
-            ButtonCalculatorArithmetic.Division -> operandRight / 100
-
-            else -> operandRight / 100
+    ```kotlin
+    class EngineMathStandard : EngineMath {
+    
+        override fun applySign(number: Double): Double = -number
+        override fun applySign(number: Int): Int = -number
+        
+        override fun applyPercent(
+            operandLeft: Double?,
+            operator: ButtonCalculatorArithmetic?,
+            operandRight: Double
+        ): Double {
+            return when (operator) {
+                ButtonCalculatorArithmetic.Addition,
+                ButtonCalculatorArithmetic.Subtraction -> (operandLeft ?: 1.0) * (operandRight / 100)
+        
+                ButtonCalculatorArithmetic.Multiplication,
+                ButtonCalculatorArithmetic.Division -> operandRight / 100
+        
+                else -> operandRight / 100
+            }
         }
-    }
-
-    override fun applyArithmetic(
-        operandLeft: Double,
-        operator: ButtonCalculatorArithmetic,
-        operandRight: Double,
-    ): Double {
-
-        return  when (operator) {
-            is ButtonCalculatorArithmetic.Addition -> operandLeft + operandRight
-            is ButtonCalculatorArithmetic.Subtraction -> operandLeft - operandRight
-            is ButtonCalculatorArithmetic.Multiplication -> operandLeft * operandRight
-            is ButtonCalculatorArithmetic.Division -> safeDivide(operandLeft, operandRight)
-            else -> throw IllegalArgumentException("Unknown operation.")
+        
+        override fun applyBinary(
+            operandLeft: Double,
+            operator: ButtonCalculatorBinary,
+            operandRight: Double,
+        ): Double {
+        
+            return  when (operator) {
+                is ButtonCalculatorBinary.Addition -> operandLeft + operandRight
+                is ButtonCalculatorBinary.Subtraction -> operandLeft - operandRight
+                is ButtonCalculatorBinary.Multiplication -> operandLeft * operandRight
+                is ButtonCalculatorBinary.Division -> safeDivide(operandLeft, operandRight)
+                else -> throw IllegalArgumentException("Unknown operation.")
+            }
         }
+        
+        private fun safeDivide(operandLeft: Double, operandRight: Double) = if (operandRight != 0.0) operandLeft / operandRight else Double.NaN
     }
+    ```
 
-    private fun safeDivide(operandLeft: Double, operandRight: Double) = if (operandRight != 0.0) operandLeft / operandRight else Double.NaN
-  }
-  ```
 - **EngineState Interface**:  
-  Manages internal calculator state transitions, such as updating numbers, performing operations, and handling clear actions. This interface focuses on ensuring that the correct state is maintained as operations are performed:
-    - `handleArithmetic`(state, arithmetic): Manages state updates and applies the selected operation.
-    - `enterArithmetic(state, arithmetic)`: Updates the state when an arithmetic operation is entered.
-    - `applyArithmetic`(state): Applies the pending arithmetic operation.
-    - `applyEquals`(state): Calculates the result of the current expression.
-    - `enterNumber(state, number)`: Handles number input.
-    - `enterDecimal(state)`: Adds a decimal point.
-    - `applyClear(state)`: Clears the current input.
-    - `applyClearAll(state)`: Resets the calculator state.
-    - `applySign`(state): Toggles the sign of the current number.
-    - `applyPercent`(state): Converts the current number into a percentage.
+  EngineState is responsible for managing calculator state transitions, ensuring correct updates as operations are performed.
 
-  **Implementation**:
   ```kotlin
-  typealias Validator<T> = (T) -> Boolean
-  
-  class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
-
-  override fun handleArithmetic(state: CalculatorState, arithmetic: ButtonCalculatorArithmetic): CalculatorState {
-      return state.modifyWith(
-          { hasNaN(state) } to { this },
-          { state.activeButton == ButtonCalculatorArithmetic.Equals } to { state.copy(operator = arithmetic, operandRight = "", operand = null) },
-          { hasOperatorAndOperandRight(state) } to {
-              val newState = applyArithmetic(state)
-              enterArithmetic(newState, arithmetic)
-          },
-          { true } to { enterArithmetic(state, arithmetic) }
-      )
-  }
-
-  override fun applyArithmetic(state: CalculatorState): CalculatorState {
-      return state.modifyWith(
-          { hasInvalidInput(state) } to { this },
-          { true } to {
-              val operandLeft = state.operandLeft.toDouble()
-              val operandRight = state.operandRight.toDouble()
-
-              if (operandLeft.isNaN() || operandRight.isNaN()) return@to state
-
-              val operation = state.operator as ButtonCalculatorArithmetic
-              val result = engineMath.applyArithmetic(operandLeft, operation, operandRight)
-
-              state.copy(
-                  operandRight = result.toString(),
-                  operandLeft = "",
-                  operator = null
-              )
-          }
-      )
-  }
-
-  override fun enterArithmetic(state: CalculatorState, arithmetic: ButtonCalculatorArithmetic): CalculatorState {
-      return state.modifyWith(
-          { state.operator != null } to { state.copy(operator = arithmetic) },
-          { state.operandRight.isNotBlank() } to { state.copy(operandLeft = state.operandRight, operandRight = "", operator = arithmetic) },
-      )
-  }
-
-  override fun applyEquals(state: CalculatorState): CalculatorState {
-      return state.modifyWith(
-          { state.operandLeft.toDoubleOrNull() == null } to { this },
-          { state.operandRight.toDoubleOrNull() == null && state.operand == null } to { this },
-          { state.operator !is ButtonCalculatorArithmetic } to { this },
-          { true } to {
-              val operandLeft = state.operandLeft.toDouble()
-              val operandRight = state.operand?.toDoubleOrNull() ?: state.operandRight.toDouble()
-
-              if (operandLeft.isNaN() || operandRight.isNaN()) return@to state
-
-              val operation = state.operator as ButtonCalculatorArithmetic
-              val result = engineMath.applyArithmetic(operandLeft, operation, operandRight)
-
-              state.copy(
-                  operandRight = result.toString(),
-                  operandLeft = result.toString(),
-                  operand = operandRight.toString() // Save the last entered number
-              )
-          }
-      )
-  }
-
-  override fun enterNumber(state: CalculatorState, number: Int): CalculatorState {
-      return state.modifyWith(
-          { hasNaN(state) } to { this },
-          { state.operandRight == SymbolButton.ZERO.label } to { copy(operandRight = number.toString()) },
-          { state.operandRight.length >= MAX_NUM_LENGTH } to { this },
-          { true } to { copy(operandRight = operandRight + number) }
-      )
-  }
-
-  override fun enterDecimal(state: CalculatorState): CalculatorState {
-      return state.modifyWith(
-          { hasNaN(state) } to { this },
-          { !state.operandRight.contains(".") && state.operandRight.isNotBlank() } to { state.copy(operandRight = state.operandRight + ".") },
-          { !state.operandRight.contains(".") && state.operandRight.isBlank() } to { state.copy(operandRight = SymbolButton.ZERO.label + ".") }
-      )
-  }
-
-  override fun applyClearAll(state: CalculatorState): CalculatorState = CalculatorState()
-
-  override fun applyClear(state: CalculatorState): CalculatorState {
-      return state.modifyWith(
-          { hasNaN(state) } to { applyClearAll(state) },
-          { !state.operand.isNullOrBlank() } to { applyClearAll(state) },
-          { state.operator != null } to { copy(operandRight = state.operandLeft, operandLeft = "", operator = null) },
-          { state.operandRight.isNotBlank() } to { copy(operandRight = SymbolButton.ZERO.label, operandLeft = "") },
-      )
-  }
-
-  override fun applySign(state: CalculatorState): CalculatorState {
-      return state.modifyWith(
-          { hasNaN(state) } to { this },
-          { isDefaultOrEmpty(state) } to { state.copy(operandRight = "-" + SymbolButton.ZERO.label) },
-          { state.operandRight.toIntOrNull() != null } to {
-              val intNumber = state.operandRight.toInt()
-              val result = engineMath.applySign(intNumber).toString()
-
-              state.copy(operandRight = result)
-          },
-          { true } to {
-              val doubleNumber = state.operandRight.toDouble()
-              val result = engineMath.applySign(doubleNumber).toString()
-
-              state.copy(operandRight = result)
-          }
-      )
-  }
-
-  override fun applyPercent(state: CalculatorState): CalculatorState {
-      return state.modifyWith(
-          { hasNaN(state) } to { this },
-          { state.operandRight.toDoubleOrNull() == null } to { this },
-          { true } to {
-              val result = engineMath.applyPercent(
-                  state.operandLeft.toDoubleOrNull(),
-                  state.operator as? ButtonCalculatorArithmetic,
-                  state.operandRight.toDouble()
-              )
-
-              state.copy(operandRight = result.toString())
-          }
-      )
-  }
-
-  val hasNaN: Validator<CalculatorState> = { it.operandRight == "NaN" || it.operandLeft == "NaN" }
-  val hasOperatorAndOperandRight: Validator<CalculatorState> = { it.operator != null && it.operandRight.isNotBlank() }
-  val hasInvalidInput: Validator<CalculatorState> = {
-      it.operandLeft.toDoubleOrNull() == null ||
-      it.operandRight.toDoubleOrNull() == null && it.operand == null ||
-      it.operator !is ButtonCalculatorArithmetic
-  }
-  val isDefaultOrEmpty: Validator<CalculatorState> = { it.operandRight == SymbolButton.ZERO.label || it.operandRight.isEmpty() }
+  interface EngineState : Engine {
+      fun handleBinary(state: CalculatorState, binary: ButtonCalculatorBinary): CalculatorState
+      fun handleUnary(state: CalculatorState, unary: ButtonCalculatorUnary): CalculatorState
+      fun handleControl(state: CalculatorState, control: ButtonCalculatorControl): CalculatorState
+      fun handleNumber(state: CalculatorState, number: ButtonCalculatorNumber): CalculatorState
   }
   ```
-- **CalculatorState**:
-  Represents the state of the calculator, which includes the current number, previous number, the active operation, and the active button label. This state is crucial for making calculations based on user input.
-    - `operandRight`: The number currently being entered.
-    - `operator`: The currently selected arithmetic operation.
-    - `operandLeft`: The number stored for an operation.
-    - `operand`: Holds intermediate values, including for repeatable equals.
-    - `activeButton`: The label of the active button.
+
+  #### Core Responsibilities:
+  - Handles numeric input, operations, and controls to maintain a consistent calculator state.
+  - Ensures correct state updates based on user interactions.
+
+  #### Key Methods:
+  - `handleBinary(state, binary)`: Applies the selected binary operation (e.g., Addition, Subtraction).
+  - `handleUnary(state, unary)`: Processes unary operations (e.g., Sign, Percentage).
+  - `handleControl(state, control)`: Handles control actions (e.g., Clear, Clear All).
+  - `handleNumber(state, number)`: Manages number input and state updates.
 
   **Implementation**:
-  ```kotlin
-  data class CalculatorState(
-    val operandLeft: String = "",
-    val operator: Button? = null,
-    val operandRight: String = SymbolButton.ZERO.label,
-    val operand: String? = null,
+    ```kotlin
+    class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
+    
+        override fun handleBinary(state: CalculatorState, binary: ButtonCalculatorBinary): CalculatorState {
+            return state.modifyWith(
+                { state.lastOperand == "NaN" || state.expression.contains("NaN") } to { this },
+                { state.activeButton == ButtonCalculatorControl.Equals } to { state.copy(lastOperator = binary, lastOperand = "", lastResult = null) },
+                { state.lastOperator != null && state.lastOperand.isNotBlank() } to {
+                val newState = applyBinary(state)
+                enterBinary(newState, binary)
+                },
+                { true } to { enterBinary(state, binary) }
+            )
+        }
+    
+        override fun handleUnary(state: CalculatorState, unary: ButtonCalculatorUnary): CalculatorState {
+            return state.modifyWith(
+                { true } to {
+                    when (unary) {
+                        is ButtonCalculatorUnary.Sign -> applySign(state)
+                        is ButtonCalculatorUnary.Percentage -> applyPercent(state)
+                    }
+                }
+            )
+        }
+    
+        override fun handleControl(state: CalculatorState, control: ButtonCalculatorControl): CalculatorState {
+            return state.modifyWith(
+                { true } to {
+                    when (control) {
+                        is ButtonCalculatorControl.AllClear -> applyClearAll()
+                        is ButtonCalculatorControl.Clear -> applyClear(state)
+                        is ButtonCalculatorControl.Decimal -> enterDecimal(state)
+                        is ButtonCalculatorControl.Equals -> applyEquals(state)
+                    }
+                }
+            )
+        }
+    
+        override fun handleNumber(state: CalculatorState, number: ButtonCalculatorNumber): CalculatorState {
+            return state.modifyWith(
+                { true } to {
+                    applyNumber(state, number)
+                }
+            )
+        }
+    }
+    ```
+
+#### **CalculatorState**:
+CalculatorState represents the current state of the calculator, maintaining essential data for computations, user interactions, and error handling.
+
+#### **State properties**:
+- `expression` – Stores the sequence of inputs for an ongoing operation.
+- `lastOperand` – The number currently being entered.
+- `lastResult` – The most recently computed result.
+- `lastOperator` – The last selected arithmetic operation.
+- `cachedOperand` – Holds intermediate values, including for repeatable equals (=).
+- `activeButton` – Tracks the last pressed button.
+- `isComputed` – Indicates whether the last action resulted in a computation (used to reset input).
+- `hasError` – Flags if an error has occurred during a computation.
+- `errorMessage` – Describes the error when hasError is true.
+
+#### **State Modification with `modifyWith`**:
+The `modifyWith` function conditionally applies transformations to CalculatorState based on a set of conditions.
+
+- **Functionality**:
+  - Accepts a list of transformation pairs, where each:
+    - Condition: A function returning Boolean that determines if the transformation should apply.
+    - Action: A function that modifies CalculatorState when the condition is met.
+  - The first matching transformation is applied.
+  - If no conditions match, the state remains unchanged.
+  - If an exception occurs, the state is updated with an error message.
+
+- **Parameters**:
+  - transformations – A vararg list of condition-action pairs.
+  - errorMessage (optional) – A message set if an exception occurs during modification.
+
+- **Returns**:
+  - A new CalculatorState reflecting the applied transformation.
+  - The original state if no condition matches.
+  - An error state if an exception occurs.
+
+#### **Implementation**:
+```kotlin
+data class CalculatorState(
+    val expression: List<String> = emptyList(),
+    val lastOperand: String = SymbolButton.ZERO.label,
+    val lastResult: String? = null,
+    val lastOperator: Button? = null,
+    val cachedOperand: String? = null,
     val activeButton: Button? = null,
-  ) {
-      fun modifyWith(vararg transformations: Pair<() -> Boolean, CalculatorState.() -> CalculatorState>): CalculatorState {
-          for ((condition, action) in transformations) {
-            if (condition()) return action()
-          }
-          return this
-      }
-  }
-  ```
+    val isComputed: Boolean = false,
+    val hasError: Boolean = false,
+    val errorMessage: String? = null,
+) {
+
+    fun modifyWith(
+        vararg transformations: Pair<() -> Boolean, CalculatorState.() -> CalculatorState>,
+        errorMessage: String? = null,
+    ): CalculatorState {
+        return try {
+            transformations
+                .firstOrNull { it.first() }
+                ?.second?.invoke(this)
+                ?: this
+        } catch (e: Exception) {
+            this.copy(hasError = true, errorMessage = errorMessage ?: e.message)
+        }
+    }
+}
+```
+#### Why `modifyWith`?
+- Improves readability – Avoids deeply nested if statements.
+- Encapsulates state logic – Centralized modification logic improves maintainability.
+- Gracefully handles errors – Ensures unexpected failures don’t break the application.
 
 ---
 
 ### 6. Command
 
-- The **Command** pattern is used to encapsulate calculator actions into executable objects. Each command represents a specific operation and allows flexible management of calculator behavior. Commands are executed using the execute method, which takes the current CalculatorState and returns an updated state.
-- The **CommandFactory** is responsible for creating commands based on user actions. It ensures that the correct command is instantiated for each button press, promoting separation of concerns and simplifying state management.
+- The **Command** pattern is used to encapsulate calculator actions into executable objects.
+- The **CommandFactory** is responsible for creating commands based on user actions.
 
 #### Key Concepts of Commands:
 
 - **Command Interface**:
-  The `Command` interface defines the structure for all commands:
-  - `CommandApplyArithmetic`: Executes an arithmetic operation.
-  - `CommandApplyEquals`: Finalizes the current operation and displays the result.
-  - `CommandApplyClear` and `CommandApplyClearAll`: Clear the current input or reset the entire state.
-  - `CommandApplyPercent`: Converts the current value into a percentage.
-  - `CommandApplySign`: Toggles the sign of the current number.
-  - `CommandEnterNumber`: Handles number input.
-  - `CommandEnterDecimal`: Appends a decimal point.
-  - `CommandEnterArithmetic`: Sets the current operation.
-
-  **Implementations**:
+  The `Command` interface represents an executable action in the calculator system.
 
   ```kotlin
-  class CommandApplyArithmetic(private val engine: EngineState) : Command {
-      override fun execute(state: CalculatorState): CalculatorState {
-          return engine.applyArithmetic(state)
-      }
+  interface Command {
+      fun execute(state: CalculatorState): CalculatorState
   }
-
-   class CommandEnterNumber(
-       private val engine: EngineState,
-       private val number: Int,
-   ) : Command {
-       override fun execute(state: CalculatorState): CalculatorState {
-           return engine.enterNumber(state, number)
-       }
-   }
   ```
+
+  **Implementations**:
+  The `CommandHandler` class executes commands by delegating to the EngineState, based on the provided button type.
+    ```kotlin
+    data class CommandHandler<T : Button>(
+        private val engineState: EngineState,
+        private val button: T,
+    ) : Command {
+    
+        override fun execute(state: CalculatorState): CalculatorState {
+            return when (button) {
+                is ButtonCalculatorBinary -> engineState.handleBinary(state, button)
+                is ButtonCalculatorUnary -> engineState.handleUnary(state, button)
+                is ButtonCalculatorControl -> engineState.handleControl(state, button)
+                is ButtonCalculatorNumber -> engineState.handleNumber(state, button)
+                else -> throw IllegalArgumentException("Invalid button: $button")
+            }
+        }
+    }
+    ```
 
 - **Command Factory Interface**:
-  The `CommandFacgtory` is a base interface for creating commands:
-  - `CommandFactoryControl`: Creates commands for control buttons like clear, percent, and sign toggle.
-  - `CommandFactoryNumber`: Creates number input commands.
-  - `CommandFactoryArithmetic`: Creates commands for arithmetic operations.
-  - `CommandFactoryStandard`: Serves as the primary factory, delegating to sub-factories based on the button type.
-
-  **Implementations**:
-  Different factory implementations handle specific button types:
+  The CommandFactory interface provides a mechanism to create commands dynamically based on user actions.
 
   ```kotlin
-   class CommandFactoryControl(
-       private val engineState: EngineState,
-   ) : CommandFactorySub<ButtonCalculatorControl> {
-       override fun create(button: ButtonCalculatorControl): Command {
-           return when (button) {
-               is ButtonCalculatorControl.Decimal -> CommandEnterDecimal(engineState)
-               is ButtonCalculatorControl.AllClear -> CommandApplyClearAll(engineState)
-               is ButtonCalculatorControl.Clear -> CommandApplyClear(engineState)
-               is ButtonCalculatorControl.Percentage -> CommandApplyPercent(engineState)
-               is ButtonCalculatorControl.Sign -> CommandApplySign(engineState)
-           }
-       }
-   }
-   
-   class CommandFactoryStandard(
-       private val arithmeticCommandFactory: CommandFactoryArithmetic,
-       private val controlCommandFactory: CommandFactoryControl,
-       private val numberCommandFactory: CommandFactoryNumber,
-   ) : CommandFactory {
-       override fun createCommand(action: CalculatorAction): Command {
-           return when (action) {
-               is CalculatorAction.ButtonPressed -> handleButtonPressed(action.button)
-           }
-       }
-   
-       private fun handleButtonPressed(button: Button): Command {
-           return when (button) {
-               is ButtonCalculatorNumber -> numberCommandFactory.create(button)
-               is ButtonCalculatorArithmetic -> arithmeticCommandFactory.create(button)
-               is ButtonCalculatorControl -> controlCommandFactory.create(button)
-               else -> throw IllegalArgumentException("Unknown button.")
-           }
-       }
-   }
+  interface CommandFactory {
+      fun createCommand(action: CalculatorAction): Command
+  }
   ```
 
-The CommandFactory simplifies the process of translating user interactions into executable actions while maintaining modularity and readability.
+  **Implementations**:
+  `CommandFactoryStandard` serves as the concrete factory that creates CommandHandler instances based on button actions.
+    ```kotlin
+    class CommandFactoryStandard(
+        private val engineState: EngineState
+    ) : CommandFactory {
+    
+        override fun createCommand(action: CalculatorAction): Command {
+            return when (action) {
+                is CalculatorAction.ButtonPressed -> CommandHandler(engineState, action.button)
+            }
+        }
+    }
+    ```
+
+The CommandFactoryStandard simplifies the process of translating user interactions into executable commands while ensuring modularity and readability. It dynamically generates CommandHandler instances based on the button type, allowing the calculator to process different operations efficiently.
 
 ___
 
@@ -581,21 +537,21 @@ Unlike features that are actively being developed and are part of the core funct
 
 - The @ConceptClass annotation is used to mark a class as a concept that is under development and may change significantly or be removed without prior notice. It signals to developers that the class is part of an experimental or evolving feature.
 
-```kotlin
-@RequiresOptIn(level = RequiresOptIn.Level.ERROR, message = "This is a concept under development and may change significantly or be removed without prior notice.")
-@Retention(AnnotationRetention.BINARY)
-@Target(AnnotationTarget.CLASS)
-annotation class ConceptClass
-```
+    ```kotlin
+    @RequiresOptIn(level = RequiresOptIn.Level.ERROR, message = "This is a concept under development and may change significantly or be removed without prior notice.")
+    @Retention(AnnotationRetention.BINARY)
+    @Target(AnnotationTarget.CLASS)
+    annotation class ConceptClass
+    ```
 
 #### ConceptMethod Annotation:
 
 - The @ConceptMethod annotation marks a method that is part of an under development concept and may change significantly or be removed without prior notice. This helps track methods that are placeholders or are being designed for future functionality.
 
-```kotlin
-@RequiresOptIn(level = RequiresOptIn.Level.ERROR, message = "This is a concept under development and may change significantly or be removed without prior notice.")
-@Retention(AnnotationRetention.BINARY)
-@Target(AnnotationTarget.FUNCTION)
-annotation class ConceptMethod
-```
+    ```kotlin
+    @RequiresOptIn(level = RequiresOptIn.Level.ERROR, message = "This is a concept under development and may change significantly or be removed without prior notice.")
+    @Retention(AnnotationRetention.BINARY)
+    @Target(AnnotationTarget.FUNCTION)
+    annotation class ConceptMethod
+    ```
 ---
