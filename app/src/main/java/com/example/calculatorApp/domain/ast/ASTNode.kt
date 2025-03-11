@@ -1,4 +1,4 @@
-package com.example.calculatorApp.domain
+package com.example.calculatorApp.domain.ast
 
 sealed class ASTNode {
 

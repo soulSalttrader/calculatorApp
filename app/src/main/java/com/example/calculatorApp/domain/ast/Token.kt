@@ -1,4 +1,4 @@
-package com.example.calculatorApp.domain
+package com.example.calculatorApp.domain.ast
 
 sealed class Token {
     data class Number(val value: Double) : Token()

@@ -1,4 +1,4 @@
-package com.example.calculatorApp.domain
+package com.example.calculatorApp.domain.ast
 
 import com.example.calculatorApp.model.symbols.Symbol
 import com.example.calculatorApp.model.symbols.SymbolButton
