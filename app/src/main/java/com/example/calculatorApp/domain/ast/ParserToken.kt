@@ -29,7 +29,7 @@ class ParserToken : Parser {
         operators.add(token)
     }
 
-    override fun buildOperatorNode(output: MutableList<ASTNode>, operatorToken: Token) {
+    private fun buildOperatorNode(output: MutableList<ASTNode>, operatorToken: Token) {
         when (operatorToken) {
             is Token.Binary -> {
                 require(output.size >= 2) { "Malformed expression" }
