@@ -60,9 +60,17 @@ object TokenizerUtils {
             ?: throw IllegalArgumentException("Unknown unary operator: $this.")
     }
 
-    fun String.toParenthesisOperator(): OperatorParenthesis = when (this) {
-        ButtonCalculatorParenthesis.OpenParenthesis.symbol.label -> OperatorParenthesis.Open
-        ButtonCalculatorParenthesis.CloseParenthesis.symbol.label -> OperatorParenthesis.Close
-        else -> throw IllegalArgumentException("Unknown parenthesis: $this.")
+    fun ButtonCalculatorParenthesis.toParenthesisOperator(): OperatorParenthesis = when (this) {
+        ButtonCalculatorParenthesis.OpenParenthesis -> OperatorParenthesis.Open
+        ButtonCalculatorParenthesis.CloseParenthesis -> OperatorParenthesis.Close
+    }
+
+    fun String.toParenthesisOperator(): OperatorParenthesis {
+        val matchingButton = ButtonCalculatorParenthesis::class.sealedSubclasses
+            .mapNotNull { it.objectInstance }
+            .firstOrNull { it.symbol.label == this }
+
+        return matchingButton?.toParenthesisOperator()
+            ?: throw IllegalArgumentException("Unknown parenthesis operator: $this.")
     }
 }
