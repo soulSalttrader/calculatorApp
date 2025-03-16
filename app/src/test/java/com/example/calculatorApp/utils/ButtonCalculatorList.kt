@@ -6,8 +6,19 @@ import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorParenthesis
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
+import kotlin.reflect.KClass
 
 object ButtonCalculatorList {
+    fun provideSequenceButtons(buttonClass: KClass<out Button>): Sequence<Button> {
+        return try {
+            buttonClass.sealedSubclasses
+                .asSequence()
+                .mapNotNull { it.objectInstance }
+        } catch (e: Exception) {
+            throw IllegalArgumentException("Unknown button class: $buttonClass.")
+        }
+    }
+
     val binary: Array<ButtonCalculatorBinary> = ButtonCalculatorBinary::class.sealedSubclasses
         .mapNotNull { it.objectInstance }
         .toTypedArray()

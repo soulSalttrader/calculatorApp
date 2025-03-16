@@ -33,85 +33,75 @@ class CommandFactoryStandardTest {
         factory = CommandFactoryStandard(engineState)
     }
 
-@Nested
-inner class Create {
+    @Nested
+    inner class Create {
 
-    // Arrange:
-    private fun provideArithmetics(): Array<ButtonCalculatorBinary> {
-        return ButtonCalculatorList.binary
-    }
+        // Arrange:
+        private fun provideArithmetics(): Array<ButtonCalculatorBinary> {
+            return ButtonCalculatorList.binary
+        }
 
-    // Arrange:
-    private fun provideUnary(): Array<ButtonCalculatorUnary> {
-        return ButtonCalculatorList.unary
-    }
+        // Arrange:
+        private fun provideUnary(): Array<ButtonCalculatorUnary> {
+            return ButtonCalculatorList.unary
+        }
 
-    // Arrange:
-    private fun provideControls(): Array<ButtonCalculatorControl> {
-        return ButtonCalculatorList.controls
-    }
+        // Arrange:
+        private fun provideControls(): Array<ButtonCalculatorControl> {
+            return ButtonCalculatorList.controls
+        }
 
-    // Arrange:
-    private fun provideNumbers(): Array<ButtonCalculatorNumber> {
-        return ButtonCalculatorList.numbers
-    }
+        // Arrange:
+        private fun provideNumbers(): Array<ButtonCalculatorNumber> {
+            return ButtonCalculatorList.numbers
+        }
 
-    @ParameterizedTest
-    @MethodSource("provideArithmetics")
-    fun `should create CommandHandler for binary buttons`(button: ButtonCalculatorBinary) {
-        val action = CalculatorAction.ButtonPressed(button)
+        @ParameterizedTest
+        @MethodSource("provideArithmetics")
+        fun `should create CommandHandler for binary buttons`(button: ButtonCalculatorBinary) {
+            val action = CalculatorAction.ButtonPressed(button)
 
-        // Act
-        val command = factory.createCommand(action)
+            // Act
+            val command = factory.createCommand(action)
 
-        // Assert
-        command shouldBe CommandHandler(engineState, button)
-    }
+            // Assert
+            command shouldBe CommandHandler(engineState, button)
+        }
 
-    @ParameterizedTest
-    @MethodSource("provideUnary")
-    fun `should create CommandHandler for unary buttons`(button: ButtonCalculatorUnary) {
-        val action = CalculatorAction.ButtonPressed(button)
+        @ParameterizedTest
+        @MethodSource("provideUnary")
+        fun `should create CommandHandler for unary buttons`(button: ButtonCalculatorUnary) {
+            val action = CalculatorAction.ButtonPressed(button)
 
-        // Act
-        val command = factory.createCommand(action)
+            // Act
+            val command = factory.createCommand(action)
 
-        // Assert
-        command shouldBe CommandHandler(engineState, button)
-    }
+            // Assert
+            command shouldBe CommandHandler(engineState, button)
+        }
 
-    @ParameterizedTest
-    @MethodSource("provideControls")
-    fun `should create CommandHandler for control buttons`(button: ButtonCalculatorControl) {
-        val action = CalculatorAction.ButtonPressed(button)
+        @ParameterizedTest
+        @MethodSource("provideControls")
+        fun `should create CommandHandler for control buttons`(button: ButtonCalculatorControl) {
+            val action = CalculatorAction.ButtonPressed(button)
 
-        // Act
-        val command = factory.createCommand(action)
+            // Act
+            val command = factory.createCommand(action)
 
-        // Assert
-        command shouldBe CommandHandler(engineState, button)
-    }
+            // Assert
+            command shouldBe CommandHandler(engineState, button)
+        }
 
-    @ParameterizedTest
-    @MethodSource("provideNumbers")
-    fun `should create CommandHandler for number buttons`(button: ButtonCalculatorNumber) {
-        val action = CalculatorAction.ButtonPressed(button)
+        @ParameterizedTest
+        @MethodSource("provideNumbers")
+        fun `should create CommandHandler for number buttons`(button: ButtonCalculatorNumber) {
+            val action = CalculatorAction.ButtonPressed(button)
 
-        // Act
-        val command = factory.createCommand(action)
+            // Act
+            val command = factory.createCommand(action)
 
-        // Assert
-        command shouldBe CommandHandler(engineState, button)
-    }
-
-    @Disabled("Deprecated: No longer throws an exception for invalid buttons.")
-    @Test
-    fun `should throw IllegalArgumentException when invalid button is pressed`() {
-        val button = mockk<Button>()
-
-        shouldThrow<IllegalArgumentException> {
-            factory.createCommand(CalculatorAction.ButtonPressed(button))
+            // Assert
+            command shouldBe CommandHandler(engineState, button)
         }
     }
-}
 }
