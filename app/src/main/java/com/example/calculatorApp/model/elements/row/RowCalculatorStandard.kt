@@ -6,13 +6,13 @@ import com.example.calculatorApp.model.elements.ElementCategoryStyleCollection
 import com.example.calculatorApp.model.elements.ElementColorStyle
 import com.example.calculatorApp.model.elements.button.ButtonData
 
-sealed class RowCalculatorStandard(override val buttons: List<ButtonData>) : Row {
+sealed class RowCalculatorStandard(override val buttons: Sequence<ButtonData>) : Row {
 
-    class Standard1(override val buttons: List<ButtonData>) : RowCalculatorStandard(buttons)
-    class Standard2(override val buttons: List<ButtonData>) : RowCalculatorStandard(buttons)
-    class Standard3(override val buttons: List<ButtonData>) : RowCalculatorStandard(buttons)
-    class Standard4(override val buttons: List<ButtonData>) : RowCalculatorStandard(buttons)
-    class Standard5(override val buttons: List<ButtonData>) : RowCalculatorStandard(buttons)
+    class Standard1(override val buttons: Sequence<ButtonData>) : RowCalculatorStandard(buttons)
+    class Standard2(override val buttons: Sequence<ButtonData>) : RowCalculatorStandard(buttons)
+    class Standard3(override val buttons: Sequence<ButtonData>) : RowCalculatorStandard(buttons)
+    class Standard4(override val buttons: Sequence<ButtonData>) : RowCalculatorStandard(buttons)
+    class Standard5(override val buttons: Sequence<ButtonData>) : RowCalculatorStandard(buttons)
 
     override fun getCategory(): ElementCategory<ElementColorStyle> = RowCategory.Standard
     override fun getBackgroundColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).backgroundColor

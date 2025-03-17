@@ -17,6 +17,7 @@ import com.example.calculatorApp.utils.ButtonCalculatorList.parenthesis
 import com.example.calculatorApp.utils.ButtonCalculatorList.unary
 import org.junit.jupiter.params.provider.Arguments
 import java.util.stream.Stream
+import kotlin.streams.asStream
 
 object TestArgumentsButtonStyleBuilder : TestArguments {
 
@@ -32,21 +33,25 @@ object TestArgumentsButtonStyleBuilder : TestArguments {
 
         val testedStyle = style ?: StylesButton.iButtonStyle
 
-        val expectedStyles = mapOf(
-            *binary.map { it to binaryBaseStyle }.toTypedArray(),
-            *unary.map { it to unaryBaseStyle }.toTypedArray(),
-            *controls.map { it to controlsBaseStyle }.toTypedArray(),
-            *numbers.map { it to numbersBaseStyle }.toTypedArray(),
-            *parenthesis.map { it to parenthesisBaseStyle }.toTypedArray(),
-
-            // base style overridden for control buttons
-            ButtonCalculatorControl.Decimal to decimalStyle,
-            ButtonCalculatorControl.Equals to equalsStyle,
-        )
+        val expectedStyles = sequenceOf(
+            binary.map { it to binaryBaseStyle },
+            unary.map { it to unaryBaseStyle },
+            controls.map { it to controlsBaseStyle },
+            numbers.map { it to numbersBaseStyle },
+            parenthesis.map { it to parenthesisBaseStyle },
+        ).flatMap { it }
+            .plus(
+                sequenceOf(
+                    // base style overridden for control buttons
+                    ButtonCalculatorControl.Decimal to decimalStyle,
+                    ButtonCalculatorControl.Equals to equalsStyle,
+                )
+            )
+            .toMap()
 
         return allButtons.map { button ->
             val expectedStyle = expectedStyles[button]
             Arguments.of(button, testedStyle, expectedStyle)
-        }.stream()
+        }.asStream()
     }
 }

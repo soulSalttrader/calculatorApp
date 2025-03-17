@@ -13,6 +13,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
+import kotlin.streams.asStream
 
 class CalculatorStateTest {
 
@@ -101,7 +102,7 @@ class CalculatorStateTest {
     inner class CalculatorStatePropertiesTest {
         // Arrange: Setup test data (button instance)
         private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsButton.provideButtonButton()
+            return TestArgumentsButton.provideButtonButton().asStream()
         }
 
         @ParameterizedTest

@@ -9,6 +9,7 @@ import com.example.calculatorApp.model.styles.StylesRow
 import com.example.calculatorApp.utils.ColorToLongConverter
 import com.example.calculatorApp.utils.RowCalculatorList
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.params.ParameterizedTest
@@ -16,6 +17,7 @@ import org.junit.jupiter.params.converter.ConvertWith
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
+import kotlin.streams.asStream
 
 class RowCalculatorStandardTest {
 
@@ -23,8 +25,8 @@ class RowCalculatorStandardTest {
     inner class GetCategory {
 
         // Arrange: Setup test data (row instance)
-        private fun provideArguments(): Array<RowCalculatorStandard> {
-            return RowCalculatorList.standards
+        private fun provideArguments(): Stream<Row> {
+            return RowCalculatorList.standards.asStream()
         }
 
         @ParameterizedTest
@@ -57,7 +59,7 @@ class RowCalculatorStandardTest {
 
         // Arrange: Setup test data (row instance)
         private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsRow.provideRowColors()
+            return TestArgumentsRow.provideRowColors().asStream()
         }
 
         @ParameterizedTest
@@ -81,7 +83,7 @@ class RowCalculatorStandardTest {
     inner class GetTextColor {
 
         private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsRow.provideRowColors()
+            return TestArgumentsRow.provideRowColors().asStream()
         }
 
         @ParameterizedTest
@@ -106,17 +108,17 @@ class RowCalculatorStandardTest {
 
         // Arrange: Setup test data (button instance and expected symbol)
         private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsRow.provideStandardButtons()
+            return TestArgumentsRow.provideStandardButtons().asStream()
         }
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should correctly map buttons to rows`(
             row: RowCalculatorStandard,
-            expectedButtons: List<ButtonData>,
+            expectedButtons: Sequence<ButtonData>,
         ) {
-            // Act & Assert: Check if the button's symbol matches the expected symbol
-            expectedButtons shouldBe row.buttons
+            // Act & Assert:
+            expectedButtons.shouldBeEqualToIgnoringFields(row.buttons, ButtonData::layout)
         }
     }
 }

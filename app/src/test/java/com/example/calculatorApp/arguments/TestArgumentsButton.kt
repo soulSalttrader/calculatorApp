@@ -10,14 +10,16 @@ import com.example.calculatorApp.utils.ButtonCalculatorList.numbers
 import com.example.calculatorApp.utils.ButtonCalculatorList.parenthesis
 import com.example.calculatorApp.utils.ButtonCalculatorList.unary
 import com.example.calculatorApp.utils.ButtonCalculatorMappings
+import io.mockk.InternalPlatformDsl.toArray
 import org.junit.jupiter.params.provider.Arguments
+import kotlin.streams.asStream
 
 object TestArgumentsButton : TestArguments {
 
     private fun <T, R> provideButtonProperties(
-        buttons: Array<T>,
+        buttons: Sequence<T>,
         propertyMapping: (T) -> R
-    ) = buttons.map { button -> Arguments.of(button, propertyMapping(button)) }.stream()
+    ) = buttons.map { button -> Arguments.of(button, propertyMapping(button)) }
 
     fun provideArithmeticColors() = provideButtonProperties(
         buttons = binary,

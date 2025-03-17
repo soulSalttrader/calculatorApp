@@ -18,7 +18,7 @@ object RowCalculatorMappings {
 
     // Even index (0, 2, 4) use buttonsArithmeticsTest
     // Odd index (1, 3) use buttonsNumbersTest
-    val standardButtonsMap: Map<KClass<out RowCalculatorStandard>, List<ButtonData>> = mapOf(
+    val standardButtonsMap: Map<KClass<out RowCalculatorStandard>, Sequence<ButtonData>> = mapOf(
         RowCalculatorStandard.Standard1::class to RowCalculatorList.buttonsBinaryTest,
         RowCalculatorStandard.Standard2::class to RowCalculatorList.buttonsNumbersTest,
         RowCalculatorStandard.Standard3::class to RowCalculatorList.buttonsBinaryTest,

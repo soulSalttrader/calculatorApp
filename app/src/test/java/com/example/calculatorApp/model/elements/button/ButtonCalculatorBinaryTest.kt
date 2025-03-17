@@ -16,6 +16,7 @@ import org.junit.jupiter.params.converter.ConvertWith
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
+import kotlin.streams.asStream
 
 class ButtonCalculatorBinaryTest {
 
@@ -23,8 +24,8 @@ class ButtonCalculatorBinaryTest {
     inner class GetCategory {
 
         // Arrange: Setup test data (button instance)
-        private fun provideArguments(): Array<ButtonCalculatorBinary> {
-            return binary
+        private fun provideArguments(): Stream<Button> {
+            return binary.asStream()
         }
 
         @ParameterizedTest
@@ -57,7 +58,7 @@ class ButtonCalculatorBinaryTest {
 
         // Arrange: Setup test data (button instance)
         private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsButton.provideArithmeticColors()
+            return TestArgumentsButton.provideArithmeticColors().asStream()
         }
 
         @ParameterizedTest
@@ -81,7 +82,7 @@ class ButtonCalculatorBinaryTest {
     inner class GetTextColor {
 
         private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsButton.provideArithmeticColors()
+            return TestArgumentsButton.provideArithmeticColors().asStream()
         }
 
         @ParameterizedTest
@@ -106,7 +107,7 @@ class ButtonCalculatorBinaryTest {
 
         // Arrange: Setup test data (button instance and expected symbol)
         private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsButton.provideArithmeticSymbols()
+            return TestArgumentsButton.provideArithmeticSymbols().asStream()
         }
 
         @ParameterizedTest

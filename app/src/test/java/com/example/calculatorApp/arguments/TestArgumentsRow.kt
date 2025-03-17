@@ -8,11 +8,11 @@ import org.junit.jupiter.params.provider.Arguments
 
 object TestArgumentsRow : TestArguments {
 
-    private fun <T> provideRowsColors(rows: Array<T>, colorMapping: (T) -> Any) =
-        rows.map { row -> Arguments.of(row, colorMapping(row)) }.stream()
+    private fun <T> provideRowsColors(rows: Sequence<T>, colorMapping: (T) -> Any) =
+        rows.map { row -> Arguments.of(row, colorMapping(row)) }
 
-    private fun <T> provideRowButtons(buttons: Array<T>, buttonMapping: (T) -> List<ButtonData>?) =
-        buttons.map { button -> Arguments.of(button, buttonMapping(button)) }.stream()
+    private fun <T> provideRowButtons(buttons: Sequence<T>, buttonMapping: (T) -> Sequence<ButtonData>?) =
+        buttons.map { button -> Arguments.of(button, buttonMapping(button)) }
 
     fun provideRowColors() = provideRowsColors(
         rows = RowCalculatorList.standards,

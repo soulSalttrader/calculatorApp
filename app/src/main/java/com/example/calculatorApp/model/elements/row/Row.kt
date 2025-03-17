@@ -8,5 +8,5 @@ import com.example.calculatorApp.model.elements.button.ButtonData
 
 interface Row : Element<ElementCategory<ElementColorStyle>, ElementCategoryStyleCollection<ElementColorStyle>, ElementColorStyle> {
 
-    val buttons: List<ButtonData>
+    val buttons: Sequence<ButtonData>
 }

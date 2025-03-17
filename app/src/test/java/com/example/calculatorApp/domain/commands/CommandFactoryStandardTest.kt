@@ -20,6 +20,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
+import java.util.stream.Stream
+import kotlin.streams.asStream
 
 @ExtendWith(MockKExtension::class)
 class CommandFactoryStandardTest {
@@ -37,23 +39,23 @@ class CommandFactoryStandardTest {
     inner class Create {
 
         // Arrange:
-        private fun provideArithmetics(): Array<ButtonCalculatorBinary> {
-            return ButtonCalculatorList.binary
+        private fun provideArithmetics(): Stream<Button> {
+            return ButtonCalculatorList.binary.asStream()
         }
 
         // Arrange:
-        private fun provideUnary(): Array<ButtonCalculatorUnary> {
-            return ButtonCalculatorList.unary
+        private fun provideUnary(): Stream<Button> {
+            return ButtonCalculatorList.unary.asStream()
         }
 
         // Arrange:
-        private fun provideControls(): Array<ButtonCalculatorControl> {
-            return ButtonCalculatorList.controls
+        private fun provideControls(): Stream<Button> {
+            return ButtonCalculatorList.controls.asStream()
         }
 
         // Arrange:
-        private fun provideNumbers(): Array<ButtonCalculatorNumber> {
-            return ButtonCalculatorList.numbers
+        private fun provideNumbers(): Stream<Button> {
+            return ButtonCalculatorList.numbers.asStream()
         }
 
         @ParameterizedTest

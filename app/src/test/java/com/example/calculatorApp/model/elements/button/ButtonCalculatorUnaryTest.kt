@@ -16,6 +16,7 @@ import org.junit.jupiter.params.converter.ConvertWith
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
+import kotlin.streams.asStream
 
 class ButtonCalculatorUnaryTest {
 
@@ -23,8 +24,8 @@ class ButtonCalculatorUnaryTest {
     inner class GetCategory {
 
         // Arrange: Setup test data (button instance)
-        private fun provideArguments(): Array<ButtonCalculatorUnary> {
-            return ButtonCalculatorList.unary
+        private fun provideArguments(): Stream<Button> {
+            return ButtonCalculatorList.unary.asStream()
         }
 
         @ParameterizedTest
@@ -57,7 +58,7 @@ class ButtonCalculatorUnaryTest {
 
         // Arrange: Setup test data (button instance)
         private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsButton.provideUnaryColors()
+            return TestArgumentsButton.provideUnaryColors().asStream()
         }
 
         @ParameterizedTest
@@ -81,7 +82,7 @@ class ButtonCalculatorUnaryTest {
     inner class GetTextColor {
 
         private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsButton.provideUnaryColors()
+            return TestArgumentsButton.provideUnaryColors().asStream()
         }
 
         @ParameterizedTest
@@ -106,7 +107,7 @@ class ButtonCalculatorUnaryTest {
 
         // Arrange: Setup test data (button instance and expected symbol)
         private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsButton.provideUnarySymbols()
+            return TestArgumentsButton.provideUnarySymbols().asStream()
         }
 
         @ParameterizedTest
@@ -126,7 +127,7 @@ class ButtonCalculatorUnaryTest {
 
         // Arrange: Setup test data (button instance and expected value)
         private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsButton.provideIsPrefix()
+            return TestArgumentsButton.provideIsPrefix().asStream()
         }
 
         @ParameterizedTest
@@ -145,7 +146,7 @@ class ButtonCalculatorUnaryTest {
 
         // Arrange: Setup test data (button instance and expected value)
         private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsButton.provideIsSuffix()
+            return TestArgumentsButton.provideIsSuffix().asStream()
         }
 
         @ParameterizedTest
