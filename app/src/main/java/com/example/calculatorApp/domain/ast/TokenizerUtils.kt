@@ -1,34 +1,46 @@
 package com.example.calculatorApp.domain.ast
 
+import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorParenthesis
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
 
 object TokenizerUtils {
 
+    fun Button.toOperator(): Operator = when (this) {
+        ButtonCalculatorBinary.Addition -> OperatorBinary.Addition
+        ButtonCalculatorBinary.Subtraction -> OperatorBinary.Subtraction
+        ButtonCalculatorBinary.Multiplication -> OperatorBinary.Multiplication
+        ButtonCalculatorBinary.Division -> OperatorBinary.Division
+
+        ButtonCalculatorUnary.Sign -> OperatorUnary.Prefix.Sign
+        ButtonCalculatorUnary.Percentage -> OperatorUnary.Suffix.Percentage
+
+        ButtonCalculatorParenthesis.OpenParenthesis -> OperatorParenthesis.Open
+        ButtonCalculatorParenthesis.CloseParenthesis -> OperatorParenthesis.Close
+
+        else -> throw IllegalArgumentException("Unknown operator for button: $this")
+    }
+
     fun String.isNumber(): Boolean = this.toDoubleOrNull() != null
-    fun String.isBinary(): Boolean {
-        return OperatorBinary::class.sealedSubclasses
+    fun String.isBinary(): Boolean =
+        OperatorBinary::class.sealedSubclasses
             .mapNotNull { it.objectInstance }
             .any { it.symbol.label == this }
-    }
-    fun String.isUnaryPrefix(): Boolean {
-        return OperatorUnary.Prefix::class.sealedSubclasses
+    fun String.isUnaryPrefix(): Boolean =
+        OperatorUnary.Prefix::class.sealedSubclasses
             .mapNotNull { it.objectInstance }
             .any { it.symbol.label == this }
-    }
 
-    fun String.isUnarySuffix(): Boolean {
-        return OperatorUnary.Suffix::class.sealedSubclasses
+    fun String.isUnarySuffix(): Boolean =
+        OperatorUnary.Suffix::class.sealedSubclasses
             .mapNotNull { it.objectInstance }
             .any { it.symbol.label == this }
-    }
 
-    fun String.isParenthesis(): Boolean {
-        return OperatorParenthesis::class.sealedSubclasses
+    fun String.isParenthesis(): Boolean =
+        OperatorParenthesis::class.sealedSubclasses
             .mapNotNull { it.objectInstance }
             .any { it.symbol.label == this }
-    }
 
     fun ButtonCalculatorBinary.toBinaryOperator(): OperatorBinary = when (this) {
         ButtonCalculatorBinary.Addition -> OperatorBinary.Addition
