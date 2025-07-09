@@ -1,19 +1,14 @@
 package com.example.calculatorApp.model.state
 
-import com.example.calculatorApp.arguments.TestArgumentsButton
-import com.example.calculatorApp.model.elements.button.Button
+import com.example.calculatorApp.domain.ast.TokenizerUtils.toBinaryOperator
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import io.kotest.assertions.withClue
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.Arguments
-import org.junit.jupiter.params.provider.MethodSource
-import java.util.stream.Stream
-import kotlin.streams.asStream
 
 class CalculatorStateTest {
 
@@ -21,13 +16,8 @@ class CalculatorStateTest {
 
     @BeforeEach
     fun setUp() {
-        // Arrange:
-        state = CalculatorState(
-            expression = emptyList(),
-            lastOperand = "0",
-            lastOperator  = null,
-            activeButton = null,
-        )
+        // Arrange: Default Calculator state
+        state = CalculatorState()
     }
 
     @Nested
@@ -36,26 +26,29 @@ class CalculatorStateTest {
         @Test
         fun `should apply first matching transformation`() {
             // Arrange:
-            val initialState = state.copy(lastOperand = "5")
-
+            val initialState = state.copy(lastOperand = "1")
             // Act:
             val newState = initialState.modifyWith(
-                { initialState.lastOperand == "5" } to { copy(lastOperator = ButtonCalculatorBinary.Division) },
-                { initialState.lastOperand == "10" } to { copy(lastOperand = "15") }
+                { initialState.lastOperand == "50" } to { copy(lastOperand = "29") },
+                { initialState.lastOperand == "1" } to { copy(lastOperator = ButtonCalculatorBinary.Division.toBinaryOperator()) },
             )
             // Assert:
-            ButtonCalculatorBinary.Division shouldBe newState.lastOperator
+            newState.lastOperator shouldBe ButtonCalculatorBinary.Division.symbol.label.toBinaryOperator()
+            newState.lastOperand shouldBe "1"
+            newState.lastOperand shouldNotBe "29"
         }
 
         @Test
         fun `should not modify state if no conditions match`() {
-            // Arrange & Act:
-            val newState = state.modifyWith(
-                { state.lastOperand == "329" } to { copy(lastOperand = "200") }
+            // Arrange:
+            val initialState = state.copy(lastOperand = "1")
+            // & Act:
+            val newState = initialState.modifyWith(
+                { false } to { copy(lastOperand = "200") },
+                { false } to { copy(lastOperand = "300") }
             )
-
             // Assert:
-            state.lastOperand shouldBeEqual newState.lastOperand
+            newState shouldBe initialState
         }
 
         @Test
@@ -66,14 +59,13 @@ class CalculatorStateTest {
                 { true } to { copy(lastOperand = "20") }
             )
             // Assert:
-            "10" shouldBeEqual newState.lastOperand
+            newState.lastOperand shouldBeEqual "10"
         }
 
         @Test
         fun `modifyWith should set hasError to true when exception occurs`() {
             // Arrange:
             val initialState = state.copy(hasError = false, errorMessage = null)
-
             // Act:
             val resultState = initialState.modifyWith(
                 { true } to { throw IllegalArgumentException("Test error") },
@@ -86,7 +78,6 @@ class CalculatorStateTest {
         @Test
         fun `modifyWith should use custom error message when provided`() {
             val initialState = state.copy(hasError = false, errorMessage = null)
-
             // Act:
             val resultState = initialState.modifyWith(
                 { true } to { throw IllegalArgumentException("Test error") },
@@ -100,27 +91,8 @@ class CalculatorStateTest {
 
     @Nested
     inner class CalculatorStatePropertiesTest {
-        // Arrange: Setup test data (button instance)
-        private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsButton.provideButtonButton().asStream()
-        }
-
-        @ParameterizedTest
-        @MethodSource("provideArguments")
-        fun `should update active button correctly`(
-            button: Button,
-            expectedButton: Button,
-        ) {
-            // Act:
-            val initialState = state.copy(activeButton = button)
-
-            // Assert:
-            expectedButton shouldBe initialState.activeButton
-        }
-
         @Test
-        fun `should return the correct property for calculator state`() {
-
+        fun `should have default empty calculator state`() {
             // Arrange & Act & Assert:
             withClue("Expected expression to be empty by default.") {
                 state.expression shouldBe emptyList()
@@ -128,30 +100,27 @@ class CalculatorStateTest {
             withClue("Expected lastOperand to be '0' by default.") {
                 state.lastOperand shouldBe "0"
             }
+            withClue("Expected lastResult null by default.") {
+                state.lastResult shouldBe null
+            }
             withClue("Expected operation to be null by default.") {
                 state.lastOperator shouldBe null
+            }
+            withClue("Expected cachedOperand null by default.") {
+                state.cachedOperand shouldBe null
             }
             withClue("Expected activeButton to be empty by default.") {
                 state.activeButton shouldBe null
             }
-        }
-
-        @Test
-        fun `should update lastOperand correctly`() {
-            // Arrange & Act:
-            val initialState = state.copy(lastOperand = "5")
-
-            // Assert:
-            "5" shouldBe initialState.lastOperand
-        }
-
-        @Test
-        fun `should update expression correctly`() {
-            // Arrange & Act
-            val initialState = state.copy(expression = listOf("10"))
-
-            // Assert
-            "10" shouldBe initialState.expression[0]
+            withClue("Expected isComputed false by default.") {
+                state.isComputed shouldBe false
+            }
+            withClue("Expected hasError false by default.") {
+                state.hasError shouldBe false
+            }
+            withClue("Expected errorMessage null by default.") {
+                state.errorMessage shouldBe null
+            }
         }
     }
 }

@@ -1,13 +1,15 @@
 package com.example.calculatorApp.model.state
 
+import com.example.calculatorApp.domain.ast.Operator
+import com.example.calculatorApp.domain.ast.Token
 import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.model.symbols.SymbolButton
 
 data class CalculatorState(
-    val expression: List<String> = emptyList(),
+    val expression: List<Token> = emptyList(),
     val lastOperand: String = SymbolButton.ZERO.label,
     val lastResult: String? = null,
-    val lastOperator: Button? = null,
+    val lastOperator: Operator? = null,
     val cachedOperand: String? = null,
     val activeButton: Button? = null,
     val isComputed: Boolean = false,
