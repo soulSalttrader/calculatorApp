@@ -23,86 +23,101 @@ class EngineMathStandardTest {
     }
 
     @Nested
-    inner class ApplySign {
+    inner class EvalBinary {
+        private fun provideBinaryArguments(): Stream<TestDataEngineMathStandardBinary> =
+            TestArgumentsEngineMath.provideBinary().take(5).asStream()
 
-        // Arrange:
-        private fun provideArgumentsPositive(): Stream<TestDataEngineMathStandardSign> {
-            return TestArgumentsEngineMath.provideSign()
-                .filter { it.operand > 0 }
-                .asStream()
-        }
-        // Arrange:
-        private fun provideArgumentsNegative(): Stream<TestDataEngineMathStandardSign> {
-            return TestArgumentsEngineMath.provideSign()
-                .filter { it.operand < 0 }
-                .asStream()
-        }
-        // Arrange:
-        private fun provideArgumentsZero(): Stream<TestDataEngineMathStandardSign> {
-            return TestArgumentsEngineMath.provideSign()
-                .filter { it.operand == 0.0 }
-                .asStream()
+        private fun provideBinaryArgumentsAll(): Stream<TestDataEngineMathStandardBinary> =
+            TestArgumentsEngineMath.provideBinary().take(20).asStream()
+
+        @ParameterizedTest
+        @MethodSource("provideBinaryArgumentsAll")
+        fun `should apply binary operator correctly`(
+            testData: TestDataEngineMathStandardBinary
+        ) {
+            // Act & Assert:
+            engineMath.evalBinary(
+                testData.leftOperand,
+                testData.rightOperand,
+                testData.operation
+            ) shouldBe testData.expectedResult(testData.operation)
         }
 
         @ParameterizedTest
-        @MethodSource("provideArgumentsPositive")
-        fun `should return the negative of a positive number`(
-            testData: TestDataEngineMathStandardSign
+        @MethodSource("provideBinaryArguments")
+        fun `should add two numbers correctly`(
+            testData: TestDataEngineMathStandardBinary
         ) {
+            // Arrange:
+            val operation: BinaryOperation = { l, r -> l + r }
             // Act & Assert:
-            val toggled = engineMath.evalSign(testData.operand)
-
-            when (toggled.value) {
-                is Long -> toggled shouldBe EvaluationResult.IntegerResult(-testData.operand.toLong())
-                is Double -> toggled shouldBe EvaluationResult.DoubleResult(-testData.operand)
-            }
+            engineMath.evalBinary(
+                testData.leftOperand,
+                testData.rightOperand,
+                operation
+            ) shouldBe testData.expectedAddition()
         }
 
         @ParameterizedTest
-        @MethodSource("provideArgumentsNegative")
-        fun `should return the positive of a negative number`(
-            testData: TestDataEngineMathStandardSign
+        @MethodSource("provideBinaryArguments")
+        fun `should subtract two numbers correctly`(
+            testData: TestDataEngineMathStandardBinary
         ) {
+            // Arrange:
+            val operation: BinaryOperation = { l, r -> l - r }
             // Act & Assert:
-            val toggled = engineMath.evalSign(testData.operand)
-
-            when (toggled.value) {
-                is Long -> toggled shouldBe EvaluationResult.IntegerResult(-testData.operand.toLong())
-                is Double -> toggled shouldBe EvaluationResult.DoubleResult(-testData.operand)
-            }
+            engineMath.evalBinary(
+                testData.leftOperand,
+                testData.rightOperand,
+                operation
+            ) shouldBe testData.expectedSubtraction()
         }
-        @ParameterizedTest
-        @MethodSource("provideArgumentsZero")
-        fun `should return plus zero when input is zero`(
-            testData: TestDataEngineMathStandardSign
-        ) {
-            // Act & Assert:
-            val toggled = engineMath.evalSign(testData.operand)
 
-            when (toggled.value) {
-                is Long -> toggled shouldBe EvaluationResult.IntegerResult(-testData.operand.toLong())
-                is Double -> toggled shouldBe EvaluationResult.DoubleResult(-testData.operand)
-            }
+        @ParameterizedTest
+        @MethodSource("provideBinaryArguments")
+        fun `should multiply two numbers correctly`(
+            testData: TestDataEngineMathStandardBinary
+        ) {
+            // Arrange:
+            val operation: BinaryOperation = { l, r -> l * r }
+            // Act & Assert:
+            engineMath.evalBinary(
+                testData.leftOperand,
+                testData.rightOperand,
+                operation
+            ) shouldBe testData.expectedMultiplication()
+        }
+
+        @ParameterizedTest
+        @MethodSource("provideBinaryArgumentsAll")
+        fun `should divide two numbers correctly`(
+            testData: TestDataEngineMathStandardBinary
+        ) {
+            // Arrange:
+            val operation: BinaryOperation = { l, r -> l / r }
+            // Act & Assert:
+            engineMath.evalBinary(
+                testData.leftOperand,
+                testData.rightOperand,
+                operation
+            ) shouldBe testData.expectedDivision()
         }
     }
 
     @Nested
-    inner class ApplyPercentage {
+    inner class EvalPercentage {
         // Arrange:
-        private fun providePercentArgumentsWhole(): Stream<TestDataEngineMathStandardPercent> {
-            return TestArgumentsEngineMath.providePercent().asStream()
+        private fun providePercentArgumentsWhole(): Stream<TestDataEngineMathStandardPercent> =
+            TestArgumentsEngineMath.providePercent().asStream()
                 .filter { it.operand % 1.0 == 0.0 && it.operand != 0.0 }
-        }
         // Arrange:
-        private fun providePercentArgumentsDecimal(): Stream<TestDataEngineMathStandardPercent> {
-            return TestArgumentsEngineMath.providePercent().asStream()
+        private fun providePercentArgumentsDecimal(): Stream<TestDataEngineMathStandardPercent> =
+            TestArgumentsEngineMath.providePercent().asStream()
                 .filter { it.operand % 1.0 != 0.0 }
-        }
         // Arrange:
-        private fun providePercentArgumentsZero(): Stream<TestDataEngineMathStandardPercent> {
-            return TestArgumentsEngineMath.providePercent().asStream()
+        private fun providePercentArgumentsZero(): Stream<TestDataEngineMathStandardPercent> =
+            TestArgumentsEngineMath.providePercent().asStream()
                 .filter { it.operand == 0.0 }
-        }
 
         @ParameterizedTest
         @MethodSource("providePercentArgumentsWhole")
@@ -145,90 +160,60 @@ class EngineMathStandardTest {
     }
 
     @Nested
-    inner class ApplyBinary {
-        private fun provideBinaryArguments(): Stream<TestDataEngineMathStandardBinary> {
-            return TestArgumentsEngineMath.provideBinary().take(5).asStream()
-        }
+    inner class EvalSign {
+        // Arrange:
+        private fun provideArgumentsPositive(): Stream<TestDataEngineMathStandardSign> =
+            TestArgumentsEngineMath.provideSign().asStream()
+                .filter { it.operand > 0 }
+        // Arrange:
+        private fun provideArgumentsNegative(): Stream<TestDataEngineMathStandardSign> =
+            TestArgumentsEngineMath.provideSign().asStream()
+                .filter { it.operand < 0 }
+        // Arrange:
+        private fun provideArgumentsZero(): Stream<TestDataEngineMathStandardSign> =
+            TestArgumentsEngineMath.provideSign().asStream()
+                .filter { it.operand == 0.0 }
 
-        private fun provideBinaryArgumentsAll(): Stream<TestDataEngineMathStandardBinary> {
-            return TestArgumentsEngineMath.provideBinary().take(15).asStream()
+
+        @ParameterizedTest
+        @MethodSource("provideArgumentsPositive")
+        fun `should return the negative of a positive number`(
+            testData: TestDataEngineMathStandardSign
+        ) {
+            // Act & Assert:
+            val toggled = engineMath.evalSign(testData.operand)
+
+            when (toggled.value) {
+                is Long -> toggled shouldBe EvaluationResult.IntegerResult(-testData.operand.toLong())
+                is Double -> toggled shouldBe EvaluationResult.DoubleResult(-testData.operand)
+            }
         }
 
         @ParameterizedTest
-        @MethodSource("provideBinaryArgumentsAll")
-        fun `should apply binary operator correctly`(
-            testData: TestDataEngineMathStandardBinary
+        @MethodSource("provideArgumentsNegative")
+        fun `should return the positive of a negative number`(
+            testData: TestDataEngineMathStandardSign
         ) {
             // Act & Assert:
-            engineMath.evalBinary(
-                testData.leftOperand,
-                testData.rightOperand,
-                testData.operation
-            ) shouldBe testData.expectedResult(testData.operation)
+            val toggled = engineMath.evalSign(testData.operand)
+
+            when (toggled.value) {
+                is Long -> toggled shouldBe EvaluationResult.IntegerResult(-testData.operand.toLong())
+                is Double -> toggled shouldBe EvaluationResult.DoubleResult(-testData.operand)
+            }
         }
-
         @ParameterizedTest
-        @MethodSource("provideBinaryArguments")
-        fun `should add two numbers correctly`(
-            testData: TestDataEngineMathStandardBinary
+        @MethodSource("provideArgumentsZero")
+        fun `should return plus zero when input is zero`(
+            testData: TestDataEngineMathStandardSign
         ) {
-            // Arrange:
-            val operation: BinaryOperation = { l, r -> l + r }
-
             // Act & Assert:
-            engineMath.evalBinary(
-                testData.leftOperand,
-                testData.rightOperand,
-                operation
-            ) shouldBe testData.expectedAddition()
-        }
+            val toggled = engineMath.evalSign(testData.operand)
 
-        @ParameterizedTest
-        @MethodSource("provideBinaryArguments")
-        fun `should subtract two numbers correctly`(
-            testData: TestDataEngineMathStandardBinary
-        ) {
-            // Arrange:
-            val operation: BinaryOperation = { l, r -> l - r }
-
-            // Act & Assert:
-            engineMath.evalBinary(
-                testData.leftOperand,
-                testData.rightOperand,
-                operation
-            ) shouldBe testData.expectedSubtraction()
-        }
-
-        @ParameterizedTest
-        @MethodSource("provideBinaryArguments")
-        fun `should multiply two numbers correctly`(
-            testData: TestDataEngineMathStandardBinary
-        ) {
-            // Arrange:
-            val operation: BinaryOperation = { l, r -> l * r }
-
-            // Act & Assert:
-            engineMath.evalBinary(
-                testData.leftOperand,
-                testData.rightOperand,
-                operation
-            ) shouldBe testData.expectedMultiplication()
-        }
-
-        @ParameterizedTest
-        @MethodSource("provideBinaryArguments")
-        fun `should divide two numbers correctly`(
-            testData: TestDataEngineMathStandardBinary
-        ) {
-            // Arrange:
-            val operation: BinaryOperation = { l, r -> l / r }
-
-            // Act & Assert:
-            engineMath.evalBinary(
-                testData.leftOperand,
-                testData.rightOperand,
-                operation
-            ) shouldBe testData.expectedDivision()
+            when (toggled.value) {
+                is Long -> toggled shouldBe EvaluationResult.IntegerResult(-testData.operand.toLong())
+                is Double -> toggled shouldBe EvaluationResult.DoubleResult(-testData.operand)
+            }
         }
     }
 }
