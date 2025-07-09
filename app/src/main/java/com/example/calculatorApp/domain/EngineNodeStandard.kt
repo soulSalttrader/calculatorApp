@@ -5,7 +5,7 @@ import com.example.calculatorApp.domain.ast.EvaluationResult
 import com.example.calculatorApp.domain.ast.EvaluationResult.Companion.normalizeResult
 import com.example.calculatorApp.domain.ast.OperatorBinary
 
-class EngineNodeStandard(private val engineMath: EngineMathStandard) : EngineNode {
+class EngineNodeStandard(private val engineMath: EngineMath) : EngineNode {
 
     override fun evaluate(astNode: ASTNode): EvaluationResult {
         return when (astNode) {
