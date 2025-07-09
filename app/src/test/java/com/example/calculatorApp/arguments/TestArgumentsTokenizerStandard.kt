@@ -17,8 +17,8 @@ object TestArgumentsTokenizerStandard {
 
     private fun provideButtonLabels(buttonClass: KClass<out Button>?): Sequence<String> {
         return buttonClass?.sealedSubclasses
-            ?.mapNotNull { it.objectInstance }
             ?.asSequence()
+            ?.mapNotNull { it.objectInstance }
             ?.sortedBy { (it as? ButtonCalculatorNumber)?.symbol?.label?.toDoubleOrNull() }
             ?.map { it.symbol.label } ?: throw IllegalArgumentException("KClass<out Button> not provided.")
     }
