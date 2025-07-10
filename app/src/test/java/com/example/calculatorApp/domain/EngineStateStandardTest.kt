@@ -14,7 +14,7 @@ import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
 import com.example.calculatorApp.model.state.CalculatorState
 import com.example.calculatorApp.utils.Constants.MAX_NUM_LENGTH
-import com.example.calculatorApp.utils.SymbolButtonExtensions.toButton
+import com.example.calculatorApp.model.symbols.SymbolButtonUtils.toButton
 import io.kotest.matchers.comparables.shouldBeGreaterThanOrEqualTo
 import io.kotest.matchers.doubles.plusOrMinus
 import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
