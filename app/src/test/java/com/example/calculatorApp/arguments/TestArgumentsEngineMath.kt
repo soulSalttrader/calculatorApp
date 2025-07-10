@@ -1,8 +1,8 @@
 package com.example.calculatorApp.arguments
 
-import com.example.calculatorApp.TestData.TestDataEngineMathStandardBinary
-import com.example.calculatorApp.TestData.TestDataEngineMathStandardPercent
-import com.example.calculatorApp.TestData.TestDataEngineMathStandardSign
+import com.example.calculatorApp.testData.TestDataEngineMathStandardBinary
+import com.example.calculatorApp.testData.TestDataEngineMathStandardPercent
+import com.example.calculatorApp.testData.TestDataEngineMathStandardSign
 import com.example.calculatorApp.domain.BinaryOperation
 import com.example.calculatorApp.domain.ast.Operator
 import com.example.calculatorApp.domain.ast.OperatorBinary

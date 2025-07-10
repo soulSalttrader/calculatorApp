@@ -1,6 +1,6 @@
 package com.example.calculatorApp.domain.ast
 
-import com.example.calculatorApp.TestData.TestDataTokenizerStandard
+import com.example.calculatorApp.testData.TestDataTokenizerStandard
 import com.example.calculatorApp.arguments.TestArgumentsTokenizerStandard
 import com.example.calculatorApp.arguments.TestArgumentsTokenizerStandard.provideSymbolLabels
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary

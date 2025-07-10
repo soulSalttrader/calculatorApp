@@ -1,4 +1,4 @@
-package com.example.calculatorApp.TestData
+package com.example.calculatorApp.testData
 
 import com.example.calculatorApp.domain.ast.EvaluationResult
 import com.example.calculatorApp.domain.ast.Operator

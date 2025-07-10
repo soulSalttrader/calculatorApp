@@ -1,6 +1,6 @@
 package com.example.calculatorApp.arguments
 
-import com.example.calculatorApp.TestData.TestDataTokenizerStandard
+import com.example.calculatorApp.testData.TestDataTokenizerStandard
 import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
 import com.example.calculatorApp.model.symbols.SymbolButton

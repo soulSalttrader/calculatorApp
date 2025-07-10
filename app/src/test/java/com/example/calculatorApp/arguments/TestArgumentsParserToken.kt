@@ -1,6 +1,6 @@
 package com.example.calculatorApp.arguments
 
-import com.example.calculatorApp.TestData.TestDataParserToken
+import com.example.calculatorApp.testData.TestDataParserToken
 import com.example.calculatorApp.domain.ast.Operator
 import com.example.calculatorApp.domain.ast.OperatorBinary
 import com.example.calculatorApp.domain.ast.Token

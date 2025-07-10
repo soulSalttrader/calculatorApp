@@ -1,6 +1,6 @@
 package com.example.calculatorApp.arguments
 
-import com.example.calculatorApp.TestData.TestDataTokenizerUtils
+import com.example.calculatorApp.testData.TestDataTokenizerUtils
 import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.utils.ButtonCalculatorList.provideSequenceButtons
 import kotlin.reflect.KClass

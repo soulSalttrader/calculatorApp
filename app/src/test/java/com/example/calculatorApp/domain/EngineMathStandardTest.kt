@@ -1,8 +1,8 @@
 package com.example.calculatorApp.domain
 
-import com.example.calculatorApp.TestData.TestDataEngineMathStandardBinary
-import com.example.calculatorApp.TestData.TestDataEngineMathStandardPercent
-import com.example.calculatorApp.TestData.TestDataEngineMathStandardSign
+import com.example.calculatorApp.testData.TestDataEngineMathStandardBinary
+import com.example.calculatorApp.testData.TestDataEngineMathStandardPercent
+import com.example.calculatorApp.testData.TestDataEngineMathStandardSign
 import com.example.calculatorApp.arguments.TestArgumentsEngineMath
 import com.example.calculatorApp.domain.ast.EvaluationResult
 import io.kotest.matchers.shouldBe

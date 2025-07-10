@@ -1,6 +1,6 @@
 package com.example.calculatorApp.domain.ast
 
-import com.example.calculatorApp.TestData.TestDataParserToken
+import com.example.calculatorApp.testData.TestDataParserToken
 import com.example.calculatorApp.arguments.TestArgumentsParserToken
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
