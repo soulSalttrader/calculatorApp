@@ -14,7 +14,7 @@ class ParserToken : Parser {
             }
         }
 
-        while (operators.isNotEmpty()) { buildOperatorNode(output, operators.removeLast()) }
+        while (operators.isNotEmpty()) { buildOperatorNode(output, operators.removeAt(operators.lastIndex)) }
         require(output.size == 1) { "Invalid expression" }
 
         return output.single()
@@ -24,7 +24,7 @@ class ParserToken : Parser {
         while (operators.isNotEmpty() &&
             Precedence.fromToken(operators.last()).level >= Precedence.fromToken(token).level
         ) {
-            buildOperatorNode(output, operators.removeLast())
+            buildOperatorNode(output, operators.removeAt(operators.lastIndex))
         }
         operators.add(token)
     }
@@ -33,8 +33,8 @@ class ParserToken : Parser {
         when (operatorToken) {
             is Token.Binary -> {
                 require(output.size >= 2) { "Malformed expression" }
-                val right = output.removeLast()
-                val left = output.removeLast()
+                val right = output.removeAt(output.lastIndex)
+                val left = output.removeAt(output.lastIndex)
                 output.add(ASTNode.Binary(operatorToken.operator, left, right))
             }
 
