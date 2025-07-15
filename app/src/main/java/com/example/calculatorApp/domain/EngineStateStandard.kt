@@ -194,7 +194,7 @@ class EngineStateStandard(
         operator?.let { nonNullOperator ->
             when (nonNullOperator) {
                 is OperatorBinary -> {
-                    if (lastOrNull() is Token.Binary) removeLast()
+                    if (lastOrNull() is Token.Binary) removeAt(lastIndex)
                     add(Token.Binary(nonNullOperator))
                 }
 

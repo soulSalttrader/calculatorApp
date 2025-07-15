@@ -1,16 +1,33 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.compose.compiler)
+}
+
+
+kapt {
+    correctErrorTypes = true
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.fromTarget("11")
+    }
 }
 
 android {
     namespace = "com.example.calculatorApp"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.calculatorApp"
         minSdk = 30
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -19,7 +36,6 @@ android {
             useSupportLibrary = true
         }
     }
-
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -30,11 +46,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     buildFeatures {
         compose = true
@@ -74,6 +87,10 @@ dependencies {
     testImplementation(libs.kotestAssertions) // Kotest assertion
     implementation(libs.kotlin.reflect) // Enable reflection
 
+    kapt(libs.hilt.android.compiler) // Annotation processor
+    implementation(libs.hilt.android) // Core Dagger Hilt library
+    implementation(libs.androidx.hilt.navigation.compose) // Dagger Hilt + Navigation + Compose
+    implementation(libs.androidx.lifecycle.viewmodel.savedstate) // ViewModel + SavedStateHandle
 }
 
 tasks.withType<Test>().configureEach {
