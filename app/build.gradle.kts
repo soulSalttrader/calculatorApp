@@ -79,17 +79,21 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    testImplementation(libs.junitJupiterApi) // JUnit 5 API
-    testRuntimeOnly(libs.junitJupiterEngine) // JUnit 5 engine for running tests
-    testImplementation(libs.junitJupiterParams) // JUnit 5 parameterized tests
-    testImplementation(libs.mockk) // Mocking library for Kotlin tests
-    testImplementation(libs.kotestAssertions) // Kotest assertion
-    implementation(libs.kotlin.reflect) // Enable reflection
+    testImplementation(libs.junitJupiterApi) // Core JUnit 5 API (e.g., @Test, @Nested, etc.)
+    testRuntimeOnly(libs.junitJupiterEngine) // JUnit 5 test engine needed to run Jupiter tests
+    testImplementation(libs.junitJupiterParams) // Support for parameterized tests with @ParameterizedTest and @MethodSource, etc.
+    testRuntimeOnly(libs.junitPlatformLauncher) // Enables test discovery and execution via the JUnit Platform launcher (needed for Gradle integration)
+    testRuntimeOnly(libs.junitPlatformEngine) // Provides the test engine interface that all test engines (like Jupiter) implement
+    testImplementation(libs.mockk) // Lightweight mocking library for Kotlin unit tests
+    testImplementation(libs.kotestAssertions) // Kotest assertions for expressive and readable test validations (e.g., shouldBe, shouldThrow)
 
-    kapt(libs.hilt.android.compiler) // Annotation processor
-    implementation(libs.hilt.android) // Core Dagger Hilt library
-    implementation(libs.androidx.hilt.navigation.compose) // Dagger Hilt + Navigation + Compose
-    implementation(libs.androidx.lifecycle.viewmodel.savedstate) // ViewModel + SavedStateHandle
+    implementation(libs.androidx.lifecycle.viewmodel.savedstate) // Enables retrieving SavedStateHandle in ViewModels for state restoration
+
+    implementation(libs.kotlin.reflect) // Kotlin reflection library, required for advanced features like class introspection (used by frameworks like Hilt or Kotest)
+
+    implementation(libs.hilt.android) // Core Dagger Hilt library for dependency injection
+    kapt(libs.hilt.android.compiler) // Dagger Hilt annotation processor, generates code for dependency injection
+    implementation(libs.androidx.hilt.navigation.compose) // Integration for using Hilt with Jetpack Compose navigation (e.g., hiltViewModel in composables)
 }
 
 tasks.withType<Test>().configureEach {

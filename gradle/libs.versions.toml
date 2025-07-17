@@ -5,12 +5,13 @@ kotlin = "2.2.0"
 coreKtx = "1.16.0"
 junitVersion = "1.2.1"
 junitJupiter = "5.13.3"
+junitPlatform = "1.13.3"
 espressoCore = "3.6.1"
 mockk = "1.14.4"
 kotestAssertions = "6.0.0.M5"
-lifecycleRuntimeKtx = "2.9.1"
+lifecycleRuntimeKtx = "2.9.2"
 activityCompose = "1.10.1"
-composeBom = "2025.06.01"
+composeBom = "2025.07.00"
 hiltAndroid = "2.56.2"
 hiltNavigationCompose = "1.2.0"
 
@@ -39,6 +40,9 @@ hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", ve
 junitJupiterApi = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junitJupiter" }
 junitJupiterEngine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junitJupiter" }
 junitJupiterParams = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "junitJupiter" }
+
+junitPlatformLauncher = { group = "org.junit.platform", name = "junit-platform-launcher", version.ref = "junitPlatform" }
+junitPlatformEngine = { group = "org.junit.platform", name = "junit-platform-engine", version.ref = "junitPlatform" }
 
 # MockK (for Kotlin-based tests)
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
