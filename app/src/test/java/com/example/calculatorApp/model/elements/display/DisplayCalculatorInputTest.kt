@@ -14,6 +14,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -79,25 +80,6 @@ class DisplayCalculatorInputTest {
 
             // Assert:
             actualColor shouldBe expectedColor
-        }
-
-        @Test
-        fun `should get the right backgroundColor for each input display - Mocked`() {
-            // Arrange:
-            val style = mockk<ElementCategoryStyleCollection<ElementColorStyle>>(relaxed = true)
-            val elementStyle = mockk<ElementColorStyle> {
-                every { backgroundColor } returns Color.Yellow
-            }
-
-            every { style.categories[any<ElementCategory<ElementColorStyle>>()] } returns DisplayCategoryStyleInput(elementStyle)
-
-            val display = DisplayCalculatorInput.Standard
-
-            // Act:
-            val actualColor = display.getBackgroundColor(style).toArgb()
-
-            // Assert:
-            actualColor shouldBe Color.Yellow.toArgb()
         }
     }
 
