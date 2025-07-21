@@ -9,9 +9,9 @@ object StylesRow {
 
     val iRowStyle = RowCategoryStyleBuilder()
         .standardStyle(
-            baseStyle = ElementColorStyleImpl(backgroundColor = Black, textColor = White),
+            baseStyle = ElementColorStyleImpl(backgroundColor = Black, foregroundColor = White),
         )
         .scientificStyle(
-            baseStyle = ElementColorStyleImpl(backgroundColor = Black, textColor = White),
+            baseStyle = ElementColorStyleImpl(backgroundColor = Black, foregroundColor = White),
         ).build()
 }

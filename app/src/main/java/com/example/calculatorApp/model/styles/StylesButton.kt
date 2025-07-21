@@ -11,21 +11,21 @@ object StylesButton {
 
     val iButtonStyle = ButtonCategoryStyleBuilder()
         .binaryStyle(
-            baseStyle = ElementColorStyleImpl(backgroundColor = VividGamboge, textColor = White),
+            baseStyle = ElementColorStyleImpl(backgroundColor = VividGamboge, foregroundColor = White),
         )
         .unaryStyle(
-            baseStyle = ElementColorStyleImpl(backgroundColor = SilverGrey, textColor = Onyx),
+            baseStyle = ElementColorStyleImpl(backgroundColor = SilverGrey, foregroundColor = Onyx),
         )
         .controlStyle(
-            baseStyle = ElementColorStyleImpl(backgroundColor = SilverGrey, textColor = Onyx),
-            decimalStyle = ElementColorStyleImpl(backgroundColor = Onyx, textColor = White),
-            equalsStyle = ElementColorStyleImpl(backgroundColor = VividGamboge, textColor = White),
+            baseStyle = ElementColorStyleImpl(backgroundColor = SilverGrey, foregroundColor = Onyx),
+            decimalStyle = ElementColorStyleImpl(backgroundColor = Onyx, foregroundColor = White),
+            equalsStyle = ElementColorStyleImpl(backgroundColor = VividGamboge, foregroundColor = White),
         )
         .numberStyle(
-            baseStyle = ElementColorStyleImpl(backgroundColor = Onyx, textColor = White),
+            baseStyle = ElementColorStyleImpl(backgroundColor = Onyx, foregroundColor = White),
         )
         .parenthesisStyle(
-            baseStyle = ElementColorStyleImpl(backgroundColor = Onyx, textColor = White),
+            baseStyle = ElementColorStyleImpl(backgroundColor = Onyx, foregroundColor = White),
         )
         .build()
 }

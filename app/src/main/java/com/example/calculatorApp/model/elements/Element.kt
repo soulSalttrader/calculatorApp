@@ -9,6 +9,6 @@ interface Element<
         > {
 
     fun getBackgroundColor(style: Style): Color
-    fun getTextColor(style: Style): Color
+    fun getForegroundColor(style: Style): Color
     fun getCategory(): Category
 }

@@ -22,14 +22,14 @@ import kotlin.streams.asStream
 object TestArgumentsButtonStyleBuilder : TestArguments {
 
     fun provideButtonStyle(style: ElementCategoryStyleCollection<ElementColorStyle>? = null): Stream<Arguments> {
-        val binaryBaseStyle = ElementColorStyleImpl(backgroundColor = VividGamboge, textColor = White)
-        val unaryBaseStyle = ElementColorStyleImpl(backgroundColor = SilverGrey, textColor = Onyx)
-        val controlsBaseStyle = ElementColorStyleImpl(backgroundColor = SilverGrey, textColor = Onyx)
-        val numbersBaseStyle = ElementColorStyleImpl(backgroundColor = Onyx, textColor = White)
-        val parenthesisBaseStyle = ElementColorStyleImpl(backgroundColor = Onyx, textColor = White)
+        val binaryBaseStyle = ElementColorStyleImpl(backgroundColor = VividGamboge, foregroundColor = White)
+        val unaryBaseStyle = ElementColorStyleImpl(backgroundColor = SilverGrey, foregroundColor = Onyx)
+        val controlsBaseStyle = ElementColorStyleImpl(backgroundColor = SilverGrey, foregroundColor = Onyx)
+        val numbersBaseStyle = ElementColorStyleImpl(backgroundColor = Onyx, foregroundColor = White)
+        val parenthesisBaseStyle = ElementColorStyleImpl(backgroundColor = Onyx, foregroundColor = White)
 
-        val decimalStyle = ElementColorStyleImpl(backgroundColor = Onyx, textColor = White)
-        val equalsStyle = ElementColorStyleImpl(backgroundColor = VividGamboge, textColor = White)
+        val decimalStyle = ElementColorStyleImpl(backgroundColor = Onyx, foregroundColor = White)
+        val equalsStyle = ElementColorStyleImpl(backgroundColor = VividGamboge, foregroundColor = White)
 
         val testedStyle = style ?: StylesButton.iButtonStyle
 
