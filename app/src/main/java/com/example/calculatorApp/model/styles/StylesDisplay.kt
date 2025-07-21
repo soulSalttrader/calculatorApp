@@ -9,8 +9,8 @@ object StylesDisplay {
 
     val iDisplayStyleInput = DisplayCategoryStyleBuilder()
         .inputStyle(
-            baseStyle = ElementColorStyleImpl(backgroundColor = Black, textColor = White),
-            scientificStyle = ElementColorStyleImpl(backgroundColor = Black, textColor = White),
+            baseStyle = ElementColorStyleImpl(backgroundColor = Black, foregroundColor = White),
+            scientificStyle = ElementColorStyleImpl(backgroundColor = Black, foregroundColor = White),
         )
         .build()
 }

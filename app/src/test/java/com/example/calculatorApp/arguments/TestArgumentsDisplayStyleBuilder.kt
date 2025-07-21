@@ -16,8 +16,8 @@ import java.util.stream.Stream
 object TestArgumentsDisplayStyleBuilder : TestArguments {
 
     fun provideDisplayStyle(style: ElementCategoryStyleCollection<ElementColorStyle>? = null): Stream<Arguments> {
-        val inputBaseStyle = ElementColorStyleImpl(backgroundColor = Black, textColor = White)
-        val scientificStyle = ElementColorStyleImpl(backgroundColor = Black, textColor = White)
+        val inputBaseStyle = ElementColorStyleImpl(backgroundColor = Black, foregroundColor = White)
+        val scientificStyle = ElementColorStyleImpl(backgroundColor = Black, foregroundColor = White)
 
         val testedStyle = style ?: StylesDisplay.iDisplayStyleInput
 

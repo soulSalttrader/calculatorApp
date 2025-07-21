@@ -11,23 +11,23 @@ import org.junit.jupiter.api.Test
 class ElementColorStyleImplTest {
 
     @Test
-    fun `should call getBackgroundColor and getTextColor`() {
+    fun `should call getBackgroundColor and getForegroundColor`() {
         // Arrange:
         val mockCategory = mockk<ElementCategory<ElementColorStyle>>(relaxed = true)
         val mockStyle = mockk<ElementCategoryStyleCollection<ElementColorStyle>>(relaxed = true)
         val mockElement = mockk<Element<ElementCategory<ElementColorStyle>, ElementCategoryStyleCollection<ElementColorStyle>, ElementColorStyle>>(relaxed = true)
 
         every { mockElement.getBackgroundColor(mockStyle) } returns Color.Red
-        every { mockElement.getTextColor(mockStyle) } returns Color.White
+        every { mockElement.getForegroundColor(mockStyle) } returns Color.White
         every { mockElement.getCategory() } returns mockCategory
 
         // Act:
         mockElement.getBackgroundColor(mockStyle)
-        mockElement.getTextColor(mockStyle)
+        mockElement.getForegroundColor(mockStyle)
 
         // Assert:
         verify { mockElement.getBackgroundColor(mockStyle) }
-        verify { mockElement.getTextColor(mockStyle) }
+        verify { mockElement.getForegroundColor(mockStyle) }
     }
 
     @Nested
@@ -46,17 +46,17 @@ class ElementColorStyleImplTest {
     }
 
     @Nested
-    inner class GetTextColor {
+    inner class GetForegroundColor {
 
         @Test
-        fun `ElementColorStyleImpl should return correct text color`() {
+        fun `ElementColorStyleImpl should return correct foreground color`() {
             // Arrange:
             val colorStyle = ElementColorStyleImpl(Color.Red, Color.Black)
 
-            // Act: (Implicit) Retrieve the textColor property
+            // Act: (Implicit) Retrieve the foregroundColor property
 
             // Assert:
-            Color.Black shouldBeEqual colorStyle.textColor
+            Color.Black shouldBeEqual colorStyle.foregroundColor
         }
     }
 }

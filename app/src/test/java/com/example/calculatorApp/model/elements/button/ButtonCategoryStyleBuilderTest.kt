@@ -29,7 +29,7 @@ class ButtonCategoryStyleBuilderTest {
         ) {
             // Act:
             val actualBackgroundColor = button.getBackgroundColor(styles)
-            val actualTextColor = button.getTextColor(styles)
+            val actualForegroundColor = button.getForegroundColor(styles)
 
             // Assert:
             withClue("Background color mismatch for ${button.symbol.label}.") {
@@ -37,7 +37,7 @@ class ButtonCategoryStyleBuilderTest {
             }
 
             withClue("Text color mismatch for ${button.symbol.label}.") {
-                expectedStyle.textColor shouldBe actualTextColor
+                expectedStyle.foregroundColor shouldBe actualForegroundColor
             }
         }
     }
@@ -58,7 +58,7 @@ class ButtonCategoryStyleBuilderTest {
         ) {
             // Act:
             val actualBackgroundColor = button.getBackgroundColor(styles)
-            val actualTextColor = button.getTextColor(styles)
+            val actualForegroundColor = button.getForegroundColor(styles)
 
             // Assert:
             withClue("Background color mismatch for ${button.symbol.label}.") {
@@ -66,7 +66,7 @@ class ButtonCategoryStyleBuilderTest {
             }
 
             withClue("Text color mismatch for ${button.symbol.label}.") {
-                expectedStyle.textColor shouldBe actualTextColor
+                expectedStyle.foregroundColor shouldBe actualForegroundColor
             }
         }
 
@@ -79,7 +79,7 @@ class ButtonCategoryStyleBuilderTest {
         ) {
             // Act:
             val actualBackgroundColor = button.getBackgroundColor(styles)
-            val actualTextColor = button.getTextColor(styles)
+            val actualForegroundColor = button.getForegroundColor(styles)
 
             // Assert:
             withClue("Background color mismatch for ${button.symbol.label}.") {
@@ -87,7 +87,7 @@ class ButtonCategoryStyleBuilderTest {
             }
 
             withClue("Text color mismatch for ${button.symbol.label}.") {
-                expectedStyle.textColor shouldBe actualTextColor
+                expectedStyle.foregroundColor shouldBe actualForegroundColor
             }
         }
     }
@@ -108,7 +108,7 @@ class ButtonCategoryStyleBuilderTest {
         ) {
             // Act:
             val actualBackgroundColor = button.getBackgroundColor(styles)
-            val actualTextColor = button.getTextColor(styles)
+            val actualForegroundColor = button.getForegroundColor(styles)
 
             // Assert:
             withClue("Background color mismatch for ${button.symbol.label}") {
@@ -116,7 +116,7 @@ class ButtonCategoryStyleBuilderTest {
             }
 
             withClue("Text color mismatch for ${button.symbol.label}") {
-                expectedStyle.textColor shouldBe actualTextColor
+                expectedStyle.foregroundColor shouldBe actualForegroundColor
             }
         }
     }
@@ -137,14 +137,14 @@ class ButtonCategoryStyleBuilderTest {
         ) {
             // Act:
             val actualBackgroundColor = button.getBackgroundColor(style)
-            val actualTextColor = button.getTextColor(style)
+            val actualForegroundColor = button.getForegroundColor(style)
             // Assert:
             withClue("Background color mismatch for ${button.symbol.label}") {
                 expectedStyle.backgroundColor shouldBe actualBackgroundColor
             }
 
             withClue("Text color mismatch for ${button.symbol.label}") {
-                expectedStyle.textColor shouldBe actualTextColor
+                expectedStyle.foregroundColor shouldBe actualForegroundColor
             }
         }
     }
