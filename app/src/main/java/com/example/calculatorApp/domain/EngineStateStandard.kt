@@ -3,7 +3,7 @@ package com.example.calculatorApp.domain
 import com.example.calculatorApp.domain.ast.EvaluationResult
 import com.example.calculatorApp.domain.ast.Operator
 import com.example.calculatorApp.domain.ast.OperatorBinary
-import com.example.calculatorApp.domain.ast.ParserToken
+import com.example.calculatorApp.domain.ast.Parser
 import com.example.calculatorApp.domain.ast.Token
 import com.example.calculatorApp.domain.ast.Token.Companion.lastNumberOrNull
 import com.example.calculatorApp.domain.ast.TokenizerUtils.toBinaryOperator
@@ -17,7 +17,7 @@ import com.example.calculatorApp.utils.Constants.MAX_NUM_LENGTH
 class EngineStateStandard(
     private val engineMath: EngineMath,
     private val engineNode: EngineNode,
-    private val parserToken: ParserToken,
+    private val parser: Parser,
 ) : EngineState {
 
     override fun handleBinary(state: CalculatorState, binary: ButtonCalculatorBinary): CalculatorState {
@@ -104,7 +104,7 @@ class EngineStateStandard(
 
                 val operand = state.cachedOperand?.toDouble() ?: 0.0
                 val newTokens = buildTokenList(newState.expression, operand)
-                val ast = parserToken.parse(newState.copy(expression = newTokens).expression)
+                val ast = parser.parse(newState.copy(expression = newTokens).expression)
                 val result = engineNode.evaluate(ast)
 
                 assessState(result, newState, lastOperator, operand)
@@ -113,7 +113,7 @@ class EngineStateStandard(
                 val operand = extractOperand(state)
                 val lastOperator = extractBinaryOperator(state) ?: return@to state.copy(hasError = true, errorMessage = "No last operator II.")
                 val newTokens = buildTokenList(state.expression, operand)
-                val ast = parserToken.parse(state.copy(expression = newTokens).expression)
+                val ast = parser.parse(state.copy(expression = newTokens).expression)
                 val result = engineNode.evaluate(ast)
 
                 assessState(result, state, lastOperator, operand)
