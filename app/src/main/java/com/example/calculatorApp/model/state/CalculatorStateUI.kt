@@ -17,7 +17,7 @@ data class CalculatorStateUI(
     val buttonWidth: Float = 0f,
 ) : Parcelable {
 
-    fun toTextStyle(): TextStyle = TextStyle(
+    fun asTextStyle(): TextStyle = TextStyle(
         fontSize = textSize.sp,
         fontWeight = FontWeight(textWeight),
         color = Color(textColor)
