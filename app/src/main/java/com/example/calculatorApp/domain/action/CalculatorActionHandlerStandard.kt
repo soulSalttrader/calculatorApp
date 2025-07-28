@@ -1,9 +1,8 @@
 package com.example.calculatorApp.domain.action
 
 import com.example.calculatorApp.di.DiUtils.toButtonCategoryHiltKey
+import com.example.calculatorApp.domain.action.ActionUtils.shouldResetTextSize
 import com.example.calculatorApp.domain.commands.CommandFactoryProvider
-import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
-import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
 import com.example.calculatorApp.model.state.CalculatorStateDomain
 
 class CalculatorActionHandlerStandard(
@@ -17,13 +16,9 @@ class CalculatorActionHandlerStandard(
         val command = commandFactory.createCommand(action)
         val newState = command.execute(state).copy(activeButton = action.button)
 
-        val shouldResetTextSize = when (action.button) {
-            is ButtonCalculatorControl,
-            is ButtonCalculatorNumber -> true
-
-            else -> false
-        }
-
-        return CalculatorActionHandlerDataStandard(newState, shouldResetTextSize)
+        return CalculatorActionHandlerDataStandard(
+            newState,
+            action.shouldResetTextSize()
+        )
     }
 }
