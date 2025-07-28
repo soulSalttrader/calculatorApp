@@ -9,7 +9,7 @@ import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class CalculatorState(
+data class CalculatorStateDomain(
     @IgnoredOnParcel val expression: List<Token> = emptyList(),
     val lastOperand: String = SymbolButton.ZERO.label,
     val lastResult: String? = null,
@@ -21,9 +21,9 @@ data class CalculatorState(
     val errorMessage: String? = null,
 ) : Parcelable {
     fun modifyWith(
-        vararg transformations: Pair<() -> Boolean, CalculatorState.() -> CalculatorState>,
+        vararg transformations: Pair<() -> Boolean, CalculatorStateDomain.() -> CalculatorStateDomain>,
         errorMessage: String? = null,
-    ): CalculatorState {
+    ): CalculatorStateDomain {
         return try {
             transformations
                 .firstOrNull { it.first() }

@@ -12,7 +12,7 @@ import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
-import com.example.calculatorApp.model.state.CalculatorState
+import com.example.calculatorApp.model.state.CalculatorStateDomain
 import com.example.calculatorApp.utils.Constants.MAX_NUM_LENGTH
 import com.example.calculatorApp.model.symbols.SymbolButtonUtils.toButton
 import io.kotest.matchers.comparables.shouldBeGreaterThanOrEqualTo
@@ -36,7 +36,7 @@ import kotlin.streams.asStream
 
 class EngineStateStandardTest {
 
-    private lateinit var state: CalculatorState
+    private lateinit var state: CalculatorStateDomain
     private lateinit var parser: ParserToken
     private lateinit var engineMath: EngineMath
     private lateinit var engineNode: EngineNode
@@ -45,7 +45,7 @@ class EngineStateStandardTest {
     @BeforeEach
     fun setUp() {
         // Arrange:
-        state = CalculatorState()
+        state = CalculatorStateDomain()
         parser = ParserToken()
         engineMath = EngineMathStandard()
         engineNode = EngineNodeStandard(engineMath)
@@ -341,7 +341,7 @@ class EngineStateStandardTest {
                         ?: throw IllegalArgumentException("Expected at least one clear button in buttonControls.")
                 )
                 // Assert: Result should reflect Clear action, active button is Clear
-                newState.shouldBeEqualToIgnoringFields(state, CalculatorState::activeButton)
+                newState.shouldBeEqualToIgnoringFields(state, CalculatorStateDomain::activeButton)
             }
         }
 
