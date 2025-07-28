@@ -1,13 +1,12 @@
 package com.example.calculatorApp.domain.action
 
+import com.example.calculatorApp.di.DiUtils.toButtonCategoryHiltKey
 import com.example.calculatorApp.domain.commands.CommandFactoryProvider
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
-import com.example.calculatorApp.di.DiUtils.toButtonCategoryHiltKey
 import com.example.calculatorApp.model.state.CalculatorState
-import javax.inject.Inject
 
-class CalculatorActionHandlerStandard @Inject constructor(
+class CalculatorActionHandlerStandard(
     private val factoryProvider: CommandFactoryProvider,
 ) : CalculatorActionHandler {
 
