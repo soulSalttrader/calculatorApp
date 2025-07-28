@@ -6,14 +6,14 @@ import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
-import com.example.calculatorApp.model.state.CalculatorState
+import com.example.calculatorApp.model.state.CalculatorStateDomain
 
 data class CommandHandler<T : Button>(
     private val engineState: EngineState,
     private val button: T
 ) : Command {
 
-    override fun execute(state: CalculatorState): CalculatorState {
+    override fun execute(state: CalculatorStateDomain): CalculatorStateDomain {
         return when (button) {
             is ButtonCalculatorBinary -> engineState.handleBinary(state, button)
             is ButtonCalculatorUnary -> engineState.handleUnary(state, button)

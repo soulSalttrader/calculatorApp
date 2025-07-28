@@ -11,7 +11,7 @@ import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
-import com.example.calculatorApp.model.state.CalculatorState
+import com.example.calculatorApp.model.state.CalculatorStateDomain
 import com.example.calculatorApp.utils.Constants.MAX_NUM_LENGTH
 
 class EngineStateStandard(
@@ -20,13 +20,13 @@ class EngineStateStandard(
     private val parser: Parser,
 ) : EngineState {
 
-    override fun handleBinary(state: CalculatorState, binary: ButtonCalculatorBinary): CalculatorState {
+    override fun handleBinary(state: CalculatorStateDomain, binary: ButtonCalculatorBinary): CalculatorStateDomain {
         return state.modifyWith(
             { true } to { enterBinary(state, binary.toBinaryOperator()) }
         )
     }
 
-    override fun handleUnary(state: CalculatorState, unary: ButtonCalculatorUnary): CalculatorState {
+    override fun handleUnary(state: CalculatorStateDomain, unary: ButtonCalculatorUnary): CalculatorStateDomain {
         return state.modifyWith(
             { state.hasError } to { this },
             { true } to {
@@ -45,7 +45,7 @@ class EngineStateStandard(
         )
     }
 
-    override fun handleControl(state: CalculatorState, control: ButtonCalculatorControl): CalculatorState {
+    override fun handleControl(state: CalculatorStateDomain, control: ButtonCalculatorControl): CalculatorStateDomain {
         return state.modifyWith(
             { true } to {
                 when (control) {
@@ -58,7 +58,7 @@ class EngineStateStandard(
         )
     }
 
-    override fun handleNumber(state: CalculatorState, number: ButtonCalculatorNumber): CalculatorState {
+    override fun handleNumber(state: CalculatorStateDomain, number: ButtonCalculatorNumber): CalculatorStateDomain {
         return state.modifyWith(
             { state.hasError } to { this },
             { state.lastOperand == "NaN" } to { this },
@@ -70,7 +70,7 @@ class EngineStateStandard(
         )
     }
 
-    private fun enterDecimal(state: CalculatorState): CalculatorState {
+    private fun enterDecimal(state: CalculatorStateDomain): CalculatorStateDomain {
         return state.modifyWith(
             { state.hasError } to { this },
             { state.lastOperand == "NaN" } to { this },
@@ -79,7 +79,7 @@ class EngineStateStandard(
         ).also { println(it) }
     }
 
-    private fun applyClear(state: CalculatorState): CalculatorState {
+    private fun applyClear(state: CalculatorStateDomain): CalculatorStateDomain {
         return state.modifyWith(
             { state.hasError } to { applyClearAll() },
             { state.activeButton == ButtonCalculatorControl.Equals } to { applyClearAll() },
@@ -88,11 +88,11 @@ class EngineStateStandard(
         )
     }
 
-    private fun applyClearAll(): CalculatorState {
-        return CalculatorState()
+    private fun applyClearAll(): CalculatorStateDomain {
+        return CalculatorStateDomain()
     }
 
-    private fun applyEquals(state: CalculatorState): CalculatorState {
+    private fun applyEquals(state: CalculatorStateDomain): CalculatorStateDomain {
         return state.modifyWith(
             { state.hasError } to { this },
             { state.expression.isEmpty() && state.lastOperand.isNotBlank() } to { state.copy(lastOperand = "", lastResult = state.lastOperand) },
@@ -121,7 +121,7 @@ class EngineStateStandard(
         )
     }
 
-    private fun enterBinary(state: CalculatorState, binary: OperatorBinary): CalculatorState {
+    private fun enterBinary(state: CalculatorStateDomain, binary: OperatorBinary): CalculatorStateDomain {
         return state.modifyWith(
             { state.hasError } to { this },
             { true } to {
@@ -134,7 +134,7 @@ class EngineStateStandard(
 
     private fun assessState(
         result: EvaluationResult,
-        state: CalculatorState,
+        state: CalculatorStateDomain,
         lastOperator: Token.Binary,
         operand: Double
     ) = result
@@ -142,7 +142,7 @@ class EngineStateStandard(
         ?.let { updateStateWithResult(result, state, lastOperator, operand) }
         ?: handleComputationError(state, "Error") // Division by zero
 
-    private fun handleComputationError(state: CalculatorState, errorMessage: String? = null): CalculatorState {
+    private fun handleComputationError(state: CalculatorStateDomain, errorMessage: String? = null): CalculatorStateDomain {
         return state.copy(
             lastResult = null,
             lastOperand = "",
@@ -155,10 +155,10 @@ class EngineStateStandard(
 
     private fun updateStateWithResult(
         result: EvaluationResult,
-        state: CalculatorState,
+        state: CalculatorStateDomain,
         lastOperator: Token.Binary,
         operand: Double
-    ): CalculatorState {
+    ): CalculatorStateDomain {
         return state.copy(
             lastResult = null,
             lastOperand = "",
@@ -173,13 +173,13 @@ class EngineStateStandard(
         return conditions.all { it(value) }
     }
 
-    private fun extractOperand(state: CalculatorState): Double {
+    private fun extractOperand(state: CalculatorStateDomain): Double {
         val lastInput = state.lastOperand.toDoubleOrNull()
         val subResult = state.cachedOperand?.toDoubleOrNull() ?: lastInput
         return lastInput ?: subResult ?: state.expression.lastNumberOrNull()?.value ?: 0.0
     }
 
-    private fun extractBinaryOperator(state: CalculatorState): Token.Binary? {
+    private fun extractBinaryOperator(state: CalculatorStateDomain): Token.Binary? {
         return state.lastOperator?.let { Token.Binary(it as OperatorBinary) }
     }
 

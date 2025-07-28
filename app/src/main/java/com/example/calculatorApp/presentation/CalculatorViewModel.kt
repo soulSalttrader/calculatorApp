@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.example.calculatorApp.domain.action.CalculatorAction
 import com.example.calculatorApp.domain.action.CalculatorActionHandler
-import com.example.calculatorApp.model.state.CalculatorState
+import com.example.calculatorApp.model.state.CalculatorStateDomain
 import com.example.calculatorApp.model.state.CalculatorStateUI
 import com.example.calculatorApp.presentation.PresentationUtils.isLandscape
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,11 +23,11 @@ class CalculatorViewModel @Inject constructor(
         private const val ORIENTATION = "calculator_orientation"
     }
 
-    val stateCal: StateFlow<CalculatorState> = savedStateHandle.getStateFlow(STATE_CAL, CalculatorState())
+    val stateCal: StateFlow<CalculatorStateDomain> = savedStateHandle.getStateFlow(STATE_CAL, CalculatorStateDomain())
     val stateUi: StateFlow<CalculatorStateUI> = savedStateHandle.getStateFlow(STATE_UI, CalculatorStateUI.DEFAULT)
     val isLandscape: StateFlow<Boolean> = savedStateHandle.getStateFlow(ORIENTATION, false)
 
-    private fun setState(newState: CalculatorState) {
+    private fun setState(newState: CalculatorStateDomain) {
         savedStateHandle[STATE_CAL] = newState
     }
 

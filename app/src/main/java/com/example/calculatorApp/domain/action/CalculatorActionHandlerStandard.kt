@@ -4,13 +4,13 @@ import com.example.calculatorApp.di.DiUtils.toButtonCategoryHiltKey
 import com.example.calculatorApp.domain.commands.CommandFactoryProvider
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
-import com.example.calculatorApp.model.state.CalculatorState
+import com.example.calculatorApp.model.state.CalculatorStateDomain
 
 class CalculatorActionHandlerStandard(
     private val factoryProvider: CommandFactoryProvider,
 ) : CalculatorActionHandler {
 
-    override fun handleAction(action: CalculatorAction, state: CalculatorState): CalculatorActionHandlerData {
+    override fun handleAction(action: CalculatorAction, state: CalculatorStateDomain): CalculatorActionHandlerData {
         require(action is CalculatorAction.ButtonPressed) { "Unsupported action: $action" }
 
         val commandFactory = factoryProvider.getFactory(action.button.getCategory().toButtonCategoryHiltKey())
