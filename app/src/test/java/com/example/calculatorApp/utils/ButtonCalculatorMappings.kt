@@ -1,5 +1,6 @@
 package com.example.calculatorApp.utils
 
+import androidx.compose.ui.graphics.Color
 import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
@@ -10,27 +11,34 @@ import com.example.calculatorApp.model.symbols.SymbolButton
 import com.example.calculatorApp.ui.theme.Onyx
 import com.example.calculatorApp.ui.theme.SilverGrey
 import com.example.calculatorApp.ui.theme.VividGamboge
+import com.example.calculatorApp.ui.theme.White
 
 object ButtonCalculatorMappings {
 
-    // Map for ButtonCalculatorBinary to Color (future-proofing)
-    val binaryColorMap: Map<ButtonCalculatorBinary, Any> = mapOf(
-        ButtonCalculatorBinary.Addition to VividGamboge,
-        ButtonCalculatorBinary.Subtraction to VividGamboge,
-        ButtonCalculatorBinary.Multiplication to VividGamboge,
-        ButtonCalculatorBinary.Division to VividGamboge,
-
+    val binaryVisualsMap: Map<ButtonCalculatorBinary, VisualsButton> = mapOf(
+        ButtonCalculatorBinary.Addition to VisualsButton(
+            background = VividGamboge,
+            foreground = White,
+            symbol = SymbolButton.ADDITION,
+        ),
+        ButtonCalculatorBinary.Subtraction to VisualsButton(
+            background = VividGamboge,
+            foreground = White,
+            symbol = SymbolButton.SUBTRACTION,
+        ),
+        ButtonCalculatorBinary.Multiplication to VisualsButton(
+            background = VividGamboge,
+            foreground = White,
+            symbol = SymbolButton.MULTIPLICATION,
+        ),
+        ButtonCalculatorBinary.Division to VisualsButton(
+            background = VividGamboge,
+            foreground = White,
+            symbol = SymbolButton.DIVISION,
+        ),
     )
 
-    // Map for ButtonCalculatorBinary to SymbolButton
-    val binarySymbolMap: Map<ButtonCalculatorBinary, SymbolButton> = mapOf(
-        ButtonCalculatorBinary.Addition to SymbolButton.ADDITION,
-        ButtonCalculatorBinary.Subtraction to SymbolButton.SUBTRACTION,
-        ButtonCalculatorBinary.Multiplication to SymbolButton.MULTIPLICATION,
-        ButtonCalculatorBinary.Division to SymbolButton.DIVISION,
-    )
-
-    val unaryColorMap: Map<ButtonCalculatorUnary, Any> = mapOf(
+    val unaryColorMap: Map<ButtonCalculatorUnary, Color> = mapOf(
         ButtonCalculatorUnary.Sign to SilverGrey,
         ButtonCalculatorUnary.Percentage to SilverGrey,
     )
@@ -66,7 +74,7 @@ object ButtonCalculatorMappings {
     )
 
     // Map for ButtonCalculatorNumber to Color (future-proofing)
-    val numberColorMap: Map<ButtonCalculatorNumber, Any> = mapOf(
+    val numberColorMap: Map<ButtonCalculatorNumber, Color> = mapOf(
         ButtonCalculatorNumber.Zero to Onyx,
         ButtonCalculatorNumber.One to Onyx,
         ButtonCalculatorNumber.Two to Onyx,
@@ -93,7 +101,7 @@ object ButtonCalculatorMappings {
         ButtonCalculatorNumber.Nine to SymbolButton.NINE
     )
 
-    val parenthesisColorMap: Map<ButtonCalculatorParenthesis, Any> = mapOf(
+    val parenthesisColorMap: Map<ButtonCalculatorParenthesis, Color> = mapOf(
         ButtonCalculatorParenthesis.OpenParenthesis to Onyx,
         ButtonCalculatorParenthesis.CloseParenthesis to Onyx,
     )
