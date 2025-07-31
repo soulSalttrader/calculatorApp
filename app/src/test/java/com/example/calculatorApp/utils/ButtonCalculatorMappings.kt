@@ -38,24 +38,19 @@ object ButtonCalculatorMappings {
         ),
     )
 
-    val unaryColorMap: Map<ButtonCalculatorUnary, Color> = mapOf(
-        ButtonCalculatorUnary.Sign to SilverGrey,
-        ButtonCalculatorUnary.Percentage to SilverGrey,
-    )
-
-    val unarySymbolMap: Map<ButtonCalculatorUnary, SymbolButton> = mapOf(
-        ButtonCalculatorUnary.Sign to SymbolButton.SIGN,
-        ButtonCalculatorUnary.Percentage to SymbolButton.PERCENTAGE,
-    )
-
-    val unaryIsPrefix: Map<ButtonCalculatorUnary, Boolean> = mapOf(
-        ButtonCalculatorUnary.Sign to true,
-        ButtonCalculatorUnary.Percentage to false,
-    )
-
-    val unaryIsSuffix: Map<ButtonCalculatorUnary, Boolean> = mapOf(
-        ButtonCalculatorUnary.Sign to false,
-        ButtonCalculatorUnary.Percentage to true,
+    val unaryVisualsMap: Map<ButtonCalculatorUnary, VisualsButtonUnary> = mapOf(
+        ButtonCalculatorUnary.Sign to VisualsButtonUnary(
+            background = SilverGrey,
+            foreground = Onyx,
+            symbol = SymbolButton.SIGN,
+            isPrefix = true,
+        ),
+        ButtonCalculatorUnary.Percentage to VisualsButtonUnary(
+            background = SilverGrey,
+            foreground = Onyx,
+            symbol = SymbolButton.PERCENTAGE,
+            isPrefix = false,
+        ),
     )
 
     val controlVisualsMap: Map<ButtonCalculatorControl, VisualsButton> = mapOf(
