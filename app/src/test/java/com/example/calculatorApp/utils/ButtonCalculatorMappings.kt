@@ -81,32 +81,57 @@ object ButtonCalculatorMappings {
         ),
     )
 
-    // Map for ButtonCalculatorNumber to Color (future-proofing)
-    val numberColorMap: Map<ButtonCalculatorNumber, Color> = mapOf(
-        ButtonCalculatorNumber.Zero to Onyx,
-        ButtonCalculatorNumber.One to Onyx,
-        ButtonCalculatorNumber.Two to Onyx,
-        ButtonCalculatorNumber.Three to Onyx,
-        ButtonCalculatorNumber.Four to Onyx,
-        ButtonCalculatorNumber.Five to Onyx,
-        ButtonCalculatorNumber.Six to Onyx,
-        ButtonCalculatorNumber.Seven to Onyx,
-        ButtonCalculatorNumber.Eight to Onyx,
-        ButtonCalculatorNumber.Nine to Onyx
-    )
-
-    // Map for ButtonCalculatorNumber to SymbolButton
-    val numberSymbolMap: Map<ButtonCalculatorNumber, SymbolButton> = mapOf(
-        ButtonCalculatorNumber.Zero to SymbolButton.ZERO,
-        ButtonCalculatorNumber.One to SymbolButton.ONE,
-        ButtonCalculatorNumber.Two to SymbolButton.TWO,
-        ButtonCalculatorNumber.Three to SymbolButton.THREE,
-        ButtonCalculatorNumber.Four to SymbolButton.FOUR,
-        ButtonCalculatorNumber.Five to SymbolButton.FIVE,
-        ButtonCalculatorNumber.Six to SymbolButton.SIX,
-        ButtonCalculatorNumber.Seven to SymbolButton.SEVEN,
-        ButtonCalculatorNumber.Eight to SymbolButton.EIGHT,
-        ButtonCalculatorNumber.Nine to SymbolButton.NINE
+    val numberVisualsMap: Map<ButtonCalculatorNumber, VisualsButton> = mapOf(
+        ButtonCalculatorNumber.Zero to VisualsButton(
+            background = Onyx,
+            foreground = White,
+            symbol = SymbolButton.ZERO,
+        ),
+        ButtonCalculatorNumber.One to VisualsButton(
+            background = Onyx,
+            foreground = White,
+            symbol = SymbolButton.ONE,
+        ),
+        ButtonCalculatorNumber.Two to VisualsButton(
+            background = Onyx,
+            foreground = White,
+            symbol = SymbolButton.TWO,
+        ),
+        ButtonCalculatorNumber.Three to VisualsButton(
+            background = Onyx,
+            foreground = White,
+            symbol = SymbolButton.THREE,
+        ),
+        ButtonCalculatorNumber.Four to VisualsButton(
+            background = Onyx,
+            foreground = White,
+            symbol = SymbolButton.FOUR,
+        ),
+        ButtonCalculatorNumber.Five to VisualsButton(
+            background = Onyx,
+            foreground = White,
+            symbol = SymbolButton.FIVE,
+        ),
+        ButtonCalculatorNumber.Six to VisualsButton(
+            background = Onyx,
+            foreground = White,
+            symbol = SymbolButton.SIX,
+        ),
+        ButtonCalculatorNumber.Seven to VisualsButton(
+            background = Onyx,
+            foreground = White,
+            symbol = SymbolButton.SEVEN,
+        ),
+        ButtonCalculatorNumber.Eight to VisualsButton(
+            background = Onyx,
+            foreground = White,
+            symbol = SymbolButton.EIGHT,
+        ),
+        ButtonCalculatorNumber.Nine to VisualsButton(
+            background = Onyx,
+            foreground = White,
+            symbol = SymbolButton.NINE,
+        ),
     )
 
     val parenthesisColorMap: Map<ButtonCalculatorParenthesis, Color> = mapOf(
