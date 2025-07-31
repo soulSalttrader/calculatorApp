@@ -58,19 +58,27 @@ object ButtonCalculatorMappings {
         ButtonCalculatorUnary.Percentage to true,
     )
 
-    // Map for ButtonCalculatorControl to color and symbol
-    val controlColorMap: Map<ButtonCalculatorControl, Any> = mapOf(
-        ButtonCalculatorControl.Decimal to Onyx,
-        ButtonCalculatorControl.AllClear to SilverGrey,
-        ButtonCalculatorControl.Clear to SilverGrey,
-        ButtonCalculatorControl.Equals to VividGamboge,
-    )
-
-    val controlSymbolMap: Map<ButtonCalculatorControl, SymbolButton> = mapOf(
-        ButtonCalculatorControl.AllClear to SymbolButton.ALL_CLEAR,
-        ButtonCalculatorControl.Clear to SymbolButton.CLEAR,
-        ButtonCalculatorControl.Decimal to SymbolButton.DECIMAL,
-        ButtonCalculatorControl.Equals to SymbolButton.EQUALS
+    val controlVisualsMap: Map<ButtonCalculatorControl, VisualsButton> = mapOf(
+        ButtonCalculatorControl.AllClear to VisualsButton(
+            background = SilverGrey,
+            foreground = Onyx,
+            symbol = SymbolButton.ALL_CLEAR,
+        ),
+        ButtonCalculatorControl.Clear to VisualsButton(
+            background = SilverGrey,
+            foreground = Onyx,
+            symbol = SymbolButton.CLEAR,
+        ),
+        ButtonCalculatorControl.Decimal to VisualsButton(
+            background = Onyx,
+            foreground = White,
+            symbol = SymbolButton.DECIMAL,
+        ),
+        ButtonCalculatorControl.Equals to VisualsButton(
+            background = VividGamboge,
+            foreground = White,
+            symbol = SymbolButton.EQUALS,
+        ),
     )
 
     // Map for ButtonCalculatorNumber to Color (future-proofing)
