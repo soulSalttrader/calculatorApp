@@ -1,7 +1,5 @@
 package com.example.calculatorApp.utils
 
-import androidx.compose.ui.graphics.Color
-import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
@@ -129,42 +127,16 @@ object ButtonCalculatorMappings {
         ),
     )
 
-    val parenthesisColorMap: Map<ButtonCalculatorParenthesis, Color> = mapOf(
-        ButtonCalculatorParenthesis.OpenParenthesis to Onyx,
-        ButtonCalculatorParenthesis.CloseParenthesis to Onyx,
-    )
-
-    val parenthesisSymbolMap: Map<ButtonCalculatorParenthesis, SymbolButton> = mapOf(
-        ButtonCalculatorParenthesis.OpenParenthesis to SymbolButton.OPEN_PARENT,
-        ButtonCalculatorParenthesis.CloseParenthesis to SymbolButton.CLOSE_PARENT,
-    )
-
-    val buttonButtonMap: Map<Button, Button> = mapOf(
-        ButtonCalculatorBinary.Addition to ButtonCalculatorBinary.Addition,
-        ButtonCalculatorBinary.Subtraction to ButtonCalculatorBinary.Subtraction,
-        ButtonCalculatorBinary.Multiplication to ButtonCalculatorBinary.Multiplication,
-        ButtonCalculatorBinary.Division to ButtonCalculatorBinary.Division,
-
-        ButtonCalculatorUnary.Sign to ButtonCalculatorUnary.Sign,
-        ButtonCalculatorUnary.Percentage to ButtonCalculatorUnary.Percentage,
-
-        ButtonCalculatorControl.AllClear to ButtonCalculatorControl.AllClear,
-        ButtonCalculatorControl.Clear to ButtonCalculatorControl.Clear,
-        ButtonCalculatorControl.Decimal to ButtonCalculatorControl.Decimal,
-        ButtonCalculatorControl.Equals to ButtonCalculatorControl.Equals,
-
-        ButtonCalculatorNumber.Zero to ButtonCalculatorNumber.Zero,
-        ButtonCalculatorNumber.One to ButtonCalculatorNumber.One,
-        ButtonCalculatorNumber.Two to ButtonCalculatorNumber.Two,
-        ButtonCalculatorNumber.Three to ButtonCalculatorNumber.Three,
-        ButtonCalculatorNumber.Four to ButtonCalculatorNumber.Four,
-        ButtonCalculatorNumber.Five to ButtonCalculatorNumber.Five,
-        ButtonCalculatorNumber.Six to ButtonCalculatorNumber.Six,
-        ButtonCalculatorNumber.Seven to ButtonCalculatorNumber.Seven,
-        ButtonCalculatorNumber.Eight to ButtonCalculatorNumber.Eight,
-        ButtonCalculatorNumber.Nine to ButtonCalculatorNumber.Nine,
-
-        ButtonCalculatorParenthesis.CloseParenthesis to ButtonCalculatorParenthesis.CloseParenthesis,
-        ButtonCalculatorParenthesis.OpenParenthesis to ButtonCalculatorParenthesis.OpenParenthesis,
+    val parenthesisVisualsMap: Map<ButtonCalculatorParenthesis, VisualsButton> = mapOf(
+        ButtonCalculatorParenthesis.OpenParenthesis to VisualsButton(
+            background = Onyx,
+            foreground = White,
+            symbol = SymbolButton.OPEN_PARENT,
+        ),
+        ButtonCalculatorParenthesis.CloseParenthesis to VisualsButton(
+            background = Onyx,
+            foreground = White,
+            symbol = SymbolButton.CLOSE_PARENT,
+        ),
     )
 }
