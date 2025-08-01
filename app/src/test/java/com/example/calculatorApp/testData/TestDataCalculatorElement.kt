@@ -1,6 +1,6 @@
 package com.example.calculatorApp.testData
 
-data class TestDataButtonCalculatorX<T>(
-    val button: T,
+data class TestDataCalculatorElement<T>(
+    val element: T,
     val expected: Any?,
 )

@@ -1,18 +1,18 @@
 package com.example.calculatorApp.arguments
 
-import com.example.calculatorApp.testData.TestDataButtonCalculatorX
+import com.example.calculatorApp.testData.TestDataCalculatorElement
 
-object TestArgumentsButton : TestArguments {
+object TestArgumentsCalculatorElement : TestArguments {
 
     fun <T, R> provideMappedTestData(
         items: Sequence<T>,
         map: Map<T, R>,
-    ): Sequence<TestDataButtonCalculatorX<T>> =
+    ): Sequence<TestDataCalculatorElement<T>> =
         sequence {
             items.forEach { item ->
                 yield(
-                    TestDataButtonCalculatorX(
-                        button = item,
+                    TestDataCalculatorElement(
+                        element = item,
                         expected = map[item],
                     )
                 )
