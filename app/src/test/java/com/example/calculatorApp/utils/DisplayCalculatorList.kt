@@ -1,9 +1,9 @@
 package com.example.calculatorApp.utils
 
 import com.example.calculatorApp.model.elements.display.DisplayCalculatorInput
+import com.example.calculatorApp.utils.TestUtils.provideSequenceOfSingletons
 
 object DisplayCalculatorList {
-    val inputs: Array<DisplayCalculatorInput> = DisplayCalculatorInput::class.sealedSubclasses
-        .mapNotNull { it.objectInstance }
-        .toTypedArray()
+
+    val inputs = provideSequenceOfSingletons(DisplayCalculatorInput::class)
 }
