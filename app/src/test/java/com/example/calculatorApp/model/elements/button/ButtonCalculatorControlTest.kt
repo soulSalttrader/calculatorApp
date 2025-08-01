@@ -1,10 +1,10 @@
 package com.example.calculatorApp.model.elements.button
 
-import com.example.calculatorApp.arguments.TestArgumentsButton
+import com.example.calculatorApp.arguments.TestArgumentsCalculatorElement
 import com.example.calculatorApp.model.elements.ElementCategoryStyleCollectionImpl
 import com.example.calculatorApp.model.elements.ElementColorStyle
 import com.example.calculatorApp.model.styles.StylesButton
-import com.example.calculatorApp.testData.TestDataButtonCalculatorX
+import com.example.calculatorApp.testData.TestDataCalculatorElement
 import com.example.calculatorApp.utils.ButtonCalculatorList.controls
 import com.example.calculatorApp.utils.ButtonCalculatorMappings.controlVisualsMap
 import com.example.calculatorApp.utils.VisualsButton
@@ -51,18 +51,18 @@ class ButtonCalculatorControlTest {
     inner class GetBackgroundColor {
 
         // Arrange:
-        private fun provideArguments(): Stream<TestDataButtonCalculatorX<ButtonCalculatorControl>> =
-            TestArgumentsButton.provideMappedTestData(controls, controlVisualsMap).asStream()
+        private fun provideArguments(): Stream<TestDataCalculatorElement<ButtonCalculatorControl>> =
+            TestArgumentsCalculatorElement.provideMappedTestData(controls, controlVisualsMap).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should get the right backgroundColor for each control button in iButtonStyle`(
-            testData: TestDataButtonCalculatorX<ButtonCalculatorControl>
+            testData: TestDataCalculatorElement<ButtonCalculatorControl>
         ) {
             // Arrange:
             val style = StylesButton.iButtonStyle
             // Act:
-            val actualColor = testData.button.getBackgroundColor(style)
+            val actualColor = testData.element.getBackgroundColor(style)
             // Assert:
             actualColor shouldBe (testData.expected as VisualsButton).background
         }
@@ -71,18 +71,18 @@ class ButtonCalculatorControlTest {
     @Nested
     inner class GetForegroundColor {
 
-        private fun provideArguments(): Stream<TestDataButtonCalculatorX<ButtonCalculatorControl>> =
-            TestArgumentsButton.provideMappedTestData(controls, controlVisualsMap).asStream()
+        private fun provideArguments(): Stream<TestDataCalculatorElement<ButtonCalculatorControl>> =
+            TestArgumentsCalculatorElement.provideMappedTestData(controls, controlVisualsMap).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should get the right foreground for each control button in iButtonStyle`(
-            testData: TestDataButtonCalculatorX<ButtonCalculatorControl>
+            testData: TestDataCalculatorElement<ButtonCalculatorControl>
         ) {
             // Arrange:
             val style = StylesButton.iButtonStyle
             // Act:
-            val actualColor = testData.button.getForegroundColor(style)
+            val actualColor = testData.element.getForegroundColor(style)
             // Assert:
             actualColor shouldBe (testData.expected as VisualsButton).foreground
         }
@@ -92,16 +92,16 @@ class ButtonCalculatorControlTest {
     inner class GetSymbol {
 
         // Arrange:
-        private fun provideArguments(): Stream<TestDataButtonCalculatorX<ButtonCalculatorControl>> =
-            TestArgumentsButton.provideMappedTestData(controls, controlVisualsMap).asStream()
+        private fun provideArguments(): Stream<TestDataCalculatorElement<ButtonCalculatorControl>> =
+            TestArgumentsCalculatorElement.provideMappedTestData(controls, controlVisualsMap).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should correctly map symbols to buttons`(
-            testData: TestDataButtonCalculatorX<ButtonCalculatorControl>
+            testData: TestDataCalculatorElement<ButtonCalculatorControl>
         ) {
             // Act & Assert: Check if the button's symbol matches the expected symbol
-            testData.button.symbol shouldBe (testData.expected as VisualsButton).symbol
+            testData.element.symbol shouldBe (testData.expected as VisualsButton).symbol
         }
     }
 }

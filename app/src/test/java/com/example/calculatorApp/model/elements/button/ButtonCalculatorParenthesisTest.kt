@@ -1,11 +1,10 @@
 package com.example.calculatorApp.model.elements.button
 
-import androidx.compose.ui.graphics.toArgb
-import com.example.calculatorApp.arguments.TestArgumentsButton.provideMappedTestData
+import com.example.calculatorApp.arguments.TestArgumentsCalculatorElement.provideMappedTestData
 import com.example.calculatorApp.model.elements.ElementCategoryStyleCollectionImpl
 import com.example.calculatorApp.model.elements.ElementColorStyle
 import com.example.calculatorApp.model.styles.StylesButton
-import com.example.calculatorApp.testData.TestDataButtonCalculatorX
+import com.example.calculatorApp.testData.TestDataCalculatorElement
 import com.example.calculatorApp.utils.ButtonCalculatorList
 import com.example.calculatorApp.utils.ButtonCalculatorList.parenthesis
 import com.example.calculatorApp.utils.ButtonCalculatorMappings.parenthesisVisualsMap
@@ -53,18 +52,18 @@ class ButtonCalculatorParenthesisTest {
     inner class GetBackgroundColor {
 
         // Arrange:
-        private fun provideArguments(): Stream<TestDataButtonCalculatorX<ButtonCalculatorParenthesis>> =
+        private fun provideArguments(): Stream<TestDataCalculatorElement<ButtonCalculatorParenthesis>> =
             provideMappedTestData(parenthesis, parenthesisVisualsMap).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should get the right backgroundColor for each parenthesis button in iButtonStyle`(
-            testData: TestDataButtonCalculatorX<ButtonCalculatorParenthesis>
+            testData: TestDataCalculatorElement<ButtonCalculatorParenthesis>
         ) {
             // Arrange:
             val style = StylesButton.iButtonStyle
             // Act:
-            val actualColor = testData.button.getBackgroundColor(style)
+            val actualColor = testData.element.getBackgroundColor(style)
             // Assert:
             actualColor shouldBe (testData.expected as VisualsButton).background
         }
@@ -73,18 +72,18 @@ class ButtonCalculatorParenthesisTest {
     @Nested
     inner class GetForegroundColor {
 
-        private fun provideArguments(): Stream<TestDataButtonCalculatorX<ButtonCalculatorParenthesis>> =
+        private fun provideArguments(): Stream<TestDataCalculatorElement<ButtonCalculatorParenthesis>> =
             provideMappedTestData(parenthesis, parenthesisVisualsMap).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should get the right foreground for each parenthesis button in iButtonStyle`(
-            testData: TestDataButtonCalculatorX<ButtonCalculatorParenthesis>
+            testData: TestDataCalculatorElement<ButtonCalculatorParenthesis>
         ) {
             // Arrange:
             val style = StylesButton.iButtonStyle
             // Act:
-            val actualColor = testData.button.getForegroundColor(style)
+            val actualColor = testData.element.getForegroundColor(style)
             // Assert:
             actualColor shouldBe (testData.expected as VisualsButton).foreground
         }
@@ -94,16 +93,16 @@ class ButtonCalculatorParenthesisTest {
     inner class GetSymbol {
 
         // Arrange:
-        private fun provideArguments(): Stream<TestDataButtonCalculatorX<ButtonCalculatorParenthesis>> =
+        private fun provideArguments(): Stream<TestDataCalculatorElement<ButtonCalculatorParenthesis>> =
             provideMappedTestData(parenthesis, parenthesisVisualsMap).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should correctly map symbols to buttons`(
-            testData: TestDataButtonCalculatorX<ButtonCalculatorParenthesis>
+            testData: TestDataCalculatorElement<ButtonCalculatorParenthesis>
         ) {
             // Act & Assert: Check if the button's symbol matches the expected symbol
-            testData.button.symbol shouldBe (testData.expected as VisualsButton).symbol
+            testData.element.symbol shouldBe (testData.expected as VisualsButton).symbol
         }
     }
 }
