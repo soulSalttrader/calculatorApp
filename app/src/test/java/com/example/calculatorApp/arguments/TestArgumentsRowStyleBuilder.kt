@@ -6,7 +6,7 @@ import com.example.calculatorApp.model.elements.ElementColorStyleImpl
 import com.example.calculatorApp.model.styles.StylesRow
 import com.example.calculatorApp.ui.theme.Black
 import com.example.calculatorApp.ui.theme.White
-import com.example.calculatorApp.utils.RowCalculatorList.allRows
+import com.example.calculatorApp.utils.RowCalculatorList.standardRows
 import org.junit.jupiter.params.provider.Arguments
 import java.util.stream.Stream
 import kotlin.streams.asStream
@@ -19,11 +19,11 @@ object TestArgumentsRowStyleBuilder : TestArguments {
         val testedStyle = style ?: StylesRow.iRowStyle
 
         val expectedStyles = sequenceOf(
-            allRows.map { it to standardBaseStyle },
+            standardRows.map { it to standardBaseStyle },
         ).flatMap { it }
             .toMap()
 
-        return allRows.map { row ->
+        return standardRows.map { row ->
             val expectedStyle = expectedStyles[row] ?: standardBaseStyle
             Arguments.of(row, testedStyle, expectedStyle)
         }.asStream()
