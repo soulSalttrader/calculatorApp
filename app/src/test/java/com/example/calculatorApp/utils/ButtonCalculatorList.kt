@@ -6,25 +6,15 @@ import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorParenthesis
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
-import io.mockk.InternalPlatformDsl.toArray
-import kotlin.reflect.KClass
+import com.example.calculatorApp.utils.TestUtils.provideSequenceOfSingletons
 
 object ButtonCalculatorList {
-    fun provideSequenceButtons(buttonClass: KClass<out Button>): Sequence<Button> {
-        return try {
-            buttonClass.sealedSubclasses
-                .asSequence()
-                .mapNotNull { it.objectInstance }
-        } catch (e: Exception) {
-            throw IllegalArgumentException("Unknown button class: $buttonClass.")
-        }
-    }
 
-    val binary = provideSequenceButtons(ButtonCalculatorBinary::class)
-    val unary = provideSequenceButtons(ButtonCalculatorUnary::class)
-    val controls = provideSequenceButtons(ButtonCalculatorControl::class)
-    val numbers = provideSequenceButtons(ButtonCalculatorNumber::class)
-    val parenthesis = provideSequenceButtons(ButtonCalculatorParenthesis::class)
+    val binary = provideSequenceOfSingletons(ButtonCalculatorBinary::class)
+    val unary = provideSequenceOfSingletons(ButtonCalculatorUnary::class)
+    val controls = provideSequenceOfSingletons(ButtonCalculatorControl::class)
+    val numbers = provideSequenceOfSingletons(ButtonCalculatorNumber::class)
+    val parenthesis = provideSequenceOfSingletons(ButtonCalculatorParenthesis::class)
 
     val allButtons: Sequence<Button> = sequenceOf(
         binary,
