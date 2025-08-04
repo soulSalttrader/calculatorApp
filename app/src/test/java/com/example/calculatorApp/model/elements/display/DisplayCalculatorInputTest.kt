@@ -7,6 +7,7 @@ import com.example.calculatorApp.model.styles.StylesDisplay
 import com.example.calculatorApp.testData.TestDataCalculatorElement
 import com.example.calculatorApp.utils.DisplayCalculatorList.inputs
 import com.example.calculatorApp.utils.DisplayCalculatorMappings.inputsVisualsMap
+import com.example.calculatorApp.utils.Visuals
 import com.example.calculatorApp.utils.VisualsDisplay
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
@@ -50,13 +51,13 @@ class DisplayCalculatorInputTest {
     inner class GetBackgroundColor {
 
         // Arrange:
-        private fun provideArguments(): Stream<TestDataCalculatorElement<DisplayCalculatorInput>> =
+        private fun provideArguments(): Stream<TestDataCalculatorElement<Display, Visuals>> =
             provideMappedTestData(inputs, inputsVisualsMap).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should get the right backgroundColor for each input display in iDisplayStyle`(
-            testData: TestDataCalculatorElement<DisplayCalculatorInput>
+            testData: TestDataCalculatorElement<Display, Visuals>
         ) {
             // Arrange:
             val style = StylesDisplay.iDisplayStyleInput
@@ -70,13 +71,13 @@ class DisplayCalculatorInputTest {
     @Nested
     inner class GetForegroundColor {
 
-        private fun provideArguments(): Stream<TestDataCalculatorElement<DisplayCalculatorInput>> =
+        private fun provideArguments(): Stream<TestDataCalculatorElement<Display, Visuals>> =
             provideMappedTestData(inputs, inputsVisualsMap).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should get the right foreground color for each input display in iDisplayStyle`(
-            testData: TestDataCalculatorElement<DisplayCalculatorInput>
+            testData: TestDataCalculatorElement<Display, Visuals>
         ) {
             // Arrange:
             val style = StylesDisplay.iDisplayStyleInput
