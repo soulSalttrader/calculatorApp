@@ -1,5 +1,6 @@
 package com.example.calculatorApp.utils
 
+import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
@@ -10,40 +11,41 @@ import com.example.calculatorApp.ui.theme.Onyx
 import com.example.calculatorApp.ui.theme.SilverGrey
 import com.example.calculatorApp.ui.theme.VividGamboge
 import com.example.calculatorApp.ui.theme.White
+import kotlin.reflect.KClass
 
 object ButtonCalculatorMappings {
 
-    val binaryVisualsMap: Map<ButtonCalculatorBinary, VisualsButton> = mapOf(
-        ButtonCalculatorBinary.Addition to VisualsButton(
+    val binaryVisualsMap: Map<KClass<out Button>, Visuals> = mapOf(
+        ButtonCalculatorBinary.Addition::class to VisualsButton(
             background = VividGamboge,
             foreground = White,
             symbol = SymbolButton.ADDITION,
         ),
-        ButtonCalculatorBinary.Subtraction to VisualsButton(
+        ButtonCalculatorBinary.Subtraction::class to VisualsButton(
             background = VividGamboge,
             foreground = White,
             symbol = SymbolButton.SUBTRACTION,
         ),
-        ButtonCalculatorBinary.Multiplication to VisualsButton(
+        ButtonCalculatorBinary.Multiplication::class to VisualsButton(
             background = VividGamboge,
             foreground = White,
             symbol = SymbolButton.MULTIPLICATION,
         ),
-        ButtonCalculatorBinary.Division to VisualsButton(
+        ButtonCalculatorBinary.Division::class to VisualsButton(
             background = VividGamboge,
             foreground = White,
             symbol = SymbolButton.DIVISION,
         ),
     )
 
-    val unaryVisualsMap: Map<ButtonCalculatorUnary, VisualsButtonUnary> = mapOf(
-        ButtonCalculatorUnary.Sign to VisualsButtonUnary(
+    val unaryVisualsMap: Map<KClass<out Button>, Visuals> = mapOf(
+        ButtonCalculatorUnary.Sign::class to VisualsButtonUnary(
             background = SilverGrey,
             foreground = Onyx,
             symbol = SymbolButton.SIGN,
             isPrefix = true,
         ),
-        ButtonCalculatorUnary.Percentage to VisualsButtonUnary(
+        ButtonCalculatorUnary.Percentage::class to VisualsButtonUnary(
             background = SilverGrey,
             foreground = Onyx,
             symbol = SymbolButton.PERCENTAGE,
@@ -51,89 +53,89 @@ object ButtonCalculatorMappings {
         ),
     )
 
-    val controlVisualsMap: Map<ButtonCalculatorControl, VisualsButton> = mapOf(
-        ButtonCalculatorControl.AllClear to VisualsButton(
+    val controlVisualsMap: Map<KClass<out Button>, Visuals> = mapOf(
+        ButtonCalculatorControl.AllClear::class to VisualsButton(
             background = SilverGrey,
             foreground = Onyx,
             symbol = SymbolButton.ALL_CLEAR,
         ),
-        ButtonCalculatorControl.Clear to VisualsButton(
+        ButtonCalculatorControl.Clear::class to VisualsButton(
             background = SilverGrey,
             foreground = Onyx,
             symbol = SymbolButton.CLEAR,
         ),
-        ButtonCalculatorControl.Decimal to VisualsButton(
+        ButtonCalculatorControl.Decimal::class to VisualsButton(
             background = Onyx,
             foreground = White,
             symbol = SymbolButton.DECIMAL,
         ),
-        ButtonCalculatorControl.Equals to VisualsButton(
+        ButtonCalculatorControl.Equals::class to VisualsButton(
             background = VividGamboge,
             foreground = White,
             symbol = SymbolButton.EQUALS,
         ),
     )
 
-    val numberVisualsMap: Map<ButtonCalculatorNumber, VisualsButton> = mapOf(
-        ButtonCalculatorNumber.Zero to VisualsButton(
+    val numberVisualsMap: Map<KClass<out Button>, Visuals> = mapOf(
+        ButtonCalculatorNumber.Zero::class to VisualsButton(
             background = Onyx,
             foreground = White,
             symbol = SymbolButton.ZERO,
         ),
-        ButtonCalculatorNumber.One to VisualsButton(
+        ButtonCalculatorNumber.One::class to VisualsButton(
             background = Onyx,
             foreground = White,
             symbol = SymbolButton.ONE,
         ),
-        ButtonCalculatorNumber.Two to VisualsButton(
+        ButtonCalculatorNumber.Two::class to VisualsButton(
             background = Onyx,
             foreground = White,
             symbol = SymbolButton.TWO,
         ),
-        ButtonCalculatorNumber.Three to VisualsButton(
+        ButtonCalculatorNumber.Three::class to VisualsButton(
             background = Onyx,
             foreground = White,
             symbol = SymbolButton.THREE,
         ),
-        ButtonCalculatorNumber.Four to VisualsButton(
+        ButtonCalculatorNumber.Four::class to VisualsButton(
             background = Onyx,
             foreground = White,
             symbol = SymbolButton.FOUR,
         ),
-        ButtonCalculatorNumber.Five to VisualsButton(
+        ButtonCalculatorNumber.Five::class to VisualsButton(
             background = Onyx,
             foreground = White,
             symbol = SymbolButton.FIVE,
         ),
-        ButtonCalculatorNumber.Six to VisualsButton(
+        ButtonCalculatorNumber.Six::class to VisualsButton(
             background = Onyx,
             foreground = White,
             symbol = SymbolButton.SIX,
         ),
-        ButtonCalculatorNumber.Seven to VisualsButton(
+        ButtonCalculatorNumber.Seven::class to VisualsButton(
             background = Onyx,
             foreground = White,
             symbol = SymbolButton.SEVEN,
         ),
-        ButtonCalculatorNumber.Eight to VisualsButton(
+        ButtonCalculatorNumber.Eight::class to VisualsButton(
             background = Onyx,
             foreground = White,
             symbol = SymbolButton.EIGHT,
         ),
-        ButtonCalculatorNumber.Nine to VisualsButton(
+        ButtonCalculatorNumber.Nine::class to VisualsButton(
             background = Onyx,
             foreground = White,
             symbol = SymbolButton.NINE,
         ),
     )
 
-    val parenthesisVisualsMap: Map<ButtonCalculatorParenthesis, VisualsButton> = mapOf(
-        ButtonCalculatorParenthesis.OpenParenthesis to VisualsButton(
+    val parenthesisVisualsMap: Map<KClass<out Button>, Visuals> = mapOf(
+        ButtonCalculatorParenthesis.OpenParenthesis::class to VisualsButton(
             background = Onyx,
             foreground = White,
             symbol = SymbolButton.OPEN_PARENT,
         ),
-        ButtonCalculatorParenthesis.CloseParenthesis to VisualsButton(
+        ButtonCalculatorParenthesis.CloseParenthesis::class to VisualsButton(
             background = Onyx,
             foreground = White,
             symbol = SymbolButton.CLOSE_PARENT,

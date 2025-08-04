@@ -7,6 +7,7 @@ import com.example.calculatorApp.model.styles.StylesButton
 import com.example.calculatorApp.testData.TestDataCalculatorElement
 import com.example.calculatorApp.utils.ButtonCalculatorList.binary
 import com.example.calculatorApp.utils.ButtonCalculatorMappings.binaryVisualsMap
+import com.example.calculatorApp.utils.Visuals
 import com.example.calculatorApp.utils.VisualsButton
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
@@ -51,40 +52,40 @@ class ButtonCalculatorBinaryTest {
     inner class GetBackgroundColor {
 
         // Arrange:
-        private fun provideArguments(): Stream<TestDataCalculatorElement<ButtonCalculatorBinary>> =
+        private fun provideArguments(): Stream<TestDataCalculatorElement<Button, Visuals>> =
             provideMappedTestData(binary, binaryVisualsMap).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should get the right backgroundColor for each arithmetic button in iButtonStyle`(
-            testData: TestDataCalculatorElement<ButtonCalculatorBinary>
+            testData: TestDataCalculatorElement<Button, Visuals>
         ) {
             // Arrange:
             val style = StylesButton.iButtonStyle
             // Act:
             val actualColor = testData.element.getBackgroundColor(style)
             // Assert:
-            actualColor shouldBe (testData.expected as VisualsButton).background
+            actualColor shouldBe (testData.expected).background
         }
     }
 
     @Nested
     inner class GetForegroundColor {
 
-        private fun provideArguments(): Stream<TestDataCalculatorElement<ButtonCalculatorBinary>> =
+        private fun provideArguments(): Stream<TestDataCalculatorElement<Button, Visuals>> =
             provideMappedTestData(binary, binaryVisualsMap).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should get the right foreground for each arithmetic button in iButtonStyle`(
-            testData: TestDataCalculatorElement<ButtonCalculatorBinary>
+            testData: TestDataCalculatorElement<Button, Visuals>
         ) {
             // Arrange:
             val style = StylesButton.iButtonStyle
             // Act:
             val actualColor = testData.element.getForegroundColor(style)
             // Assert:
-            actualColor shouldBe (testData.expected as VisualsButton).foreground
+            actualColor shouldBe (testData.expected).foreground
         }
     }
 
@@ -92,14 +93,13 @@ class ButtonCalculatorBinaryTest {
     inner class GetSymbol {
 
         // Arrange: Setup test data (button instance and expected symbol)
-        private fun provideArguments(): Stream<TestDataCalculatorElement<ButtonCalculatorBinary>> =
+        private fun provideArguments(): Stream<TestDataCalculatorElement<Button, Visuals>> =
             provideMappedTestData(binary, binaryVisualsMap).asStream()
-
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should correctly map symbols to buttons`(
-            testData: TestDataCalculatorElement<ButtonCalculatorBinary>
+            testData: TestDataCalculatorElement<Button, Visuals>
         ) {
             // Act & Assert: Check if the button's symbol matches the expected symbol
             testData.element.symbol shouldBe (testData.expected as VisualsButton).symbol

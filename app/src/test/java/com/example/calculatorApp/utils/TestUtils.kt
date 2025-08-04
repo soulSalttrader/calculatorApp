@@ -17,7 +17,7 @@ object TestUtils {
 
     fun <T : Any, R> provideSequenceConstructed(
         type: KClass<out T>,
-        constructorArgs: Map<KClass<out T>, Sequence<R>>,
+        constructorArgs: Map<KClass<out T>, R>,
     ): Sequence<T> = type.sealedSubclasses
             .asSequence()
             .map { subclass ->
@@ -27,8 +27,14 @@ object TestUtils {
                 val params = constructor.parameters
                 params.requireSingleSequenceParameter(subclass)
 
-                val buttons = constructorArgs[subclass] ?: error("No constructor args provided for ${subclass.simpleName}")
-                constructor.call(buttons)
+                val args = constructorArgs[subclass] ?: error("No constructor args provided for ${subclass.simpleName}")
+
+                val buttonData = when (args) {
+                    is VisualsRow -> args.buttonData
+                    else -> error("Unknown args $args")
+                }
+
+                constructor.call(buttonData)
             }
 
     fun <T : Any, R> mapSingletonsTo(
