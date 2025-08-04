@@ -7,6 +7,7 @@ import com.example.calculatorApp.model.styles.StylesButton
 import com.example.calculatorApp.testData.TestDataCalculatorElement
 import com.example.calculatorApp.utils.ButtonCalculatorList.controls
 import com.example.calculatorApp.utils.ButtonCalculatorMappings.controlVisualsMap
+import com.example.calculatorApp.utils.Visuals
 import com.example.calculatorApp.utils.VisualsButton
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
@@ -51,13 +52,13 @@ class ButtonCalculatorControlTest {
     inner class GetBackgroundColor {
 
         // Arrange:
-        private fun provideArguments(): Stream<TestDataCalculatorElement<ButtonCalculatorControl>> =
+        private fun provideArguments(): Stream<TestDataCalculatorElement<Button, Visuals>> =
             TestArgumentsCalculatorElement.provideMappedTestData(controls, controlVisualsMap).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should get the right backgroundColor for each control button in iButtonStyle`(
-            testData: TestDataCalculatorElement<ButtonCalculatorControl>
+            testData: TestDataCalculatorElement<Button, Visuals>
         ) {
             // Arrange:
             val style = StylesButton.iButtonStyle
@@ -71,13 +72,13 @@ class ButtonCalculatorControlTest {
     @Nested
     inner class GetForegroundColor {
 
-        private fun provideArguments(): Stream<TestDataCalculatorElement<ButtonCalculatorControl>> =
+        private fun provideArguments(): Stream<TestDataCalculatorElement<Button, Visuals>> =
             TestArgumentsCalculatorElement.provideMappedTestData(controls, controlVisualsMap).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should get the right foreground for each control button in iButtonStyle`(
-            testData: TestDataCalculatorElement<ButtonCalculatorControl>
+            testData: TestDataCalculatorElement<Button, Visuals>
         ) {
             // Arrange:
             val style = StylesButton.iButtonStyle
@@ -92,13 +93,13 @@ class ButtonCalculatorControlTest {
     inner class GetSymbol {
 
         // Arrange:
-        private fun provideArguments(): Stream<TestDataCalculatorElement<ButtonCalculatorControl>> =
+        private fun provideArguments(): Stream<TestDataCalculatorElement<Button, Visuals>> =
             TestArgumentsCalculatorElement.provideMappedTestData(controls, controlVisualsMap).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should correctly map symbols to buttons`(
-            testData: TestDataCalculatorElement<ButtonCalculatorControl>
+            testData: TestDataCalculatorElement<Button, Visuals>
         ) {
             // Act & Assert: Check if the button's symbol matches the expected symbol
             testData.element.symbol shouldBe (testData.expected as VisualsButton).symbol
