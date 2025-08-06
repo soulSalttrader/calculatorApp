@@ -6,7 +6,7 @@ import com.example.calculatorApp.testData.TestDataEngineMathStandardSign
 import com.example.calculatorApp.domain.BinaryOperation
 import com.example.calculatorApp.domain.ast.Operator
 import com.example.calculatorApp.domain.ast.OperatorBinary
-import com.example.calculatorApp.utils.OperatorList.allOperators
+import com.example.calculatorApp.testData.TestDataElementSeq.operatorsAllTest
 
 object TestArgumentsEngineMath {
 
@@ -56,7 +56,7 @@ object TestArgumentsEngineMath {
     // Skipping Subtraction and Division to avoid redundant test cases.
     // Addition and Multiplication cover the same result patterns,
     // making Subtraction and Division unnecessary for efficiency.
-    private val testOperators = allOperators
+    private val testOperators = operatorsAllTest
         .filter { it != OperatorBinary.Subtraction && it != OperatorBinary.Division }
 
     private val testOperands = sequenceOf(

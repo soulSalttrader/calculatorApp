@@ -4,9 +4,9 @@ import com.example.calculatorApp.arguments.TestArgumentsCalculatorElement.provid
 import com.example.calculatorApp.model.elements.ElementCategoryStyleCollectionImpl
 import com.example.calculatorApp.model.elements.ElementColorStyle
 import com.example.calculatorApp.model.styles.StylesButton
+import com.example.calculatorApp.testData.TestDataElementExpectedMap.numberVisualsMapTest
+import com.example.calculatorApp.testData.TestDataElementSeq.buttonsNumbersTest
 import com.example.calculatorApp.testData.TestDataCalculatorElement
-import com.example.calculatorApp.utils.ButtonCalculatorList.numbers
-import com.example.calculatorApp.utils.ButtonCalculatorMappings.numberVisualsMap
 import com.example.calculatorApp.utils.Visuals
 import com.example.calculatorApp.utils.VisualsButton
 import io.kotest.assertions.throwables.shouldThrow
@@ -23,7 +23,7 @@ class ButtonCalculatorNumberTest {
     inner class GetCategory {
 
         // Arrange:
-        private fun provideArguments(): Stream<Button> = numbers.asStream()
+        private fun provideArguments(): Stream<Button> = buttonsNumbersTest.asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
@@ -53,7 +53,7 @@ class ButtonCalculatorNumberTest {
 
         // Arrange:
         private fun provideArguments(): Stream<TestDataCalculatorElement<Button, Visuals>> =
-            provideMappedTestData(numbers, numberVisualsMap).asStream()
+            provideMappedTestData(buttonsNumbersTest, numberVisualsMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
@@ -74,7 +74,7 @@ class ButtonCalculatorNumberTest {
 
         // Arrange:
         private fun provideArguments(): Stream<TestDataCalculatorElement<Button, Visuals>> =
-            provideMappedTestData(numbers, numberVisualsMap).asStream()
+            provideMappedTestData(buttonsNumbersTest, numberVisualsMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
@@ -95,7 +95,7 @@ class ButtonCalculatorNumberTest {
 
         // Arrange:
         private fun provideArguments(): Stream<TestDataCalculatorElement<Button, Visuals>> =
-            provideMappedTestData(numbers, numberVisualsMap).asStream()
+            provideMappedTestData(buttonsNumbersTest, numberVisualsMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")

@@ -4,9 +4,9 @@ import com.example.calculatorApp.arguments.TestArgumentsCalculatorElement.provid
 import com.example.calculatorApp.model.elements.ElementCategoryStyleCollectionImpl
 import com.example.calculatorApp.model.elements.ElementColorStyle
 import com.example.calculatorApp.model.styles.StylesButton
+import com.example.calculatorApp.testData.TestDataElementExpectedMap.binaryVisualsMapTest
+import com.example.calculatorApp.testData.TestDataElementSeq.buttonsBinaryTest
 import com.example.calculatorApp.testData.TestDataCalculatorElement
-import com.example.calculatorApp.utils.ButtonCalculatorList.binary
-import com.example.calculatorApp.utils.ButtonCalculatorMappings.binaryVisualsMap
 import com.example.calculatorApp.utils.Visuals
 import com.example.calculatorApp.utils.VisualsButton
 import io.kotest.assertions.throwables.shouldThrow
@@ -23,7 +23,7 @@ class ButtonCalculatorBinaryTest {
     inner class GetCategory {
 
         // Arrange: Setup test data (button instance)
-        private fun provideArguments(): Stream<Button> = binary.asStream()
+        private fun provideArguments(): Stream<Button> = buttonsBinaryTest.asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
@@ -53,7 +53,7 @@ class ButtonCalculatorBinaryTest {
 
         // Arrange:
         private fun provideArguments(): Stream<TestDataCalculatorElement<Button, Visuals>> =
-            provideMappedTestData(binary, binaryVisualsMap).asStream()
+            provideMappedTestData(buttonsBinaryTest, binaryVisualsMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
@@ -73,7 +73,7 @@ class ButtonCalculatorBinaryTest {
     inner class GetForegroundColor {
 
         private fun provideArguments(): Stream<TestDataCalculatorElement<Button, Visuals>> =
-            provideMappedTestData(binary, binaryVisualsMap).asStream()
+            provideMappedTestData(buttonsBinaryTest, binaryVisualsMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
@@ -94,7 +94,7 @@ class ButtonCalculatorBinaryTest {
 
         // Arrange: Setup test data (button instance and expected symbol)
         private fun provideArguments(): Stream<TestDataCalculatorElement<Button, Visuals>> =
-            provideMappedTestData(binary, binaryVisualsMap).asStream()
+            provideMappedTestData(buttonsBinaryTest, binaryVisualsMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")

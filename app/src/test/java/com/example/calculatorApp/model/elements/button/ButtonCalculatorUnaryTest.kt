@@ -4,9 +4,9 @@ import com.example.calculatorApp.arguments.TestArgumentsCalculatorElement.provid
 import com.example.calculatorApp.model.elements.ElementCategoryStyleCollectionImpl
 import com.example.calculatorApp.model.elements.ElementColorStyle
 import com.example.calculatorApp.model.styles.StylesButton
+import com.example.calculatorApp.testData.TestDataElementExpectedMap.unaryVisualsMapTest
+import com.example.calculatorApp.testData.TestDataElementSeq.buttonsUnaryTest
 import com.example.calculatorApp.testData.TestDataCalculatorElement
-import com.example.calculatorApp.utils.ButtonCalculatorList.unary
-import com.example.calculatorApp.utils.ButtonCalculatorMappings.unaryVisualsMap
 import com.example.calculatorApp.utils.Visuals
 import com.example.calculatorApp.utils.VisualsButtonUnary
 import io.kotest.assertions.throwables.shouldThrow
@@ -23,7 +23,7 @@ class ButtonCalculatorUnaryTest {
     inner class GetCategory {
 
         // Arrange: Setup test data (button instance)
-        private fun provideArguments(): Stream<Button> = unary.asStream()
+        private fun provideArguments(): Stream<Button> = buttonsUnaryTest.asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
@@ -53,7 +53,7 @@ class ButtonCalculatorUnaryTest {
 
         // Arrange:
         private fun provideArguments(): Stream<TestDataCalculatorElement<Button, Visuals>> =
-            provideMappedTestData(unary, unaryVisualsMap).asStream()
+            provideMappedTestData(buttonsUnaryTest, unaryVisualsMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
@@ -73,7 +73,7 @@ class ButtonCalculatorUnaryTest {
     inner class GetForegroundColor {
 
         private fun provideArguments(): Stream<TestDataCalculatorElement<Button, Visuals>> =
-            provideMappedTestData(unary, unaryVisualsMap).asStream()
+            provideMappedTestData(buttonsUnaryTest, unaryVisualsMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
@@ -94,7 +94,7 @@ class ButtonCalculatorUnaryTest {
 
         // Arrange:
         private fun provideArguments(): Stream<TestDataCalculatorElement<Button, Visuals>> =
-            provideMappedTestData(unary, unaryVisualsMap).asStream()
+            provideMappedTestData(buttonsUnaryTest, unaryVisualsMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
@@ -112,7 +112,7 @@ class ButtonCalculatorUnaryTest {
 
         // Arrange:
         private fun provideArguments(): Stream<TestDataCalculatorElement<Button, Visuals>> =
-            provideMappedTestData(unary, unaryVisualsMap).asStream()
+            provideMappedTestData(buttonsUnaryTest, unaryVisualsMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
@@ -129,7 +129,7 @@ class ButtonCalculatorUnaryTest {
 
         // Arrange:
         private fun provideArguments(): Stream<TestDataCalculatorElement<Button, Visuals>> =
-            provideMappedTestData(unary, unaryVisualsMap).asStream()
+            provideMappedTestData(buttonsUnaryTest, unaryVisualsMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
