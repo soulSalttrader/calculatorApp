@@ -28,25 +28,25 @@ class TokenizerStandardTest {
         // Arrange:
         private fun provideArgumentsNumbers(): Stream<TestDataTokenizerStandard> {
             return TestArgumentsTokenizerStandard
-                .provide(ButtonCalculatorNumber::class).asStream()
+                .provideStandard(ButtonCalculatorNumber::class).asStream()
         }
 
         // Arrange:
         private fun provideArgumentsBinary(): Stream<TestDataTokenizerStandard> {
             return TestArgumentsTokenizerStandard
-                .provide(ButtonCalculatorBinary::class).asStream()
+                .provideStandard(ButtonCalculatorBinary::class).asStream()
         }
 
         // Arrange:
         private fun provideArgumentsParenthesis(): Stream<TestDataTokenizerStandard> {
             return TestArgumentsTokenizerStandard
-                .provide(ButtonCalculatorParenthesis::class).asStream()
+                .provideStandard(ButtonCalculatorParenthesis::class).asStream()
         }
 
         // Arrange:
         private fun provideArgumentsUnary(): Stream<TestDataTokenizerStandard> {
             return TestArgumentsTokenizerStandard
-                .provide(ButtonCalculatorUnary::class).asStream()
+                .provideStandard(ButtonCalculatorUnary::class).asStream()
         }
 
         @BeforeEach

@@ -39,13 +39,13 @@ class TokenizerUtilsTest {
         // Arrange:
         private fun provideArgumentsNumbers(): Stream<TestDataTokenizerStandard> {
             return TestArgumentsTokenizerStandard
-                .provide(ButtonCalculatorNumber::class).asStream()
+                .provideStandard(ButtonCalculatorNumber::class).asStream()
         }
 
         // Arrange:
         private fun provideArgumentsBinary(): Stream<TestDataTokenizerStandard> {
             return TestArgumentsTokenizerStandard
-                .provide(ButtonCalculatorBinary::class).asStream()
+                .provideStandard(ButtonCalculatorBinary::class).asStream()
         }
 
         @ParameterizedTest
@@ -76,13 +76,13 @@ class TokenizerUtilsTest {
         // Arrange:
         private fun provideArgumentsNumbers(): Stream<TestDataTokenizerStandard> {
             return TestArgumentsTokenizerStandard
-                .provide(ButtonCalculatorNumber::class).asStream()
+                .provideStandard(ButtonCalculatorNumber::class).asStream()
         }
 
         // Arrange:
         private fun provideArgumentsBinary(): Stream<TestDataTokenizerStandard> {
             return TestArgumentsTokenizerStandard
-                .provide(ButtonCalculatorBinary::class).asStream()
+                .provideStandard(ButtonCalculatorBinary::class).asStream()
         }
 
         @ParameterizedTest
@@ -165,13 +165,13 @@ class TokenizerUtilsTest {
         // Arrange:
         private fun provideArgumentsNumbers(): Stream<TestDataTokenizerStandard> {
             return TestArgumentsTokenizerStandard
-                .provide(ButtonCalculatorNumber::class).asStream()
+                .provideStandard(ButtonCalculatorNumber::class).asStream()
         }
 
         // Arrange:
         private fun provideArgumentsParenthesis(): Stream<TestDataTokenizerStandard> {
             return TestArgumentsTokenizerStandard
-                .provide(ButtonCalculatorParenthesis::class).asStream()
+                .provideStandard(ButtonCalculatorParenthesis::class).asStream()
         }
 
         @ParameterizedTest
@@ -202,7 +202,7 @@ class TokenizerUtilsTest {
 
         // Arrange:
         private fun provideArguments(): Stream<TestDataTokenizerUtils> {
-            return TestArgumentsTokenizerUtils.provide(ButtonCalculatorBinary::class).asStream()
+            return TestArgumentsTokenizerUtils.provideUtils(ButtonCalculatorBinary::class).asStream()
         }
 
         @ParameterizedTest
@@ -239,7 +239,7 @@ class TokenizerUtilsTest {
 
         // Arrange:
         private fun provideArguments(): Stream<TestDataTokenizerUtils> {
-            return TestArgumentsTokenizerUtils.provide(ButtonCalculatorUnary::class).asStream()
+            return TestArgumentsTokenizerUtils.provideUtils(ButtonCalculatorUnary::class).asStream()
         }
 
         @ParameterizedTest
@@ -276,7 +276,7 @@ class TokenizerUtilsTest {
 
         // Arrange:
         private fun provideArguments(): Stream<TestDataTokenizerUtils> {
-            return TestArgumentsTokenizerUtils.provide(ButtonCalculatorParenthesis::class).asStream()
+            return TestArgumentsTokenizerUtils.provideUtils(ButtonCalculatorParenthesis::class).asStream()
         }
 
         @ParameterizedTest

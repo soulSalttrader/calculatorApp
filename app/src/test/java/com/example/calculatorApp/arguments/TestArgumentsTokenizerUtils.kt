@@ -1,16 +1,15 @@
 package com.example.calculatorApp.arguments
 
-import com.example.calculatorApp.testData.TestDataTokenizerUtils
 import com.example.calculatorApp.model.elements.button.Button
-import com.example.calculatorApp.utils.ButtonCalculatorList.provideSequenceButtons
+import com.example.calculatorApp.testData.TestDataTokenizerUtils
+import com.example.calculatorApp.utils.TestUtils.mapSingletonsTo
 import kotlin.reflect.KClass
 
 object TestArgumentsTokenizerUtils {
 
-    fun provide(
-        buttonClass: KClass<out Button>,
-        buttons: Sequence<Button> = provideSequenceButtons(buttonClass)
-    ): Sequence<TestDataTokenizerUtils> {
-        return buttons.map { TestDataTokenizerUtils(it) }
+    fun <T : Button> provideUtils(
+        type: KClass<out T>,
+    ): Sequence<TestDataTokenizerUtils> = mapSingletonsTo(type) {
+        TestDataTokenizerUtils(it)
     }
 }
