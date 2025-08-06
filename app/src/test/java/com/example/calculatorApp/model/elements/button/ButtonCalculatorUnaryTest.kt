@@ -4,11 +4,11 @@ import com.example.calculatorApp.arguments.TestArgumentsCalculatorElement.provid
 import com.example.calculatorApp.model.elements.ElementCategoryStyleCollectionImpl
 import com.example.calculatorApp.model.elements.ElementColorStyle
 import com.example.calculatorApp.model.styles.StylesButton
-import com.example.calculatorApp.testData.TestDataElementExpectedMap.unaryVisualsMapTest
+import com.example.calculatorApp.testData.TestDataElementExpectedMap.unaryExpectedMapTest
 import com.example.calculatorApp.testData.TestDataElementSeq.buttonsUnaryTest
 import com.example.calculatorApp.testData.TestDataCalculatorElement
-import com.example.calculatorApp.utils.Visuals
-import com.example.calculatorApp.utils.VisualsButtonUnary
+import com.example.calculatorApp.testData.expected.ExpectedElement
+import com.example.calculatorApp.testData.expected.ExpectedButtonUnary
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Nested
@@ -52,40 +52,40 @@ class ButtonCalculatorUnaryTest {
     inner class GetBackgroundColor {
 
         // Arrange:
-        private fun provideArguments(): Stream<TestDataCalculatorElement<Button, Visuals>> =
-            provideMappedTestData(buttonsUnaryTest, unaryVisualsMapTest).asStream()
+        private fun provideArguments(): Stream<TestDataCalculatorElement<Button, ExpectedElement>> =
+            provideMappedTestData(buttonsUnaryTest, unaryExpectedMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should get the right backgroundColor for each unary button in iButtonStyle`(
-            testData: TestDataCalculatorElement<Button, Visuals>
+            testData: TestDataCalculatorElement<Button, ExpectedElement>
         ) {
             // Arrange:
             val style = StylesButton.iButtonStyle
             // Act:
             val actualColor = testData.element.getBackgroundColor(style)
             // Assert:
-            actualColor shouldBe (testData.expected as VisualsButtonUnary).background
+            actualColor shouldBe (testData.expected as ExpectedButtonUnary).background
         }
     }
 
     @Nested
     inner class GetForegroundColor {
 
-        private fun provideArguments(): Stream<TestDataCalculatorElement<Button, Visuals>> =
-            provideMappedTestData(buttonsUnaryTest, unaryVisualsMapTest).asStream()
+        private fun provideArguments(): Stream<TestDataCalculatorElement<Button, ExpectedElement>> =
+            provideMappedTestData(buttonsUnaryTest, unaryExpectedMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should get the right foreground color for each unary button in iButtonStyle`(
-            testData: TestDataCalculatorElement<Button, Visuals>
+            testData: TestDataCalculatorElement<Button, ExpectedElement>
         ) {
             // Arrange:
             val style = StylesButton.iButtonStyle
             // Act:
             val actualColor = testData.element.getForegroundColor(style)
             // Assert:
-            actualColor shouldBe (testData.expected as VisualsButtonUnary).foreground
+            actualColor shouldBe (testData.expected as ExpectedButtonUnary).foreground
         }
     }
 
@@ -93,16 +93,16 @@ class ButtonCalculatorUnaryTest {
     inner class GetSymbol {
 
         // Arrange:
-        private fun provideArguments(): Stream<TestDataCalculatorElement<Button, Visuals>> =
-            provideMappedTestData(buttonsUnaryTest, unaryVisualsMapTest).asStream()
+        private fun provideArguments(): Stream<TestDataCalculatorElement<Button, ExpectedElement>> =
+            provideMappedTestData(buttonsUnaryTest, unaryExpectedMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should correctly map symbols to buttons`(
-            testData: TestDataCalculatorElement<Button, Visuals>
+            testData: TestDataCalculatorElement<Button, ExpectedElement>
         ) {
             // Act & Assert:
-            testData.element.symbol shouldBe (testData.expected as VisualsButtonUnary).symbol
+            testData.element.symbol shouldBe (testData.expected as ExpectedButtonUnary).symbol
         }
     }
 
@@ -111,16 +111,16 @@ class ButtonCalculatorUnaryTest {
     inner class IsPrefix {
 
         // Arrange:
-        private fun provideArguments(): Stream<TestDataCalculatorElement<Button, Visuals>> =
-            provideMappedTestData(buttonsUnaryTest, unaryVisualsMapTest).asStream()
+        private fun provideArguments(): Stream<TestDataCalculatorElement<Button, ExpectedElement>> =
+            provideMappedTestData(buttonsUnaryTest, unaryExpectedMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should return true for prefix unary operation`(
-            testData: TestDataCalculatorElement<Button, Visuals>
+            testData: TestDataCalculatorElement<Button, ExpectedElement>
         ) {
             // Act & Assert:
-            (testData.element as ButtonCalculatorUnary).isPrefix() shouldBe (testData.expected as VisualsButtonUnary).isPrefix
+            (testData.element as ButtonCalculatorUnary).isPrefix() shouldBe (testData.expected as ExpectedButtonUnary).isPrefix
         }
     }
 
@@ -128,16 +128,16 @@ class ButtonCalculatorUnaryTest {
     inner class IsSuffix {
 
         // Arrange:
-        private fun provideArguments(): Stream<TestDataCalculatorElement<Button, Visuals>> =
-            provideMappedTestData(buttonsUnaryTest, unaryVisualsMapTest).asStream()
+        private fun provideArguments(): Stream<TestDataCalculatorElement<Button, ExpectedElement>> =
+            provideMappedTestData(buttonsUnaryTest, unaryExpectedMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should return true for suffix unary operation`(
-            testData: TestDataCalculatorElement<Button, Visuals>
+            testData: TestDataCalculatorElement<Button, ExpectedElement>
         ) {
             // Act & Assert:
-            (testData.element as ButtonCalculatorUnary).isSuffix() shouldBe !(testData.expected as VisualsButtonUnary).isPrefix
+            (testData.element as ButtonCalculatorUnary).isSuffix() shouldBe !(testData.expected as ExpectedButtonUnary).isPrefix
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.calculatorApp.utils
 
+import com.example.calculatorApp.testData.expected.ExpectedRow
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 
@@ -30,7 +31,7 @@ object TestUtils {
                 val args = constructorArgs[subclass] ?: error("No constructor args provided for ${subclass.simpleName}")
 
                 val buttonData = when (args) {
-                    is VisualsRow -> args.buttonData
+                    is ExpectedRow -> args.buttonData
                     else -> error("Unknown args $args")
                 }
 

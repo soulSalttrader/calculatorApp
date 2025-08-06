@@ -6,9 +6,9 @@ import com.example.calculatorApp.model.elements.ElementColorStyle
 import com.example.calculatorApp.model.styles.StylesButton
 import com.example.calculatorApp.testData.TestDataCalculatorElement
 import com.example.calculatorApp.testData.TestDataElementSeq.buttonsControlsTest
-import com.example.calculatorApp.testData.TestDataElementExpectedMap.controlVisualsMapTest
-import com.example.calculatorApp.utils.Visuals
-import com.example.calculatorApp.utils.VisualsButton
+import com.example.calculatorApp.testData.TestDataElementExpectedMap.controlExpectedMapTest
+import com.example.calculatorApp.testData.expected.ExpectedElement
+import com.example.calculatorApp.testData.expected.ExpectedButton
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Nested
@@ -52,40 +52,40 @@ class ButtonCalculatorControlTest {
     inner class GetBackgroundColor {
 
         // Arrange:
-        private fun provideArguments(): Stream<TestDataCalculatorElement<Button, Visuals>> =
-            TestArgumentsCalculatorElement.provideMappedTestData(buttonsControlsTest, controlVisualsMapTest).asStream()
+        private fun provideArguments(): Stream<TestDataCalculatorElement<Button, ExpectedElement>> =
+            TestArgumentsCalculatorElement.provideMappedTestData(buttonsControlsTest, controlExpectedMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should get the right backgroundColor for each control button in iButtonStyle`(
-            testData: TestDataCalculatorElement<Button, Visuals>
+            testData: TestDataCalculatorElement<Button, ExpectedElement>
         ) {
             // Arrange:
             val style = StylesButton.iButtonStyle
             // Act:
             val actualColor = testData.element.getBackgroundColor(style)
             // Assert:
-            actualColor shouldBe (testData.expected as VisualsButton).background
+            actualColor shouldBe (testData.expected as ExpectedButton).background
         }
     }
 
     @Nested
     inner class GetForegroundColor {
 
-        private fun provideArguments(): Stream<TestDataCalculatorElement<Button, Visuals>> =
-            TestArgumentsCalculatorElement.provideMappedTestData(buttonsControlsTest, controlVisualsMapTest).asStream()
+        private fun provideArguments(): Stream<TestDataCalculatorElement<Button, ExpectedElement>> =
+            TestArgumentsCalculatorElement.provideMappedTestData(buttonsControlsTest, controlExpectedMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should get the right foreground for each control button in iButtonStyle`(
-            testData: TestDataCalculatorElement<Button, Visuals>
+            testData: TestDataCalculatorElement<Button, ExpectedElement>
         ) {
             // Arrange:
             val style = StylesButton.iButtonStyle
             // Act:
             val actualColor = testData.element.getForegroundColor(style)
             // Assert:
-            actualColor shouldBe (testData.expected as VisualsButton).foreground
+            actualColor shouldBe (testData.expected as ExpectedButton).foreground
         }
     }
 
@@ -93,16 +93,16 @@ class ButtonCalculatorControlTest {
     inner class GetSymbol {
 
         // Arrange:
-        private fun provideArguments(): Stream<TestDataCalculatorElement<Button, Visuals>> =
-            TestArgumentsCalculatorElement.provideMappedTestData(buttonsControlsTest, controlVisualsMapTest).asStream()
+        private fun provideArguments(): Stream<TestDataCalculatorElement<Button, ExpectedElement>> =
+            TestArgumentsCalculatorElement.provideMappedTestData(buttonsControlsTest, controlExpectedMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should correctly map symbols to buttons`(
-            testData: TestDataCalculatorElement<Button, Visuals>
+            testData: TestDataCalculatorElement<Button, ExpectedElement>
         ) {
             // Act & Assert: Check if the button's symbol matches the expected symbol
-            testData.element.symbol shouldBe (testData.expected as VisualsButton).symbol
+            testData.element.symbol shouldBe (testData.expected as ExpectedButton).symbol
         }
     }
 }

@@ -7,8 +7,8 @@ import com.example.calculatorApp.model.styles.StylesDisplay
 import com.example.calculatorApp.testData.TestDataElementExpectedMap
 import com.example.calculatorApp.testData.TestDataElementSeq
 import com.example.calculatorApp.testData.TestDataCalculatorElement
-import com.example.calculatorApp.utils.Visuals
-import com.example.calculatorApp.utils.VisualsDisplay
+import com.example.calculatorApp.testData.expected.ExpectedElement
+import com.example.calculatorApp.testData.expected.ExpectedDisplay
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Nested
@@ -52,40 +52,40 @@ class DisplayCalculatorInputTest {
     inner class GetBackgroundColor {
 
         // Arrange:
-        private fun provideArguments(): Stream<TestDataCalculatorElement<Display, Visuals>> =
-            provideMappedTestData(TestDataElementSeq.displaysInputsTest, TestDataElementExpectedMap.inputsVisualsMapTest).asStream()
+        private fun provideArguments(): Stream<TestDataCalculatorElement<Display, ExpectedElement>> =
+            provideMappedTestData(TestDataElementSeq.displaysInputsTest, TestDataElementExpectedMap.inputsExpectedMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should get the right backgroundColor for each input display in iDisplayStyle`(
-            testData: TestDataCalculatorElement<Display, Visuals>
+            testData: TestDataCalculatorElement<Display, ExpectedElement>
         ) {
             // Arrange:
             val style = StylesDisplay.iDisplayStyleInput
             // Act:
             val actualColor = testData.element.getBackgroundColor(style)
             // Assert:
-            actualColor shouldBe (testData.expected as VisualsDisplay).background
+            actualColor shouldBe (testData.expected as ExpectedDisplay).background
         }
     }
 
     @Nested
     inner class GetForegroundColor {
 
-        private fun provideArguments(): Stream<TestDataCalculatorElement<Display, Visuals>> =
-            provideMappedTestData(TestDataElementSeq.displaysInputsTest, TestDataElementExpectedMap.inputsVisualsMapTest).asStream()
+        private fun provideArguments(): Stream<TestDataCalculatorElement<Display, ExpectedElement>> =
+            provideMappedTestData(TestDataElementSeq.displaysInputsTest, TestDataElementExpectedMap.inputsExpectedMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should get the right foreground color for each input display in iDisplayStyle`(
-            testData: TestDataCalculatorElement<Display, Visuals>
+            testData: TestDataCalculatorElement<Display, ExpectedElement>
         ) {
             // Arrange:
             val style = StylesDisplay.iDisplayStyleInput
             // Act:
             val actualColor = testData.element.getForegroundColor(style)
             // Assert:
-            actualColor shouldBe (testData.expected as VisualsDisplay).foreground
+            actualColor shouldBe (testData.expected as ExpectedDisplay).foreground
         }
     }
 }
