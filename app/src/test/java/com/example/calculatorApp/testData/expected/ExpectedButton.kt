@@ -1,11 +1,10 @@
-package com.example.calculatorApp.utils
+package com.example.calculatorApp.testData.expected
 
 import androidx.compose.ui.graphics.Color
 import com.example.calculatorApp.model.symbols.SymbolButton
 
-data class VisualsButtonUnary(
+data class ExpectedButton(
     override val background: Color,
     override val foreground: Color,
     val symbol: SymbolButton,
-    val isPrefix: Boolean,
-) : Visuals
+): ExpectedElement

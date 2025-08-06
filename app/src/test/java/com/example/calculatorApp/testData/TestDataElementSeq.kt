@@ -41,7 +41,7 @@ object TestDataElementSeq {
 
     val rowsStandardTest = provideSequenceConstructed(
         type = RowCalculatorStandard::class,
-        constructorArgs = TestDataElementExpectedMap.standardVisualsMapTest,
+        constructorArgs = TestDataElementExpectedMap.standardExpectedMapTest,
     )
 
     // Operators
