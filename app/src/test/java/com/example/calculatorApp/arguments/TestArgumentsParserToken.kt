@@ -4,13 +4,13 @@ import com.example.calculatorApp.testData.TestDataParserToken
 import com.example.calculatorApp.domain.ast.Operator
 import com.example.calculatorApp.domain.ast.OperatorBinary
 import com.example.calculatorApp.domain.ast.Token
-import com.example.calculatorApp.utils.OperatorList.operatorBinary
+import com.example.calculatorApp.testData.TestDataElementSeq.operatorsBinaryTest
 
 object TestArgumentsParserToken {
 
     fun provideDataTestParserToken(
         limit: Int = 2,
-        binary: Sequence<Operator> = operatorBinary,
+        binary: Sequence<Operator> = operatorsBinaryTest,
     ): Sequence<TestDataParserToken> {
         return (-limit..limit).asSequence()
             .zip(binary) { int, operatorBinary ->

@@ -7,13 +7,13 @@ import com.example.calculatorApp.domain.ast.TokenizerUtils.toOperator
 import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
-import com.example.calculatorApp.utils.ButtonCalculatorList
+import com.example.calculatorApp.testData.TestDataElementSeq
 
-object TestArgumentsEngineState {
+object TestArgumentsEngineState : TestArguments {
 
     fun provideStateBinary(
         lastOperands: Sequence<String> = testOperands,
-        buttonsBinary: Sequence<Button> = ButtonCalculatorList.binary,
+        buttonsBinary: Sequence<Button> = TestDataElementSeq.buttonsBinaryTest,
     ): Sequence<TestDataEngineStateStandard> =
         sequence {
             buttonsBinary.forEach { button ->
@@ -37,9 +37,9 @@ object TestArgumentsEngineState {
     // making Subtraction and Division unnecessary for efficiency.
     fun provideStateUnary(
         lastOperands: Sequence<String> = testOperands,
-        buttonsBinary: Sequence<Button> = ButtonCalculatorList.binary
+        buttonsBinary: Sequence<Button> = TestDataElementSeq.buttonsBinaryTest
             .filter { it == ButtonCalculatorBinary.Addition || it == ButtonCalculatorBinary.Multiplication },
-        buttonsUnary: Sequence<Button> = ButtonCalculatorList.unary,
+        buttonsUnary: Sequence<Button> = TestDataElementSeq.buttonsUnaryTest,
     ): Sequence<TestDataEngineStateStandard> =
         sequence {
             buttonsUnary.forEach { buttonUnary ->
@@ -59,7 +59,7 @@ object TestArgumentsEngineState {
 
     fun provideStateControl(
         lastOperands: Sequence<String> = testOperands,
-        buttonsBinary: Sequence<Button> = ButtonCalculatorList.binary
+        buttonsBinary: Sequence<Button> = TestDataElementSeq.buttonsBinaryTest
             .filter { it == ButtonCalculatorBinary.Addition || it == ButtonCalculatorBinary.Division },
     ): Sequence<TestDataEngineStateStandard> =
         sequence {
@@ -82,7 +82,7 @@ object TestArgumentsEngineState {
 
     fun provideStateNumber(
         lastOperands: Sequence<String> = testOperands,
-        buttonsBinary: Sequence<Button> = ButtonCalculatorList.binary,
+        buttonsBinary: Sequence<Button> = TestDataElementSeq.buttonsBinaryTest,
     ): Sequence<TestDataEngineStateStandard> =
         sequence {
             buttonsBinary.forEach { button ->

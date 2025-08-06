@@ -4,10 +4,9 @@ import com.example.calculatorApp.arguments.TestArgumentsCalculatorElement.provid
 import com.example.calculatorApp.model.elements.ElementCategoryStyleCollectionImpl
 import com.example.calculatorApp.model.elements.ElementColorStyle
 import com.example.calculatorApp.model.styles.StylesButton
+import com.example.calculatorApp.testData.TestDataElementExpectedMap.parenthesisVisualsMap
+import com.example.calculatorApp.testData.TestDataElementSeq.buttonsParenthesisTest
 import com.example.calculatorApp.testData.TestDataCalculatorElement
-import com.example.calculatorApp.utils.ButtonCalculatorList
-import com.example.calculatorApp.utils.ButtonCalculatorList.parenthesis
-import com.example.calculatorApp.utils.ButtonCalculatorMappings.parenthesisVisualsMap
 import com.example.calculatorApp.utils.Visuals
 import com.example.calculatorApp.utils.VisualsButton
 import io.kotest.assertions.throwables.shouldThrow
@@ -24,7 +23,7 @@ class ButtonCalculatorParenthesisTest {
     inner class GetCategory {
 
         // Arrange:
-        private fun provideArguments(): Stream<Button> = ButtonCalculatorList.parenthesis.asStream()
+        private fun provideArguments(): Stream<Button> = buttonsParenthesisTest.asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
@@ -54,7 +53,7 @@ class ButtonCalculatorParenthesisTest {
 
         // Arrange:
         private fun provideArguments(): Stream<TestDataCalculatorElement<Button, Visuals>> =
-            provideMappedTestData(parenthesis, parenthesisVisualsMap).asStream()
+            provideMappedTestData(buttonsParenthesisTest, parenthesisVisualsMap).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
@@ -74,7 +73,7 @@ class ButtonCalculatorParenthesisTest {
     inner class GetForegroundColor {
 
         private fun provideArguments(): Stream<TestDataCalculatorElement<Button, Visuals>> =
-            provideMappedTestData(parenthesis, parenthesisVisualsMap).asStream()
+            provideMappedTestData(buttonsParenthesisTest, parenthesisVisualsMap).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
@@ -95,7 +94,7 @@ class ButtonCalculatorParenthesisTest {
 
         // Arrange:
         private fun provideArguments(): Stream<TestDataCalculatorElement<Button, Visuals>> =
-            provideMappedTestData(parenthesis, parenthesisVisualsMap).asStream()
+            provideMappedTestData(buttonsParenthesisTest, parenthesisVisualsMap).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")

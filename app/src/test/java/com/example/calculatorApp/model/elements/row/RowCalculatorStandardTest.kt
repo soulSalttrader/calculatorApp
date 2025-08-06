@@ -5,9 +5,9 @@ import com.example.calculatorApp.model.elements.ElementCategoryStyleCollectionIm
 import com.example.calculatorApp.model.elements.ElementColorStyle
 import com.example.calculatorApp.model.elements.button.ButtonData
 import com.example.calculatorApp.model.styles.StylesRow
+import com.example.calculatorApp.testData.TestDataElementExpectedMap
+import com.example.calculatorApp.testData.TestDataElementSeq
 import com.example.calculatorApp.testData.TestDataCalculatorElement
-import com.example.calculatorApp.utils.RowCalculatorList.standardRows
-import com.example.calculatorApp.utils.RowCalculatorMappings.standardVisualsMap
 import com.example.calculatorApp.utils.Visuals
 import com.example.calculatorApp.utils.VisualsRow
 import io.kotest.assertions.throwables.shouldThrow
@@ -25,7 +25,7 @@ class RowCalculatorStandardTest {
     inner class GetCategory {
 
         // Arrange:
-        private fun provideArguments(): Stream<Row> = standardRows.asStream()
+        private fun provideArguments(): Stream<Row> = TestDataElementSeq.rowsStandardTest.asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
@@ -55,7 +55,7 @@ class RowCalculatorStandardTest {
 
         // Arrange:
         private fun provideArguments(): Stream<TestDataCalculatorElement<Row, Visuals>> =
-            provideMappedTestData(standardRows, standardVisualsMap).asStream()
+            provideMappedTestData(TestDataElementSeq.rowsStandardTest, TestDataElementExpectedMap.standardVisualsMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
@@ -75,7 +75,7 @@ class RowCalculatorStandardTest {
     inner class GetForegroundColor {
 
         private fun provideArguments(): Stream<TestDataCalculatorElement<Row, Visuals>> =
-            provideMappedTestData(standardRows, standardVisualsMap).asStream()
+            provideMappedTestData(TestDataElementSeq.rowsStandardTest, TestDataElementExpectedMap.standardVisualsMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
@@ -96,7 +96,7 @@ class RowCalculatorStandardTest {
 
         // Arrange:
         private fun provideArguments(): Stream<TestDataCalculatorElement<Row, Visuals>> =
-            provideMappedTestData(standardRows, standardVisualsMap).asStream()
+            provideMappedTestData(TestDataElementSeq.rowsStandardTest, TestDataElementExpectedMap.standardVisualsMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")

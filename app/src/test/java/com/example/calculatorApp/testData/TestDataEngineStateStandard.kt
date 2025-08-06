@@ -6,14 +6,13 @@ import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
 import com.example.calculatorApp.model.symbols.SymbolButton
-import com.example.calculatorApp.utils.ButtonCalculatorList
 
 data class TestDataEngineStateStandard(
     val expression: List<Token> = emptyList(),
     val lastOperand: String = SymbolButton.ZERO.label,
     val buttonBinary: Button = ButtonCalculatorBinary.Addition,
     val buttonUnary: Button = ButtonCalculatorUnary.Sign,
-    val buttonControls: Sequence<Button> = ButtonCalculatorList.controls,
+    val buttonControls: Sequence<Button> = TestDataElementSeq.buttonsControlsTest,
     val buttonNumber: Button = ButtonCalculatorNumber.Three,
 ) {
     fun expectedSign(): Map<String, String> = mapOf(

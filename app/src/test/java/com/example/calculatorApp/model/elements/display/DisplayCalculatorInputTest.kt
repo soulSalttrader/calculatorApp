@@ -4,9 +4,9 @@ import com.example.calculatorApp.arguments.TestArgumentsCalculatorElement.provid
 import com.example.calculatorApp.model.elements.ElementCategoryStyleCollectionImpl
 import com.example.calculatorApp.model.elements.ElementColorStyle
 import com.example.calculatorApp.model.styles.StylesDisplay
+import com.example.calculatorApp.testData.TestDataElementExpectedMap
+import com.example.calculatorApp.testData.TestDataElementSeq
 import com.example.calculatorApp.testData.TestDataCalculatorElement
-import com.example.calculatorApp.utils.DisplayCalculatorList.inputs
-import com.example.calculatorApp.utils.DisplayCalculatorMappings.inputsVisualsMap
 import com.example.calculatorApp.utils.Visuals
 import com.example.calculatorApp.utils.VisualsDisplay
 import io.kotest.assertions.throwables.shouldThrow
@@ -22,7 +22,8 @@ class DisplayCalculatorInputTest {
     @Nested
     inner class GetCategory {
         // Arrange:
-        private fun provideArguments(): Stream<DisplayCalculatorInput> = inputs.asStream()
+        private fun provideArguments(): Stream<DisplayCalculatorInput> =
+            TestDataElementSeq.displaysInputsTest.asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
@@ -52,7 +53,7 @@ class DisplayCalculatorInputTest {
 
         // Arrange:
         private fun provideArguments(): Stream<TestDataCalculatorElement<Display, Visuals>> =
-            provideMappedTestData(inputs, inputsVisualsMap).asStream()
+            provideMappedTestData(TestDataElementSeq.displaysInputsTest, TestDataElementExpectedMap.inputsVisualsMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
@@ -72,7 +73,7 @@ class DisplayCalculatorInputTest {
     inner class GetForegroundColor {
 
         private fun provideArguments(): Stream<TestDataCalculatorElement<Display, Visuals>> =
-            provideMappedTestData(inputs, inputsVisualsMap).asStream()
+            provideMappedTestData(TestDataElementSeq.displaysInputsTest, TestDataElementExpectedMap.inputsVisualsMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
