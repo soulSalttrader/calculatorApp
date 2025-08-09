@@ -23,7 +23,7 @@ object TestDataElementSeq {
     val buttonsNumbersTest = provideSequenceOfSingletons(ButtonCalculatorNumber::class)
     val buttonsParenthesisTest = provideSequenceOfSingletons(ButtonCalculatorParenthesis::class)
 
-    val buttonsAll: Sequence<Button> = sequenceOf(
+    val buttonsAllTest: Sequence<Button> = sequenceOf(
         buttonsBinaryTest,
         buttonsUnaryTest,
         buttonsControlsTest,

@@ -9,7 +9,7 @@ import com.example.calculatorApp.ui.theme.Onyx
 import com.example.calculatorApp.ui.theme.SilverGrey
 import com.example.calculatorApp.ui.theme.VividGamboge
 import com.example.calculatorApp.ui.theme.White
-import com.example.calculatorApp.testData.TestDataElementSeq.buttonsAll
+import com.example.calculatorApp.testData.TestDataElementSeq.buttonsAllTest
 import com.example.calculatorApp.testData.TestDataElementSeq.buttonsBinaryTest
 import com.example.calculatorApp.testData.TestDataElementSeq.buttonsControlsTest
 import com.example.calculatorApp.testData.TestDataElementSeq.buttonsNumbersTest
@@ -49,7 +49,7 @@ object TestArgumentsButtonStyleBuilder : TestArguments {
             )
             .toMap()
 
-        return buttonsAll.map { button ->
+        return buttonsAllTest.map { button ->
             val expectedStyle = expectedStyles[button]
             Arguments.of(button, testedStyle, expectedStyle)
         }.asStream()

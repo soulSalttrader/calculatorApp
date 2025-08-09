@@ -20,23 +20,23 @@ object TestUtils {
         type: KClass<out T>,
         constructorArgs: Map<KClass<out T>, R>,
     ): Sequence<T> = type.sealedSubclasses
-            .asSequence()
-            .map { subclass ->
-                subclass.requireSingleConstructor()
-                val constructor = subclass.constructors.first()
+        .asSequence()
+        .map { subclass ->
+            subclass.requireSingleConstructor()
+            val constructor = subclass.constructors.first()
 
-                val params = constructor.parameters
-                params.requireSingleSequenceParameter(subclass)
+            val params = constructor.parameters
+            params.requireSingleSequenceParameter(subclass)
 
-                val args = constructorArgs[subclass] ?: error("No constructor args provided for ${subclass.simpleName}")
+            val args = constructorArgs[subclass] ?: error("No constructor args provided for ${subclass.simpleName}")
 
-                val buttonData = when (args) {
-                    is ExpectedRow -> args.buttonData
-                    else -> error("Unknown args $args")
-                }
-
-                constructor.call(buttonData)
+            val buttonData = when (args) {
+                is ExpectedRow -> args.buttonData
+                else -> error("Unknown args $args")
             }
+
+            constructor.call(buttonData)
+        }
 
     fun <T : Any, R> mapSingletonsTo(
         type: KClass<out T>,
