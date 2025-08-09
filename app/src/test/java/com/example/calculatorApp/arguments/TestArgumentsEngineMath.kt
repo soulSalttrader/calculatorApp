@@ -13,38 +13,38 @@ object TestArgumentsEngineMath {
     fun provideBinary(
         operations: Sequence<BinaryOperation> = binaryOperations,
         operands: Sequence<Pair<Double, Double>> = testOperands,
-    ): Sequence<TestDataEngineMathStandardBinary> {
-        return sequence {
+    ): Sequence<TestDataEngineMathStandardBinary>  =
+        sequence {
             operations.forEach { operation ->
-                operands.forEach { (operand, previousNumber)->
+                operands.forEach { (operand, previousNumber) ->
                     yield(TestDataEngineMathStandardBinary(operand, previousNumber, operation))
                 }
             }
         }
-    }
+
 
     fun providePercent(
         operators: Sequence<Operator> = testOperators,
         operands: Sequence<Pair<Double, Double>> = testOperands,
-    ) : Sequence<TestDataEngineMathStandardPercent> {
-        return sequence {
+    ) : Sequence<TestDataEngineMathStandardPercent>  =
+        sequence {
             operators.forEach { operator ->
                 operands.forEach { (operand, previousNumber) ->
                     yield(TestDataEngineMathStandardPercent(operand, previousNumber, operator))
                 }
             }
         }
-    }
+
 
     fun provideSign(
         operands: Sequence<Double> = testOperands.map { it.first }.distinct(),
-    ): Sequence<TestDataEngineMathStandardSign> {
-        return sequence {
+    ): Sequence<TestDataEngineMathStandardSign>  =
+        sequence {
             operands.forEach { operator ->
                 yield(TestDataEngineMathStandardSign(operator))
             }
         }
-    }
+
 
     private val binaryOperations: Sequence<BinaryOperation> = sequenceOf(
         TestDataEngineMathStandardBinary.ADDITION,

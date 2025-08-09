@@ -5,9 +5,10 @@ import com.example.calculatorApp.model.elements.ElementCategoryStyleCollectionIm
 import com.example.calculatorApp.model.elements.ElementColorStyle
 import com.example.calculatorApp.model.elements.button.ButtonData
 import com.example.calculatorApp.model.styles.StylesRow
-import com.example.calculatorApp.testData.TestDataElementExpectedMap
-import com.example.calculatorApp.testData.TestDataElementSeq
 import com.example.calculatorApp.testData.TestDataCalculatorElement
+import com.example.calculatorApp.testData.TestDataElementExpectedMap.standardExpectedMapTest
+import com.example.calculatorApp.testData.TestDataElementSeq
+import com.example.calculatorApp.testData.TestDataElementSeq.rowsStandardTest
 import com.example.calculatorApp.testData.expected.ExpectedElement
 import com.example.calculatorApp.testData.expected.ExpectedRow
 import io.kotest.assertions.throwables.shouldThrow
@@ -55,7 +56,7 @@ class RowCalculatorStandardTest {
 
         // Arrange:
         private fun provideArguments(): Stream<TestDataCalculatorElement<Row, ExpectedElement>> =
-            provideMappedTestData(TestDataElementSeq.rowsStandardTest, TestDataElementExpectedMap.standardExpectedMapTest).asStream()
+            provideMappedTestData(rowsStandardTest, standardExpectedMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
@@ -75,7 +76,7 @@ class RowCalculatorStandardTest {
     inner class GetForegroundColor {
 
         private fun provideArguments(): Stream<TestDataCalculatorElement<Row, ExpectedElement>> =
-            provideMappedTestData(TestDataElementSeq.rowsStandardTest, TestDataElementExpectedMap.standardExpectedMapTest).asStream()
+            provideMappedTestData(rowsStandardTest, standardExpectedMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
@@ -96,7 +97,7 @@ class RowCalculatorStandardTest {
 
         // Arrange:
         private fun provideArguments(): Stream<TestDataCalculatorElement<Row, ExpectedElement>> =
-            provideMappedTestData(TestDataElementSeq.rowsStandardTest, TestDataElementExpectedMap.standardExpectedMapTest).asStream()
+            provideMappedTestData(rowsStandardTest, standardExpectedMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
