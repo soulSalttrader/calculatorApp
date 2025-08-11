@@ -2,6 +2,8 @@ package com.example.calculatorApp.testData
 
 import com.example.calculatorApp.domain.ast.Operator
 import com.example.calculatorApp.domain.ast.OperatorBinary
+import com.example.calculatorApp.domain.ast.OperatorParenthesis
+import com.example.calculatorApp.domain.ast.OperatorUnary
 import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
@@ -46,5 +48,8 @@ object TestDataElementSeq {
 
     // Operators
     val operatorsBinaryTest = provideSequenceOfSingletons(OperatorBinary::class)
+    val operatorsUnaryPrefixTest = provideSequenceOfSingletons(OperatorUnary.Prefix::class)
+    val operatorsUnarySuffixTest = provideSequenceOfSingletons(OperatorUnary.Suffix::class)
+    val operatorsParenthesisTest = provideSequenceOfSingletons(OperatorParenthesis::class)
     val operatorsAllTest: Sequence<Operator> = sequenceOf(operatorsBinaryTest).flatMap { it }
 }
