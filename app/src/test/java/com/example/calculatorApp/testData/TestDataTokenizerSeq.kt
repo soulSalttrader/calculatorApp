@@ -1,42 +1,25 @@
 package com.example.calculatorApp.testData
 
-import com.example.calculatorApp.domain.ast.Operator
 import com.example.calculatorApp.domain.ast.Token
 import com.example.calculatorApp.domain.ast.TokenizerUtils.toBinaryOperator
 import com.example.calculatorApp.domain.ast.TokenizerUtils.toParenthesisOperator
 import com.example.calculatorApp.domain.ast.TokenizerUtils.toUnaryOperator
-import com.example.calculatorApp.model.elements.button.Button
+import com.example.calculatorApp.model.symbols.HasSymbol
 import com.example.calculatorApp.model.symbols.SymbolButton
 import com.example.calculatorApp.testData.TestDataElementSeq.buttonsNumbersTest
 import com.example.calculatorApp.testData.TestDataElementSeq.operatorsBinaryTest
 import com.example.calculatorApp.testData.TestDataElementSeq.operatorsParenthesisTest
 import com.example.calculatorApp.testData.TestDataElementSeq.operatorsUnaryPrefixTest
 import com.example.calculatorApp.testData.TestDataElementSeq.operatorsUnarySuffixTest
-import kotlin.reflect.full.isSubclassOf
 
 object TestDataTokenizerSeq {
 
-    private fun <T> Sequence<T>.toSymbolLists(labelProvider: (T) -> String) =
-        map { listOf(labelProvider(it)) }
+    private inline fun <reified T : HasSymbol> Sequence<T>.toSymbolLists() =
+        map { listOf(it.symbol.label) }
 
-    private inline fun <reified T> Sequence<T>.toSymbolLists(): Sequence<List<String>> =
-        when {
-            T::class.isSubclassOf(Button::class) -> toSymbolLists { (it as Button).symbol.label }
-            T::class.isSubclassOf(Operator::class) -> toSymbolLists { (it as Operator).symbol.label }
-            else -> throw IllegalArgumentException("Unsupported type: ${T::class}")
-        }
-
-    private fun <T, R : Token> Sequence<T>.toTokens(
-        transform: (String) -> R,
-        labelProvider: (T) -> String,
-    ): Sequence<R> = map { transform(labelProvider(it)) }
-
-    private inline fun <reified T, R : Token> Sequence<T>.toTokens(noinline transform: (String) -> R): Sequence<R> =
-        when {
-            T::class.isSubclassOf(Button::class) -> toTokens(transform) { (it as Button).symbol.label }
-            T::class.isSubclassOf(Operator::class) -> toTokens(transform) { (it as Operator).symbol.label }
-            else -> throw IllegalArgumentException("Unsupported type: ${T::class}")
-        }
+    private inline fun <reified T : HasSymbol, R : Token> Sequence<T>.toTokens(
+        noinline transform: (String) -> R
+    ): Sequence<R> = map { transform(it.symbol.label) }
 
     val seqSymbolsNumberTest = buttonsNumbersTest.toSymbolLists()
     val tokensNumberTest = buttonsNumbersTest.toTokens { Token.Number(it.toDouble()) }
