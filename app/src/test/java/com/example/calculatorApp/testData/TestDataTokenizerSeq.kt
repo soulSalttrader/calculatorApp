@@ -17,18 +17,12 @@ object TestDataTokenizerSeq {
         noinline transform: (String) -> R
     ): Sequence<R> = map { transform(it.symbol.label) }
 
-    val tokensNumberTest = buttonsNumbersTest.toTokens { Token.Number(it.toDouble()) }
-    val tokensBinaryTest = operatorsBinaryTest.toTokens { Token.Binary(it.toBinaryOperator()) }
-    val tokensUnaryPrefixTest = operatorsUnaryPrefixTest.toTokens { Token.Unary(it.toUnaryOperator()) }
-    val tokensUnarySuffixTest = operatorsUnarySuffixTest.toTokens { Token.Unary(it.toUnaryOperator()) }
-    val tokensParenthesisTest = operatorsParenthesisTest.toTokens { Token.Parenthesis(it.toParenthesisOperator()) }
-
     val expectedMixed: List<Token> = buildList {
-        addAll(tokensNumberTest)
-        addAll(tokensBinaryTest)
-        addAll(tokensUnaryPrefixTest)
-        addAll(tokensUnarySuffixTest)
-        addAll(tokensParenthesisTest)
+        addAll(buttonsNumbersTest.toTokens { Token.Number(it.toDouble()) })
+        addAll(operatorsBinaryTest.toTokens { Token.Binary(it.toBinaryOperator()) })
+        addAll(operatorsUnaryPrefixTest.toTokens { Token.Unary(it.toUnaryOperator()) })
+        addAll(operatorsUnarySuffixTest.toTokens { Token.Unary(it.toUnaryOperator()) })
+        addAll(operatorsParenthesisTest.toTokens { Token.Parenthesis(it.toParenthesisOperator()) })
     }
 
     val inputMixed: List<String> = sequenceOf(
