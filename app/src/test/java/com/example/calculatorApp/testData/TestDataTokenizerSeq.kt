@@ -14,26 +14,14 @@ import com.example.calculatorApp.testData.TestDataElementSeq.operatorsUnarySuffi
 
 object TestDataTokenizerSeq {
 
-    private inline fun <reified T : HasSymbol> Sequence<T>.toSymbolLists() =
-        map { listOf(it.symbol.label) }
-
     private inline fun <reified T : HasSymbol, R : Token> Sequence<T>.toTokens(
         noinline transform: (String) -> R
     ): Sequence<R> = map { transform(it.symbol.label) }
 
-    val seqSymbolsNumberTest = buttonsNumbersTest.toSymbolLists()
     val tokensNumberTest = buttonsNumbersTest.toTokens { Token.Number(it.toDouble()) }
-
-    val seqSymbolsBinaryTest = operatorsBinaryTest.toSymbolLists()
     val tokensBinaryTest = operatorsBinaryTest.toTokens { Token.Binary(it.toBinaryOperator()) }
-
-    val seqSymbolsUnaryPrefixTest = operatorsUnaryPrefixTest.toSymbolLists()
     val tokensUnaryPrefixTest = operatorsUnaryPrefixTest.toTokens { Token.Unary(it.toUnaryOperator()) }
-
-    val seqSymbolsUnarySuffixTest = operatorsUnarySuffixTest.toSymbolLists()
     val tokensUnarySuffixTest = operatorsUnarySuffixTest.toTokens { Token.Unary(it.toUnaryOperator()) }
-
-    val seqSymbolsParenthesisTest = operatorsParenthesisTest.toSymbolLists()
     val tokensParenthesisTest = operatorsParenthesisTest.toTokens { Token.Parenthesis(it.toParenthesisOperator()) }
 
     fun seqSymbolsAllTest(
