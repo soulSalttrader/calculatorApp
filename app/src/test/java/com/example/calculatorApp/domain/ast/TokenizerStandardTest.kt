@@ -1,7 +1,5 @@
 package com.example.calculatorApp.domain.ast
 
-
-import com.example.calculatorApp.arguments.TestArgumentsTokenizer
 import com.example.calculatorApp.arguments.TestArgumentsTokenizer.provideTokenizerTestCases
 import com.example.calculatorApp.testData.TestCase
 import com.example.calculatorApp.testData.TestDataElementSeq.buttonsNumbersTest
@@ -9,7 +7,8 @@ import com.example.calculatorApp.testData.TestDataElementSeq.operatorsBinaryTest
 import com.example.calculatorApp.testData.TestDataElementSeq.operatorsParenthesisTest
 import com.example.calculatorApp.testData.TestDataElementSeq.operatorsUnaryPrefixTest
 import com.example.calculatorApp.testData.TestDataElementSeq.operatorsUnarySuffixTest
-import com.example.calculatorApp.testData.TestDataTokenizerSeq.seqSymbolsAllTest
+import com.example.calculatorApp.testData.TestDataTokenizerSeq.expectedMixed
+import com.example.calculatorApp.testData.TestDataTokenizerSeq.inputMixed
 import com.example.calculatorApp.testData.expected.Expected
 import com.example.calculatorApp.testData.expected.ExpectedToken
 import com.example.calculatorApp.testData.input.Input
@@ -37,21 +36,17 @@ class TokenizerStandardTest {
         fun provideArgumentsNumbers(): Stream<TestCase<Input, Expected>> =
             provideTokenizerTestCases(buttonsNumbersTest).asStream()
 
-        // Arrange:
         fun provideArgumentsBinary(): Stream<TestCase<Input, Expected>> =
             provideTokenizerTestCases(operatorsBinaryTest).asStream()
 
-        // Arrange:
-        fun provideArgumentsParenthesis(): Stream<TestCase<Input, Expected>> =
-            provideTokenizerTestCases(operatorsParenthesisTest).asStream()
-
-        // Arrange:
         fun provideArgumentsUnaryPrefix(): Stream<TestCase<Input, Expected>> =
             provideTokenizerTestCases(operatorsUnaryPrefixTest).asStream()
 
-        // Arrange:
         fun provideArgumentsUnarySuffix(): Stream<TestCase<Input, Expected>> =
             provideTokenizerTestCases(operatorsUnarySuffixTest).asStream()
+
+        fun provideArgumentsParenthesis(): Stream<TestCase<Input, Expected>> =
+            provideTokenizerTestCases(operatorsParenthesisTest).asStream()
 
         @BeforeEach
         fun setUp() {
@@ -125,10 +120,12 @@ class TokenizerStandardTest {
 
         @Test
         fun `tokenize multiple mixed tokens`() {
-            // Arrange & Act:
-            val tokenized = tokenizer.tokenize(seqSymbolsAllTest())
+            // Arrange:
+            val mixed = inputMixed
+            // & Act:
+            val tokenized = tokenizer.tokenize(mixed)
             // Assert:
-            tokenized shouldContainExactlyInAnyOrder TestArgumentsTokenizer.expectedMixed()
+            tokenized shouldContainExactlyInAnyOrder expectedMixed
         }
 
         @ParameterizedTest
