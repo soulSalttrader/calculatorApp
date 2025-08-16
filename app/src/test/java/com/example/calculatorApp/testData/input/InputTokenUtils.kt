@@ -1,3 +1,5 @@
 package com.example.calculatorApp.testData.input
 
-data class InputTokenUtils(val label: String) : Input
+import com.example.calculatorApp.model.symbols.HasSymbol
+
+data class InputTokenUtils(val source: HasSymbol) : Input
