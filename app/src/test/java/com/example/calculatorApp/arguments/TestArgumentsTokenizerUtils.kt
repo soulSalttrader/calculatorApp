@@ -1,8 +1,10 @@
 package com.example.calculatorApp.arguments
 
+import com.example.calculatorApp.domain.ast.Operator
 import com.example.calculatorApp.model.symbols.HasSymbol
 import com.example.calculatorApp.model.symbols.SymbolButton
 import com.example.calculatorApp.testData.TestCase
+import com.example.calculatorApp.testData.TestDataSymbolButton.symbolOperatorsMapGenerated
 import com.example.calculatorApp.testData.expected.Expected
 import com.example.calculatorApp.testData.expected.ExpectedTokenUtils
 import com.example.calculatorApp.testData.input.Input
@@ -29,4 +31,19 @@ object TestArgumentsTokenizerUtils {
                 )
             }
     }
+
+    fun provideTokenUtilsTestCasesOperators(
+        hasSymbolClass: KClass<out HasSymbol>,
+        symbolOperatorMap: Map<String, Operator?> = symbolOperatorsMapGenerated,
+    ): Sequence<TestCase<Input, Expected>> =
+        hasSymbolClass.sealedSubclasses
+            .asSequence()
+            .mapNotNull { it.objectInstance }
+            .map { source ->
+                val operator = symbolOperatorMap[source.symbol.label] ?: error("No operator found for label: ${source.symbol.label}")
+                TestCase(
+                    InputTokenUtils(source = source),
+                    ExpectedTokenUtils(operator = operator)
+                )
+            }
 }
