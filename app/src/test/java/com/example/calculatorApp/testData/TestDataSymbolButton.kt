@@ -1,7 +1,15 @@
 package com.example.calculatorApp.testData
 
+import com.example.calculatorApp.domain.ast.Operator
+import com.example.calculatorApp.domain.ast.OperatorBinary
+import com.example.calculatorApp.domain.ast.OperatorParenthesis
+import com.example.calculatorApp.domain.ast.OperatorUnary
 import com.example.calculatorApp.model.symbols.SymbolButton
 import com.example.calculatorApp.model.symbols.SymbolCategory
+import com.example.calculatorApp.testData.TestDataElementSeq.operatorsBinaryTest
+import com.example.calculatorApp.testData.TestDataElementSeq.operatorsParenthesisTest
+import com.example.calculatorApp.testData.TestDataElementSeq.operatorsUnaryPrefixTest
+import com.example.calculatorApp.testData.TestDataElementSeq.operatorsUnarySuffixTest
 
 object TestDataSymbolButton {
 
@@ -13,6 +21,58 @@ object TestDataSymbolButton {
     val symbolsUnarySuffixTest = symbolsOfCategory(SymbolCategory.UNARY_SUFFIX)
     val symbolsControlTest = symbolsOfCategory(SymbolCategory.CONTROL)
     val symbolsParenthesisTest = symbolsOfCategory(SymbolCategory.PARENTHESIS)
+
+
+    val symbolOperatorMapReference: Map<String, Operator> = buildMap {
+        put(SymbolButton.ADDITION.label, OperatorBinary.Addition)
+        put(SymbolButton.SUBTRACTION.label, OperatorBinary.Subtraction)
+        put(SymbolButton.DIVISION.label, OperatorBinary.Division)
+        put(SymbolButton.MULTIPLICATION.label, OperatorBinary.Multiplication)
+        put(SymbolButton.SIGN.label, OperatorUnary.Prefix.Sign)
+        put(SymbolButton.PERCENTAGE.label, OperatorUnary.Suffix.Percentage)
+        put(SymbolButton.OPEN_PARENT.label, OperatorParenthesis.Open)
+        put(SymbolButton.CLOSE_PARENT.label, OperatorParenthesis.Close)
+    }
+
+    /**
+     * Dynamically generated mapping between [SymbolButton] labels and their corresponding [Operator]s.
+     *
+     * This map is built from the runtime definitions of operators (binary, unary, parenthesis, etc.),
+     * ensuring it always stays in sync with the sealed operator classes.
+     *
+     * Example output:
+     *
+     * ```
+     * {
+     *   "+" = Addition,
+     *   "-" = Subtraction,
+     *   "÷" = Division,
+     *   "×" = Multiplication,
+     *   "±" = Sign,
+     *   "%" = Percentage,
+     *   "(" = Open,
+     *   ")" = Close
+     * }
+     * ```
+     *
+     * Note: Values are nullable ([Operator?]) because if a [SymbolButton] does not have a matching
+     * operator in the sequence, the map entry will contain `null`.
+     */
+    val symbolOperatorsMapGenerated: Map<String, Operator?> = buildMap {
+        fun List<SymbolButton>.putOperatorsFrom(operators: Sequence<Operator>) {
+            val operatorMap = operators.associateBy { it.symbol.label }
+            this.forEach { put(it.label, operatorMap[it.label]) }
+        }
+
+        listOf(
+            symbolsBinaryTest to operatorsBinaryTest,
+            symbolsUnaryPrefixTest to operatorsUnaryPrefixTest,
+            symbolsUnarySuffixTest to operatorsUnarySuffixTest,
+            symbolsParenthesisTest to operatorsParenthesisTest,
+        ).forEach { (symbols, operators) ->
+            symbols.putOperatorsFrom(operators)
+        }
+    }
 
     /**
      * Returns an anonymous function that generates a list of strings from [SymbolButton] entries
