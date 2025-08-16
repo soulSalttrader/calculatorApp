@@ -19,10 +19,7 @@ object TestArgumentsTokenizerUtils {
         shouldMatch: Boolean = true
     ): Sequence<TestCase<Input, Expected>> {
         val matchingLabels = matchingSource.map { it.label }.toSet()
-        return hasSymbolClass.sealedSubclasses
-            .asSequence()
-            .mapNotNull { it.objectInstance }
-            .map { source ->
+        return forEachSymbolInstance(hasSymbolClass) { source ->
                 val labelInSet = source.symbol.label in matchingLabels
                 val matches = if (shouldMatch) labelInSet else !labelInSet
                 TestCase(
@@ -36,14 +33,20 @@ object TestArgumentsTokenizerUtils {
         hasSymbolClass: KClass<out HasSymbol>,
         symbolOperatorMap: Map<String, Operator?> = symbolOperatorsMapGenerated,
     ): Sequence<TestCase<Input, Expected>> =
-        hasSymbolClass.sealedSubclasses
-            .asSequence()
-            .mapNotNull { it.objectInstance }
-            .map { source ->
+        forEachSymbolInstance(hasSymbolClass) { source ->
                 val operator = symbolOperatorMap[source.symbol.label] ?: error("No operator found for label: ${source.symbol.label}")
                 TestCase(
                     InputTokenUtils(source = source),
                     ExpectedTokenUtils(operator = operator)
                 )
             }
+
+    private fun forEachSymbolInstance(
+        hasSymbolClass: KClass<out HasSymbol>,
+        block: (HasSymbol) -> TestCase<Input, Expected>,
+    ): Sequence<TestCase<Input, Expected>> =
+        hasSymbolClass.sealedSubclasses
+            .asSequence()
+            .mapNotNull { it.objectInstance }
+            .map(block)
 }
