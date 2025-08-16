@@ -1,6 +1,7 @@
 package com.example.calculatorApp.arguments
 
 import com.example.calculatorApp.model.symbols.HasSymbol
+import com.example.calculatorApp.model.symbols.SymbolButton
 import com.example.calculatorApp.testData.TestCase
 import com.example.calculatorApp.testData.expected.Expected
 import com.example.calculatorApp.testData.expected.ExpectedTokenUtils
@@ -10,20 +11,22 @@ import kotlin.reflect.KClass
 
 object TestArgumentsTokenizerUtils {
 
-    fun provideTokenUtilsTestCases(
-        symbolClass: KClass<out HasSymbol>,
-        matchingLabels: Set<String>,
-        shouldMatch: Boolean = true,
-    ): Sequence<TestCase<Input, Expected>> =
-        symbolClass.sealedSubclasses
+    fun provideTokenUtilsTestCasesLabels(
+        hasSymbolClass: KClass<out HasSymbol>,
+        matchingSource: List<SymbolButton>,
+        shouldMatch: Boolean = true
+    ): Sequence<TestCase<Input, Expected>> {
+        val matchingLabels = matchingSource.map { it.label }.toSet()
+        return hasSymbolClass.sealedSubclasses
             .asSequence()
             .mapNotNull { it.objectInstance }
             .map { source ->
                 val labelInSet = source.symbol.label in matchingLabels
-                val matchesSymbol = if (shouldMatch) labelInSet else !labelInSet
+                val matches = if (shouldMatch) labelInSet else !labelInSet
                 TestCase(
-                    InputTokenUtils(source.symbol.label),
-                    ExpectedTokenUtils(matchesSymbol)
+                    InputTokenUtils(source = source),
+                    ExpectedTokenUtils(matches = matches)
                 )
             }
+    }
 }
