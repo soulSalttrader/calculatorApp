@@ -5,7 +5,7 @@ import com.example.calculatorApp.model.elements.ElementCategoryStyleCollectionIm
 import com.example.calculatorApp.model.elements.ElementColorStyle
 import com.example.calculatorApp.model.elements.button.ButtonData
 import com.example.calculatorApp.model.styles.StylesRow
-import com.example.calculatorApp.testData.TestDataCalculatorElement
+import com.example.calculatorApp.testData.TestCase
 import com.example.calculatorApp.testData.TestDataElementExpectedMap.standardExpectedMapTest
 import com.example.calculatorApp.testData.TestDataElementSeq
 import com.example.calculatorApp.testData.TestDataElementSeq.rowsStandardTest
@@ -55,18 +55,18 @@ class RowCalculatorStandardTest {
     inner class GetBackgroundColor {
 
         // Arrange:
-        private fun provideArguments(): Stream<TestDataCalculatorElement<Row, ExpectedElement>> =
+        private fun provideArguments(): Stream<TestCase<Row, ExpectedElement>> =
             provideMappedTestData(rowsStandardTest, standardExpectedMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should get the right backgroundColor for each standard row in iRowStyle`(
-            testData: TestDataCalculatorElement<Row, ExpectedElement>
+            testData: TestCase<Row, ExpectedElement>
         ) {
             // Arrange:
             val style = StylesRow.iRowStyle
             // Act:
-            val actualColor = testData.element.getBackgroundColor(style)
+            val actualColor = testData.input.getBackgroundColor(style)
             // Assert:
             actualColor shouldBe (testData.expected).background
         }
@@ -75,18 +75,18 @@ class RowCalculatorStandardTest {
     @Nested
     inner class GetForegroundColor {
 
-        private fun provideArguments(): Stream<TestDataCalculatorElement<Row, ExpectedElement>> =
+        private fun provideArguments(): Stream<TestCase<Row, ExpectedElement>> =
             provideMappedTestData(rowsStandardTest, standardExpectedMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should get the right foreground color for each standard row in iRowStyle`(
-            testData: TestDataCalculatorElement<Row, ExpectedElement>
+            testData: TestCase<Row, ExpectedElement>
         ) {
             // Arrange:
             val style = StylesRow.iRowStyle
             // Act:
-            val actualColor = testData.element.getForegroundColor(style)
+            val actualColor = testData.input.getForegroundColor(style)
             // Assert:
             actualColor shouldBe (testData.expected).foreground
         }
@@ -96,16 +96,16 @@ class RowCalculatorStandardTest {
     inner class GetButtons {
 
         // Arrange:
-        private fun provideArguments(): Stream<TestDataCalculatorElement<Row, ExpectedElement>> =
+        private fun provideArguments(): Stream<TestCase<Row, ExpectedElement>> =
             provideMappedTestData(rowsStandardTest, standardExpectedMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should correctly map buttons to rows`(
-            testData: TestDataCalculatorElement<Row, ExpectedElement>
+            testData: TestCase<Row, ExpectedElement>
         ) {
             // Act & Assert:
-            (testData.expected as ExpectedRow).buttonData.shouldBeEqualToIgnoringFields(testData.element.buttons, ButtonData::layout)
+            (testData.expected as ExpectedRow).buttonData.shouldBeEqualToIgnoringFields(testData.input.buttons, ButtonData::layout)
         }
     }
 }
