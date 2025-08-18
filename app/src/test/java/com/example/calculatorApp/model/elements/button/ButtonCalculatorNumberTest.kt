@@ -6,7 +6,7 @@ import com.example.calculatorApp.model.elements.ElementColorStyle
 import com.example.calculatorApp.model.styles.StylesButton
 import com.example.calculatorApp.testData.TestDataElementExpectedMap.numberExpectedMapTest
 import com.example.calculatorApp.testData.TestDataElementSeq.buttonsNumbersTest
-import com.example.calculatorApp.testData.TestDataCalculatorElement
+import com.example.calculatorApp.testData.TestCase
 import com.example.calculatorApp.testData.expected.ExpectedElement
 import com.example.calculatorApp.testData.expected.ExpectedButton
 import io.kotest.assertions.throwables.shouldThrow
@@ -52,18 +52,18 @@ class ButtonCalculatorNumberTest {
     inner class GetBackgroundColor {
 
         // Arrange:
-        private fun provideArguments(): Stream<TestDataCalculatorElement<Button, ExpectedElement>> =
+        private fun provideArguments(): Stream<TestCase<Button, ExpectedElement>> =
             provideMappedTestData(buttonsNumbersTest, numberExpectedMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should get the right backgroundColor for each number button in iButtonStyle`(
-            testData: TestDataCalculatorElement<Button, ExpectedElement>
+            testData: TestCase<Button, ExpectedElement>
         ) {
             // Arrange:
             val style = StylesButton.iButtonStyle
             // Act:
-            val actualColor = testData.element.getBackgroundColor(style)
+            val actualColor = testData.input.getBackgroundColor(style)
             // Assert:
             actualColor shouldBe (testData.expected as ExpectedButton).background
         }
@@ -73,18 +73,18 @@ class ButtonCalculatorNumberTest {
     inner class GetForegroundColor {
 
         // Arrange:
-        private fun provideArguments(): Stream<TestDataCalculatorElement<Button, ExpectedElement>> =
+        private fun provideArguments(): Stream<TestCase<Button, ExpectedElement>> =
             provideMappedTestData(buttonsNumbersTest, numberExpectedMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should get the right foreground color for each number button in iButtonStyle`(
-            testData: TestDataCalculatorElement<Button, ExpectedElement>
+            testData: TestCase<Button, ExpectedElement>
         ) {
             // Arrange:
             val style = StylesButton.iButtonStyle
             // Act:
-            val actualColor = testData.element.getForegroundColor(style)
+            val actualColor = testData.input.getForegroundColor(style)
             // Assert:
             actualColor shouldBe (testData.expected as ExpectedButton).foreground
         }
@@ -94,16 +94,16 @@ class ButtonCalculatorNumberTest {
     inner class GetSymbol {
 
         // Arrange:
-        private fun provideArguments(): Stream<TestDataCalculatorElement<Button, ExpectedElement>> =
+        private fun provideArguments(): Stream<TestCase<Button, ExpectedElement>> =
             provideMappedTestData(buttonsNumbersTest, numberExpectedMapTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should correctly map symbols to buttons`(
-            testData: TestDataCalculatorElement<Button, ExpectedElement>
+            testData: TestCase<Button, ExpectedElement>
         ) {
             // Act & Assert:
-            testData.element.symbol shouldBe (testData.expected as ExpectedButton).symbol
+            testData.input.symbol shouldBe (testData.expected as ExpectedButton).symbol
         }
     }
 }
