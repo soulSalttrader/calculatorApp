@@ -1,9 +1,7 @@
 package com.example.calculatorApp.domain.ast
 
-import com.example.calculatorApp.testData.TestDataTokenizerStandard
-import com.example.calculatorApp.testData.TestDataTokenizerUtils
-import com.example.calculatorApp.arguments.TestArgumentsTokenizerStandard
-import com.example.calculatorApp.arguments.TestArgumentsTokenizerUtils
+import com.example.calculatorApp.arguments.TestArgumentsTokenizerUtils.provideTokenUtilsTestCasesLabels
+import com.example.calculatorApp.arguments.TestArgumentsTokenizerUtils.provideTokenUtilsTestCasesOperators
 import com.example.calculatorApp.domain.ast.TokenizerUtils.isBinary
 import com.example.calculatorApp.domain.ast.TokenizerUtils.isNumber
 import com.example.calculatorApp.domain.ast.TokenizerUtils.isParenthesis
@@ -17,12 +15,21 @@ import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorParenthesis
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
+import com.example.calculatorApp.testData.TestCase
+import com.example.calculatorApp.testData.TestDataSymbolButton.symbolsBinaryTest
+import com.example.calculatorApp.testData.TestDataSymbolButton.symbolsNumberTest
+import com.example.calculatorApp.testData.TestDataSymbolButton.symbolsParenthesisTest
+import com.example.calculatorApp.testData.TestDataSymbolButton.symbolsUnaryPrefixTest
+import com.example.calculatorApp.testData.TestDataSymbolButton.symbolsUnarySuffixTest
+import com.example.calculatorApp.testData.expected.Expected
+import com.example.calculatorApp.testData.expected.ExpectedTokenUtils
+import com.example.calculatorApp.testData.input.Input
+import com.example.calculatorApp.testData.input.InputTokenUtils
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Nested
-
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
@@ -34,81 +41,72 @@ import kotlin.streams.asStream
 class TokenizerUtilsTest {
 
     @Nested
-    inner class IsNumber {
-
-        // Arrange:
-        private fun provideArgumentsNumbers(): Stream<TestDataTokenizerStandard> {
-            return TestArgumentsTokenizerStandard
-                .provideStandard(ButtonCalculatorNumber::class).asStream()
-        }
-
-        // Arrange:
-        private fun provideArgumentsBinary(): Stream<TestDataTokenizerStandard> {
-            return TestArgumentsTokenizerStandard
-                .provideStandard(ButtonCalculatorBinary::class).asStream()
-        }
-
-        @ParameterizedTest
-        @MethodSource("provideArgumentsNumbers")
-        fun `isNumber should return true for valid numbers`(
-            dataTest: TestDataTokenizerStandard
-        ) {
-            // Arrange:
-            val number = dataTest.expression.first()
-            // Act & Assert:
-            number.isNumber() shouldBe true
-        }
-
-        @ParameterizedTest
-        @MethodSource("provideArgumentsBinary")
-        fun `isNumber should return false for non-numeric strings`(
-            dataTest: TestDataTokenizerStandard
-        ) {
-            // Arrange:
-            val nonNumber = dataTest.expression.first()
-            // Act & Assert:
-            nonNumber.isNumber() shouldBe false
-        }
-    }
-    @Nested
     inner class IsBinary {
 
         // Arrange:
-        private fun provideArgumentsNumbers(): Stream<TestDataTokenizerStandard> {
-            return TestArgumentsTokenizerStandard
-                .provideStandard(ButtonCalculatorNumber::class).asStream()
-        }
+        private fun provideArgumentsBinary(): Stream<TestCase<Input, Expected>> =
+            provideTokenUtilsTestCasesLabels(
+                OperatorBinary::class,
+                symbolsBinaryTest,
+            ).asStream()
 
-        // Arrange:
-        private fun provideArgumentsBinary(): Stream<TestDataTokenizerStandard> {
-            return TestArgumentsTokenizerStandard
-                .provideStandard(ButtonCalculatorBinary::class).asStream()
-        }
+        private fun provideArgumentsNonBinary(): Stream<TestCase<Input, Expected>> =
+            provideTokenUtilsTestCasesLabels(
+                ButtonCalculatorParenthesis::class,
+                symbolsParenthesisTest,
+                false,
+            ).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArgumentsBinary")
         fun `isBinary should return true for valid binary operators`(
-            dataTest: TestDataTokenizerStandard
+            dataTest: TestCase<InputTokenUtils, ExpectedTokenUtils>
         ) {
             // Arrange:
-            val binary = dataTest.expression.first()
+            val binary = dataTest.input.source.symbol.label
             // Act & Assert:
-            binary.isBinary() shouldBe true
+            binary.isBinary() shouldBe dataTest.expected.matches
         }
 
         @ParameterizedTest
-        @MethodSource("provideArgumentsNumbers")
+        @MethodSource("provideArgumentsNonBinary")
         fun `isBinary should return false for invalid operators`(
-            dataTest: TestDataTokenizerStandard
+            dataTest: TestCase<InputTokenUtils, ExpectedTokenUtils>
         ) {
             // Arrange:
-            val nonBinary = dataTest.expression.first()
+            val binary = dataTest.input.source.symbol.label
             // Act & Assert:
-            nonBinary.isBinary() shouldBe false
+            binary.isBinary() shouldBe dataTest.expected.matches
         }
     }
+
     @Nested
     inner class IsUnaryPrefix {
+
+        // Arrange:
+        private fun provideArgumentsUnaryPrefix(): Stream<TestCase<Input, Expected>> =
+            provideTokenUtilsTestCasesLabels(
+                OperatorUnary.Prefix::class,
+                symbolsUnaryPrefixTest,
+            ).asStream()
+
+        private fun provideArgumentsNonUnaryPrefix(): Stream<TestCase<Input, Expected>> =
+            provideTokenUtilsTestCasesLabels(
+                ButtonCalculatorParenthesis::class,
+                symbolsParenthesisTest,
+                false,
+            ).asStream()
+
+        @ParameterizedTest
+        @MethodSource("provideArgumentsUnaryPrefix")
+        fun `isUnaryPrefix should return true for valid unary prefix operators param`(
+            dataTest: TestCase<InputTokenUtils, ExpectedTokenUtils>
+        ) {
+            // Arrange:
+            val unary = dataTest.input.source.symbol.label
+            // Act & Assert:
+            unary.isUnaryPrefix() shouldBe dataTest.expected.matches
+        }
 
         @ParameterizedTest
         @CsvSource(
@@ -119,6 +117,17 @@ class TokenizerUtilsTest {
         ) {
             // Arrange & Act & Assert:
             dataTest.isUnaryPrefix() shouldBe true
+        }
+
+        @ParameterizedTest
+        @MethodSource("provideArgumentsNonUnaryPrefix")
+        fun `isUnaryPrefix should return false for invalid operators param`(
+            dataTest: TestCase<InputTokenUtils, ExpectedTokenUtils>
+        ) {
+            // Arrange:
+            val unary = dataTest.input.source.symbol.label
+            // Act & Assert:
+            unary.isUnaryPrefix() shouldBe dataTest.expected.matches
         }
 
         @ParameterizedTest
@@ -136,6 +145,31 @@ class TokenizerUtilsTest {
     @Nested
     inner class IsUnarySuffix {
 
+        // Arrange:
+        private fun provideArgumentsUnarySuffix(): Stream<TestCase<Input, Expected>> =
+            provideTokenUtilsTestCasesLabels(
+                OperatorUnary.Suffix::class,
+                symbolsUnarySuffixTest,
+            ).asStream()
+
+        private fun provideArgumentsNonUnarySuffix(): Stream<TestCase<Input, Expected>> =
+            provideTokenUtilsTestCasesLabels(
+                ButtonCalculatorParenthesis::class,
+                symbolsParenthesisTest,
+                false,
+            ).asStream()
+
+        @ParameterizedTest
+        @MethodSource("provideArgumentsUnarySuffix")
+        fun `isUnarySuffix should return true for valid unary suffix operators param`(
+            dataTest: TestCase<InputTokenUtils, ExpectedTokenUtils>
+        ) {
+            // Arrange:
+            val unary = dataTest.input.source.symbol.label
+            // Act & Assert:
+            unary.isUnarySuffix() shouldBe dataTest.expected.matches
+        }
+
         @ParameterizedTest
         @CsvSource(
             "%"
@@ -145,6 +179,17 @@ class TokenizerUtilsTest {
         ) {
             // Arrange & Act & Assert:
             dataTest.isUnarySuffix() shouldBe true
+        }
+
+        @ParameterizedTest
+        @MethodSource("provideArgumentsNonUnarySuffix")
+        fun `isUnarySuffix should return false for invalid operators param`(
+            dataTest: TestCase<InputTokenUtils, ExpectedTokenUtils>
+        ) {
+            // Arrange:
+            val unary = dataTest.input.source.symbol.label
+            // Act & Assert:
+            unary.isUnarySuffix() shouldBe dataTest.expected.matches
         }
 
         @ParameterizedTest
@@ -160,40 +205,81 @@ class TokenizerUtilsTest {
     }
 
     @Nested
+    inner class IsNumber {
+
+        // Arrange:
+        private fun provideArgumentsNumbers(): Stream<TestCase<Input, Expected>> =
+            provideTokenUtilsTestCasesLabels(
+                ButtonCalculatorNumber::class,
+                symbolsNumberTest,
+            ).asStream()
+
+        private fun provideArgumentsNonNumbers(): Stream<TestCase<Input, Expected>> =
+            provideTokenUtilsTestCasesLabels(
+                ButtonCalculatorParenthesis::class,
+                symbolsParenthesisTest,
+                false,
+            ).asStream()
+
+        @ParameterizedTest
+        @MethodSource("provideArgumentsNumbers")
+        fun `isNumber should return true for valid numbers`(
+            dataTest: TestCase<InputTokenUtils, ExpectedTokenUtils>
+        ) {
+            // Arrange:
+            val number = dataTest.input.source.symbol.label
+            // Act & Assert:
+            number.isNumber() shouldBe dataTest.expected.matches
+        }
+
+        @ParameterizedTest
+        @MethodSource("provideArgumentsNonNumbers")
+        fun `isNumber should return false for non-numeric strings`(
+            dataTest: TestCase<InputTokenUtils, ExpectedTokenUtils>
+        ) {
+            // Arrange:
+            val number = dataTest.input.source.symbol.label
+            // Act & Assert:
+            number.isNumber() shouldBe dataTest.expected.matches
+        }
+    }
+
+    @Nested
     inner class IsParenthesis {
 
-        // Arrange:
-        private fun provideArgumentsNumbers(): Stream<TestDataTokenizerStandard> {
-            return TestArgumentsTokenizerStandard
-                .provideStandard(ButtonCalculatorNumber::class).asStream()
-        }
+        private fun provideArgumentsParenthesis(): Stream<TestCase<Input, Expected>> =
+            provideTokenUtilsTestCasesLabels(
+                OperatorParenthesis::class,
+                symbolsParenthesisTest,
+            ).asStream()
 
-        // Arrange:
-        private fun provideArgumentsParenthesis(): Stream<TestDataTokenizerStandard> {
-            return TestArgumentsTokenizerStandard
-                .provideStandard(ButtonCalculatorParenthesis::class).asStream()
-        }
+        private fun provideArgumentsNonParenthesis(): Stream<TestCase<Input, Expected>> =
+            provideTokenUtilsTestCasesLabels(
+                OperatorUnary.Prefix::class,
+                symbolsUnaryPrefixTest,
+                false,
+            ).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArgumentsParenthesis")
         fun `isParenthesis should return true for valid parentheses`(
-            dataTest: TestDataTokenizerStandard
+            dataTest: TestCase<InputTokenUtils, ExpectedTokenUtils>
         ) {
             // Arrange:
-            val number = dataTest.expression.first()
+            val number = dataTest.input.source.symbol.label
             // Act & Assert:
-            number.isParenthesis() shouldBe true
+            number.isParenthesis() shouldBe dataTest.expected.matches
         }
 
         @ParameterizedTest
-        @MethodSource("provideArgumentsNumbers")
-        fun `isParenthesis should return false for valid parentheses`(
-            dataTest: TestDataTokenizerStandard
+        @MethodSource("provideArgumentsNonParenthesis")
+        fun `isParenthesis should return false for invalid parentheses`(
+            dataTest: TestCase<InputTokenUtils, ExpectedTokenUtils>
         ) {
             // Arrange:
-            val number = dataTest.expression.first()
+            val number = dataTest.input.source.symbol.label
             // Act & Assert:
-            number.isParenthesis() shouldBe false
+            number.isParenthesis() shouldBe dataTest.expected.matches
         }
     }
 
@@ -201,20 +287,21 @@ class TokenizerUtilsTest {
     inner class ToBinaryOperator {
 
         // Arrange:
-        private fun provideArguments(): Stream<TestDataTokenizerUtils> {
-            return TestArgumentsTokenizerUtils.provideUtils(ButtonCalculatorBinary::class).asStream()
-        }
+        private fun provideArgumentsBinaryOperator(): Stream<TestCase<Input, Expected>> =
+            provideTokenUtilsTestCasesOperators(
+                ButtonCalculatorBinary::class
+            ).asStream()
 
         @ParameterizedTest
-        @MethodSource("provideArguments")
+        @MethodSource("provideArgumentsBinaryOperator")
         fun `toBinaryOperator should correctly convert ButtonCalculatorBinary to OperatorBinary`(
-            testData: TestDataTokenizerUtils
+            dataTest: TestCase<InputTokenUtils, ExpectedTokenUtils>
         ) {
             // Arrange & Act:
-            val button = testData.button as ButtonCalculatorBinary
+            val button = dataTest.input.source as ButtonCalculatorBinary
             val operator = button.toBinaryOperator()
             // Assert:
-            testData.expectedOperatorBinary() shouldBe operator
+            operator shouldBe dataTest.expected.operator
         }
 
         @Test
@@ -222,7 +309,6 @@ class TokenizerUtilsTest {
             // Arrange :
             val unknownButton = mockk<Button>(relaxed = true)
             every { unknownButton.symbol.label } returns "ˆß®å´¬"
-
             // & Act & Assert:
             unknownButton.let {
                 val exception = shouldThrow<IllegalArgumentException> {
@@ -238,20 +324,21 @@ class TokenizerUtilsTest {
     inner class ToUnaryOperator {
 
         // Arrange:
-        private fun provideArguments(): Stream<TestDataTokenizerUtils> {
-            return TestArgumentsTokenizerUtils.provideUtils(ButtonCalculatorUnary::class).asStream()
-        }
+        private fun provideArgumentsUnaryOperator(): Stream<TestCase<Input, Expected>> =
+            provideTokenUtilsTestCasesOperators(
+                ButtonCalculatorUnary::class
+            ).asStream()
 
         @ParameterizedTest
-        @MethodSource("provideArguments")
+        @MethodSource("provideArgumentsUnaryOperator")
         fun `toUnaryOperator should correctly convert ButtonCalculatorUnary to OperatorUnary`(
-            testData: TestDataTokenizerUtils
+            dataTest: TestCase<InputTokenUtils, ExpectedTokenUtils>
         ) {
             // Arrange & Act:
-            val button = testData.button as ButtonCalculatorUnary
+            val button = dataTest.input.source as ButtonCalculatorUnary
             val operator = button.toUnaryOperator()
             // Assert:
-            testData.expectedOperatorUnary() shouldBe operator
+            operator shouldBe dataTest.expected.operator
         }
 
         @Test
@@ -259,7 +346,6 @@ class TokenizerUtilsTest {
             // Arrange :
             val unknownButton = mockk<Button>(relaxed = true)
             every { unknownButton.symbol.label } returns "ˆß®å´¬"
-
             // & Act & Assert:
             unknownButton.let {
                 val exception = shouldThrow<IllegalArgumentException> {
@@ -275,20 +361,21 @@ class TokenizerUtilsTest {
     inner class ToParenthesisOperator {
 
         // Arrange:
-        private fun provideArguments(): Stream<TestDataTokenizerUtils> {
-            return TestArgumentsTokenizerUtils.provideUtils(ButtonCalculatorParenthesis::class).asStream()
-        }
+        private fun provideArgumentsParenthesisOperator(): Stream<TestCase<Input, Expected>> =
+            provideTokenUtilsTestCasesOperators(
+                ButtonCalculatorParenthesis::class
+            ).asStream()
 
         @ParameterizedTest
-        @MethodSource("provideArguments")
+        @MethodSource("provideArgumentsParenthesisOperator")
         fun `toParenthesisOperator should correctly convert ButtonCalculatorParenthesis to OperatorParenthesis`(
-            testData: TestDataTokenizerUtils
+            dataTest: TestCase<InputTokenUtils, ExpectedTokenUtils>
         ) {
             // Arrange & Act:
-            val button = testData.button as ButtonCalculatorParenthesis
+            val button = dataTest.input.source as ButtonCalculatorParenthesis
             val operator = button.toParenthesisOperator()
             // Assert:
-            testData.expectedOperatorParenthesis() shouldBe operator
+            operator shouldBe dataTest.expected.operator
         }
 
         @Test
@@ -296,7 +383,6 @@ class TokenizerUtilsTest {
             // Arrange :
             val unknownButton = mockk<Button>(relaxed = true)
             every { unknownButton.symbol.label } returns "ˆß®å´¬"
-
             // & Act & Assert:
             unknownButton.let {
                 val exception = shouldThrow<IllegalArgumentException> {
