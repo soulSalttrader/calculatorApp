@@ -12,11 +12,8 @@ import com.example.calculatorApp.model.elements.display.DisplayCalculatorInput
 import com.example.calculatorApp.model.elements.row.Row
 import com.example.calculatorApp.model.elements.row.RowCalculatorStandard
 import com.example.calculatorApp.model.symbols.SymbolButton
-import com.example.calculatorApp.testData.expected.ExpectedButton
-import com.example.calculatorApp.testData.expected.ExpectedButtonUnary
-import com.example.calculatorApp.testData.expected.ExpectedDisplay
+import com.example.calculatorApp.testData.expected.Expected
 import com.example.calculatorApp.testData.expected.ExpectedElement
-import com.example.calculatorApp.testData.expected.ExpectedRow
 import com.example.calculatorApp.ui.theme.Black
 import com.example.calculatorApp.ui.theme.Onyx
 import com.example.calculatorApp.ui.theme.SilverGrey
@@ -26,37 +23,37 @@ import kotlin.reflect.KClass
 
 object TestDataElementExpectedMap {
 
-    val binaryExpectedMapTest: Map<KClass<out Button>, ExpectedElement> = mapOf(
-        ButtonCalculatorBinary.Addition::class to ExpectedButton(
+    val binaryExpectedMapTest: Map<KClass<out Button>, Expected> = mapOf(
+        ButtonCalculatorBinary.Addition::class to ExpectedElement.Button(
             background = VividGamboge,
             foreground = White,
             symbol = SymbolButton.ADDITION,
         ),
-        ButtonCalculatorBinary.Subtraction::class to ExpectedButton(
+        ButtonCalculatorBinary.Subtraction::class to ExpectedElement.Button(
             background = VividGamboge,
             foreground = White,
             symbol = SymbolButton.SUBTRACTION,
         ),
-        ButtonCalculatorBinary.Multiplication::class to ExpectedButton(
+        ButtonCalculatorBinary.Multiplication::class to ExpectedElement.Button(
             background = VividGamboge,
             foreground = White,
             symbol = SymbolButton.MULTIPLICATION,
         ),
-        ButtonCalculatorBinary.Division::class to ExpectedButton(
+        ButtonCalculatorBinary.Division::class to ExpectedElement.Button(
             background = VividGamboge,
             foreground = White,
             symbol = SymbolButton.DIVISION,
         ),
     )
 
-    val unaryExpectedMapTest: Map<KClass<out Button>, ExpectedElement> = mapOf(
-        ButtonCalculatorUnary.Sign::class to ExpectedButtonUnary(
+    val unaryExpectedMapTest: Map<KClass<out Button>, Expected> = mapOf(
+        ButtonCalculatorUnary.Sign::class to ExpectedElement.Button(
             background = SilverGrey,
             foreground = Onyx,
             symbol = SymbolButton.SIGN,
             isPrefix = true,
         ),
-        ButtonCalculatorUnary.Percentage::class to ExpectedButtonUnary(
+        ButtonCalculatorUnary.Percentage::class to ExpectedElement.Button(
             background = SilverGrey,
             foreground = Onyx,
             symbol = SymbolButton.PERCENTAGE,
@@ -64,89 +61,89 @@ object TestDataElementExpectedMap {
         ),
     )
 
-    val controlExpectedMapTest: Map<KClass<out Button>, ExpectedElement> = mapOf(
-        ButtonCalculatorControl.AllClear::class to ExpectedButton(
+    val controlExpectedMapTest: Map<KClass<out Button>, Expected> = mapOf(
+        ButtonCalculatorControl.AllClear::class to ExpectedElement.Button(
             background = SilverGrey,
             foreground = Onyx,
             symbol = SymbolButton.ALL_CLEAR,
         ),
-        ButtonCalculatorControl.Clear::class to ExpectedButton(
+        ButtonCalculatorControl.Clear::class to ExpectedElement.Button(
             background = SilverGrey,
             foreground = Onyx,
             symbol = SymbolButton.CLEAR,
         ),
-        ButtonCalculatorControl.Decimal::class to ExpectedButton(
+        ButtonCalculatorControl.Decimal::class to ExpectedElement.Button(
             background = Onyx,
             foreground = White,
             symbol = SymbolButton.DECIMAL,
         ),
-        ButtonCalculatorControl.Equals::class to ExpectedButton(
+        ButtonCalculatorControl.Equals::class to ExpectedElement.Button(
             background = VividGamboge,
             foreground = White,
             symbol = SymbolButton.EQUALS,
         ),
     )
 
-    val numberExpectedMapTest: Map<KClass<out Button>, ExpectedElement> = mapOf(
-        ButtonCalculatorNumber.Zero::class to ExpectedButton(
+    val numberExpectedMapTest: Map<KClass<out Button>, Expected> = mapOf(
+        ButtonCalculatorNumber.Zero::class to ExpectedElement.Button(
             background = Onyx,
             foreground = White,
             symbol = SymbolButton.ZERO,
         ),
-        ButtonCalculatorNumber.One::class to ExpectedButton(
+        ButtonCalculatorNumber.One::class to ExpectedElement.Button(
             background = Onyx,
             foreground = White,
             symbol = SymbolButton.ONE,
         ),
-        ButtonCalculatorNumber.Two::class to ExpectedButton(
+        ButtonCalculatorNumber.Two::class to ExpectedElement.Button(
             background = Onyx,
             foreground = White,
             symbol = SymbolButton.TWO,
         ),
-        ButtonCalculatorNumber.Three::class to ExpectedButton(
+        ButtonCalculatorNumber.Three::class to ExpectedElement.Button(
             background = Onyx,
             foreground = White,
             symbol = SymbolButton.THREE,
         ),
-        ButtonCalculatorNumber.Four::class to ExpectedButton(
+        ButtonCalculatorNumber.Four::class to ExpectedElement.Button(
             background = Onyx,
             foreground = White,
             symbol = SymbolButton.FOUR,
         ),
-        ButtonCalculatorNumber.Five::class to ExpectedButton(
+        ButtonCalculatorNumber.Five::class to ExpectedElement.Button(
             background = Onyx,
             foreground = White,
             symbol = SymbolButton.FIVE,
         ),
-        ButtonCalculatorNumber.Six::class to ExpectedButton(
+        ButtonCalculatorNumber.Six::class to ExpectedElement.Button(
             background = Onyx,
             foreground = White,
             symbol = SymbolButton.SIX,
         ),
-        ButtonCalculatorNumber.Seven::class to ExpectedButton(
+        ButtonCalculatorNumber.Seven::class to ExpectedElement.Button(
             background = Onyx,
             foreground = White,
             symbol = SymbolButton.SEVEN,
         ),
-        ButtonCalculatorNumber.Eight::class to ExpectedButton(
+        ButtonCalculatorNumber.Eight::class to ExpectedElement.Button(
             background = Onyx,
             foreground = White,
             symbol = SymbolButton.EIGHT,
         ),
-        ButtonCalculatorNumber.Nine::class to ExpectedButton(
+        ButtonCalculatorNumber.Nine::class to ExpectedElement.Button(
             background = Onyx,
             foreground = White,
             symbol = SymbolButton.NINE,
         ),
     )
 
-    val parenthesisExpectedMap: Map<KClass<out Button>, ExpectedElement> = mapOf(
-        ButtonCalculatorParenthesis.OpenParenthesis::class to ExpectedButton(
+    val parenthesisExpectedMap: Map<KClass<out Button>, Expected> = mapOf(
+        ButtonCalculatorParenthesis.OpenParenthesis::class to ExpectedElement.Button(
             background = Onyx,
             foreground = White,
             symbol = SymbolButton.OPEN_PARENT,
         ),
-        ButtonCalculatorParenthesis.CloseParenthesis::class to ExpectedButton(
+        ButtonCalculatorParenthesis.CloseParenthesis::class to ExpectedElement.Button(
             background = Onyx,
             foreground = White,
             symbol = SymbolButton.CLOSE_PARENT,
@@ -154,39 +151,39 @@ object TestDataElementExpectedMap {
     )
 
     @OptIn(ConceptClass::class)
-    val inputsExpectedMapTest: Map<KClass<out Display>, ExpectedElement> = mapOf(
-        DisplayCalculatorInput.Standard::class to ExpectedDisplay(
+    val inputsExpectedMapTest: Map<KClass<out Display>, Expected> = mapOf(
+        DisplayCalculatorInput.Standard::class to ExpectedElement.Display(
             background = Black,
             foreground = White,
         ),
-        DisplayCalculatorInput.Scientific::class to ExpectedDisplay(
+        DisplayCalculatorInput.Scientific::class to ExpectedElement.Display(
             background = Black,
             foreground = White,
         ),
     )
 
-    val standardExpectedMapTest: Map<KClass<out Row>, ExpectedElement> = mapOf(
-        RowCalculatorStandard.Standard1::class to ExpectedRow(
+    val standardExpectedMapTest: Map<KClass<out Row>, Expected> = mapOf(
+        RowCalculatorStandard.Standard1::class to ExpectedElement.Row(
             background = Black,
             foreground = White,
             buttonData = TestDataElementSeq.buttonDataBinaryTest,
         ),
-        RowCalculatorStandard.Standard2::class to ExpectedRow(
+        RowCalculatorStandard.Standard2::class to ExpectedElement.Row(
             background = Black,
             foreground = White,
             buttonData = TestDataElementSeq.buttonDataNumbersTest,
         ),
-        RowCalculatorStandard.Standard3::class to ExpectedRow(
+        RowCalculatorStandard.Standard3::class to ExpectedElement.Row(
             background = Black,
             foreground = White,
             buttonData = TestDataElementSeq.buttonDataBinaryTest,
         ),
-        RowCalculatorStandard.Standard4::class to ExpectedRow(
+        RowCalculatorStandard.Standard4::class to ExpectedElement.Row(
             background = Black,
             foreground = White,
             buttonData = TestDataElementSeq.buttonDataNumbersTest,
         ),
-        RowCalculatorStandard.Standard5::class to ExpectedRow(
+        RowCalculatorStandard.Standard5::class to ExpectedElement.Row(
             background = Black,
             foreground = White,
             buttonData = TestDataElementSeq.buttonDataControlsTest,
