@@ -7,6 +7,7 @@ import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorParenthesis
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
+import com.example.calculatorApp.model.elements.button.ButtonCategory
 import com.example.calculatorApp.model.elements.display.Display
 import com.example.calculatorApp.model.elements.display.DisplayCalculatorInput
 import com.example.calculatorApp.model.elements.row.Row
@@ -27,21 +28,25 @@ object TestDataElementExpectedMap {
         ButtonCalculatorBinary.Addition::class to ExpectedElement.Button(
             background = VividGamboge,
             foreground = White,
+            category = ButtonCategory.Binary,
             symbol = SymbolButton.ADDITION,
         ),
         ButtonCalculatorBinary.Subtraction::class to ExpectedElement.Button(
             background = VividGamboge,
             foreground = White,
+            category = ButtonCategory.Binary,
             symbol = SymbolButton.SUBTRACTION,
         ),
         ButtonCalculatorBinary.Multiplication::class to ExpectedElement.Button(
             background = VividGamboge,
             foreground = White,
+            category = ButtonCategory.Binary,
             symbol = SymbolButton.MULTIPLICATION,
         ),
         ButtonCalculatorBinary.Division::class to ExpectedElement.Button(
             background = VividGamboge,
             foreground = White,
+            category = ButtonCategory.Binary,
             symbol = SymbolButton.DIVISION,
         ),
     )
@@ -50,12 +55,14 @@ object TestDataElementExpectedMap {
         ButtonCalculatorUnary.Sign::class to ExpectedElement.Button(
             background = SilverGrey,
             foreground = Onyx,
+            category = ButtonCategory.Unary,
             symbol = SymbolButton.SIGN,
             isPrefix = true,
         ),
         ButtonCalculatorUnary.Percentage::class to ExpectedElement.Button(
             background = SilverGrey,
             foreground = Onyx,
+            category = ButtonCategory.Unary,
             symbol = SymbolButton.PERCENTAGE,
             isPrefix = false,
         ),
@@ -65,21 +72,25 @@ object TestDataElementExpectedMap {
         ButtonCalculatorControl.AllClear::class to ExpectedElement.Button(
             background = SilverGrey,
             foreground = Onyx,
+            category = ButtonCategory.Control,
             symbol = SymbolButton.ALL_CLEAR,
         ),
         ButtonCalculatorControl.Clear::class to ExpectedElement.Button(
             background = SilverGrey,
             foreground = Onyx,
+            category = ButtonCategory.Control,
             symbol = SymbolButton.CLEAR,
         ),
         ButtonCalculatorControl.Decimal::class to ExpectedElement.Button(
             background = Onyx,
             foreground = White,
+            category = ButtonCategory.Control,
             symbol = SymbolButton.DECIMAL,
         ),
         ButtonCalculatorControl.Equals::class to ExpectedElement.Button(
             background = VividGamboge,
             foreground = White,
+            category = ButtonCategory.Control,
             symbol = SymbolButton.EQUALS,
         ),
     )
@@ -88,51 +99,61 @@ object TestDataElementExpectedMap {
         ButtonCalculatorNumber.Zero::class to ExpectedElement.Button(
             background = Onyx,
             foreground = White,
+            category = ButtonCategory.Number,
             symbol = SymbolButton.ZERO,
         ),
         ButtonCalculatorNumber.One::class to ExpectedElement.Button(
             background = Onyx,
             foreground = White,
+            category = ButtonCategory.Number,
             symbol = SymbolButton.ONE,
         ),
         ButtonCalculatorNumber.Two::class to ExpectedElement.Button(
             background = Onyx,
             foreground = White,
+            category = ButtonCategory.Number,
             symbol = SymbolButton.TWO,
         ),
         ButtonCalculatorNumber.Three::class to ExpectedElement.Button(
             background = Onyx,
             foreground = White,
+            category = ButtonCategory.Number,
             symbol = SymbolButton.THREE,
         ),
         ButtonCalculatorNumber.Four::class to ExpectedElement.Button(
             background = Onyx,
             foreground = White,
+            category = ButtonCategory.Number,
             symbol = SymbolButton.FOUR,
         ),
         ButtonCalculatorNumber.Five::class to ExpectedElement.Button(
             background = Onyx,
             foreground = White,
+            category = ButtonCategory.Number,
             symbol = SymbolButton.FIVE,
         ),
         ButtonCalculatorNumber.Six::class to ExpectedElement.Button(
             background = Onyx,
             foreground = White,
+            category = ButtonCategory.Number,
             symbol = SymbolButton.SIX,
         ),
         ButtonCalculatorNumber.Seven::class to ExpectedElement.Button(
             background = Onyx,
             foreground = White,
+            category = ButtonCategory.Number,
             symbol = SymbolButton.SEVEN,
         ),
         ButtonCalculatorNumber.Eight::class to ExpectedElement.Button(
             background = Onyx,
             foreground = White,
+            category = ButtonCategory.Number,
             symbol = SymbolButton.EIGHT,
         ),
         ButtonCalculatorNumber.Nine::class to ExpectedElement.Button(
             background = Onyx,
             foreground = White,
+            category = ButtonCategory.Number,
             symbol = SymbolButton.NINE,
         ),
     )
@@ -141,11 +162,13 @@ object TestDataElementExpectedMap {
         ButtonCalculatorParenthesis.OpenParenthesis::class to ExpectedElement.Button(
             background = Onyx,
             foreground = White,
+            category = ButtonCategory.Parenthesis,
             symbol = SymbolButton.OPEN_PARENT,
         ),
         ButtonCalculatorParenthesis.CloseParenthesis::class to ExpectedElement.Button(
             background = Onyx,
             foreground = White,
+            category = ButtonCategory.Parenthesis,
             symbol = SymbolButton.CLOSE_PARENT,
         ),
     )
