@@ -62,10 +62,14 @@ object TestArgumentsCalculatorElement : TestArguments {
         }
 
     val mapButtonCategoryGenerated: Map<Button, ElementCategory<ElementColorStyle>> = buildMap {
-        putAll(buttonsBinaryTest.associateWith { ButtonCategory.Binary })
-        putAll(buttonsControlsTest.associateWith { ButtonCategory.Control })
-        putAll(buttonsUnaryTest.associateWith { ButtonCategory.Unary })
-        putAll(buttonsParenthesisTest.associateWith { ButtonCategory.Parenthesis })
-        putAll(buttonsNumbersTest.associateWith { ButtonCategory.Number })
+        listOf(
+            buttonsBinaryTest to ButtonCategory.Binary,
+            buttonsControlsTest to ButtonCategory.Control,
+            buttonsUnaryTest to ButtonCategory.Unary,
+            buttonsParenthesisTest to ButtonCategory.Parenthesis,
+            buttonsNumbersTest to ButtonCategory.Number,
+        ).forEach { (buttons, category) ->
+            putAll(buttons.associateWith { category })
+        }
     }
 }
