@@ -10,9 +10,14 @@ import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorParenthesis
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
+import com.example.calculatorApp.model.elements.button.ButtonCategory
 import com.example.calculatorApp.model.elements.button.ButtonData
 import com.example.calculatorApp.model.elements.display.DisplayCalculatorInput
 import com.example.calculatorApp.model.elements.row.RowCalculatorStandard
+import com.example.calculatorApp.ui.theme.Onyx
+import com.example.calculatorApp.ui.theme.SilverGrey
+import com.example.calculatorApp.ui.theme.VividGamboge
+import com.example.calculatorApp.ui.theme.White
 import com.example.calculatorApp.utils.TestUtils.provideSequenceConstructed
 import com.example.calculatorApp.utils.TestUtils.provideSequenceOfSingletons
 
@@ -52,4 +57,26 @@ object TestDataElementSeq {
     val operatorsUnarySuffixTest = provideSequenceOfSingletons(OperatorUnary.Suffix::class)
     val operatorsParenthesisTest = provideSequenceOfSingletons(OperatorParenthesis::class)
     val operatorsAllTest: Sequence<Operator> = sequenceOf(operatorsBinaryTest).flatMap { it }
+
+    //
+    val buttonCategoryMappingBase = listOf(
+        buttonsBinaryTest to ButtonCategory.Binary,
+        buttonsControlsTest to ButtonCategory.Control,
+        buttonsUnaryTest to ButtonCategory.Unary,
+        buttonsParenthesisTest to ButtonCategory.Parenthesis,
+        buttonsNumbersTest to ButtonCategory.Number,
+    )
+
+    val iButtonStyleMappingBase = listOf(
+        buttonsBinaryTest to Pair(VividGamboge, White),
+        buttonsUnaryTest to Pair(SilverGrey, Onyx),
+        buttonsControlsTest to Pair(SilverGrey, Onyx),
+        buttonsNumbersTest to Pair(Onyx,White),
+        buttonsParenthesisTest to Pair(Onyx, White),
+    )
+
+    val iButtonStyleMappingOverrides = mapOf(
+        ButtonCalculatorControl.Decimal to Pair(Onyx, White),
+        ButtonCalculatorControl.Equals to Pair(VividGamboge, White),
+    )
 }
