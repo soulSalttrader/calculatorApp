@@ -1,6 +1,5 @@
 package com.example.calculatorApp.arguments
 
-import com.example.calculatorApp.model.elements.ElementCategory
 import com.example.calculatorApp.model.elements.ElementCategoryStyleCollection
 import com.example.calculatorApp.model.elements.ElementColorStyle
 import com.example.calculatorApp.model.elements.button.Button
@@ -18,6 +17,8 @@ import com.example.calculatorApp.testData.expected.ExpectedElement
 import com.example.calculatorApp.testData.input.Input
 import com.example.calculatorApp.testData.input.InputElement
 import kotlin.reflect.KClass
+
+typealias ButtonCategoryMapping = List<Pair<Sequence<Button>, ButtonCategory<ElementColorStyle>>>
 
 object TestArgumentsCalculatorElement : TestArguments {
 
@@ -42,7 +43,7 @@ object TestArgumentsCalculatorElement : TestArguments {
     ): Sequence<TestCase<Input, Expected>> =
         sequence {
             elements.forEach { button ->
-                val category = mapButtonCategoryGenerated[button] ?: error("No category found for ${button.javaClass}")
+                val category = buildButtonCategoriesMap()[button] ?: error("No category found for ${button.javaClass}")
                 val background = button.getBackgroundColor(style)
                 val foreground = button.getForegroundColor(style)
                 val isPrefix = button is ButtonCalculatorUnary.Sign
@@ -61,15 +62,19 @@ object TestArgumentsCalculatorElement : TestArguments {
             }
         }
 
-    val mapButtonCategoryGenerated: Map<Button, ElementCategory<ElementColorStyle>> = buildMap {
-        listOf(
-            buttonsBinaryTest to ButtonCategory.Binary,
-            buttonsControlsTest to ButtonCategory.Control,
-            buttonsUnaryTest to ButtonCategory.Unary,
-            buttonsParenthesisTest to ButtonCategory.Parenthesis,
-            buttonsNumbersTest to ButtonCategory.Number,
-        ).forEach { (buttons, category) ->
+    private fun buildButtonCategoriesMap(
+        baseMappings: ButtonCategoryMapping = buttonCategoryMappingBase,
+    ) = buildMap {
+        baseMappings.forEach { (buttons, category) ->
             putAll(buttons.associateWith { category })
         }
     }
+
+    val buttonCategoryMappingBase = listOf(
+        buttonsBinaryTest to ButtonCategory.Binary,
+        buttonsControlsTest to ButtonCategory.Control,
+        buttonsUnaryTest to ButtonCategory.Unary,
+        buttonsParenthesisTest to ButtonCategory.Parenthesis,
+        buttonsNumbersTest to ButtonCategory.Number,
+    )
 }
