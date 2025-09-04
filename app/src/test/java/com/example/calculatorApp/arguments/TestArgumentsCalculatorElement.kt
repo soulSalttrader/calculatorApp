@@ -3,23 +3,16 @@ package com.example.calculatorApp.arguments
 import androidx.compose.ui.graphics.Color
 import com.example.calculatorApp.model.elements.ElementColorStyle
 import com.example.calculatorApp.model.elements.button.Button
-import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
 import com.example.calculatorApp.model.elements.button.ButtonCategory
 import com.example.calculatorApp.testData.TestCase
-import com.example.calculatorApp.testData.TestDataElementSeq.buttonsBinaryTest
-import com.example.calculatorApp.testData.TestDataElementSeq.buttonsControlsTest
-import com.example.calculatorApp.testData.TestDataElementSeq.buttonsNumbersTest
-import com.example.calculatorApp.testData.TestDataElementSeq.buttonsParenthesisTest
-import com.example.calculatorApp.testData.TestDataElementSeq.buttonsUnaryTest
+import com.example.calculatorApp.testData.TestDataElementSeq.buttonCategoryMappingBase
+import com.example.calculatorApp.testData.TestDataElementSeq.iButtonStyleMappingBase
+import com.example.calculatorApp.testData.TestDataElementSeq.iButtonStyleMappingOverrides
 import com.example.calculatorApp.testData.expected.Expected
 import com.example.calculatorApp.testData.expected.ExpectedElement
 import com.example.calculatorApp.testData.input.Input
 import com.example.calculatorApp.testData.input.InputElement
-import com.example.calculatorApp.ui.theme.Onyx
-import com.example.calculatorApp.ui.theme.SilverGrey
-import com.example.calculatorApp.ui.theme.VividGamboge
-import com.example.calculatorApp.ui.theme.White
 import kotlin.reflect.KClass
 
 typealias ButtonCategoryMapping = List<Pair<Sequence<Button>, ButtonCategory<ElementColorStyle>>>
@@ -73,14 +66,6 @@ object TestArgumentsCalculatorElement : TestArguments {
         }
     }
 
-    val buttonCategoryMappingBase = listOf(
-        buttonsBinaryTest to ButtonCategory.Binary,
-        buttonsControlsTest to ButtonCategory.Control,
-        buttonsUnaryTest to ButtonCategory.Unary,
-        buttonsParenthesisTest to ButtonCategory.Parenthesis,
-        buttonsNumbersTest to ButtonCategory.Number,
-    )
-
     private fun buildButtonColorsMap(
         baseMappings: ButtonGroupMapping = iButtonStyleMappingBase,
         overrides: Map<out Button, ButtonColors> = iButtonStyleMappingOverrides,
@@ -90,17 +75,4 @@ object TestArgumentsCalculatorElement : TestArguments {
         }
         putAll(overrides)
     }
-
-    val iButtonStyleMappingBase = listOf(
-        buttonsBinaryTest to Pair(VividGamboge, White),
-        buttonsUnaryTest to Pair(SilverGrey, Onyx),
-        buttonsControlsTest to Pair(SilverGrey, Onyx),
-        buttonsNumbersTest to Pair(Onyx,White),
-        buttonsParenthesisTest to Pair(Onyx, White),
-    )
-
-    val iButtonStyleMappingOverrides = mapOf(
-        ButtonCalculatorControl.Decimal to Pair(Onyx, White),
-        ButtonCalculatorControl.Equals to Pair(VividGamboge, White),
-    )
 }
