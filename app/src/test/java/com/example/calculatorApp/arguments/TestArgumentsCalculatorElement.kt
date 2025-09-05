@@ -75,4 +75,17 @@ object TestArgumentsCalculatorElement : TestArguments {
         }
         putAll(overrides)
     }
+
+    // TODO: investigate why buildButtonMap causes java.lang.NoClassDefFoundError at runtime
+    // Seems to happen when using typealiases ButtonCategoryMapping / ButtonGroupMapping
+    // Temporary workaround: using category/colors-specific builders instead
+    private fun <T> buildButtonMap(
+        baseMappings: List<Pair<Sequence<Button>, T>>,
+        overrides: Map<out Button, T> = emptyMap()
+    ): Map<Button, T> = buildMap {
+        baseMappings.forEach { (buttons, value) ->
+            putAll(buttons.associateWith { value })
+        }
+        putAll(overrides)
+    }
 }
