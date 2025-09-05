@@ -5,11 +5,14 @@ import com.example.calculatorApp.model.elements.ElementCategory
 import com.example.calculatorApp.model.elements.ElementCategoryStyleCollection
 import com.example.calculatorApp.model.elements.ElementColorStyle
 
-data class InputElement(
-    val element: Element
+sealed class InputElement : Input {
+
+    data class Button(
+        val element: Element
         <
             ElementCategory<ElementColorStyle>,
             ElementCategoryStyleCollection<ElementColorStyle>,
             ElementColorStyle
         >
-) : Input
+    ) : InputElement()
+}
