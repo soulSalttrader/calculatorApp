@@ -36,16 +36,16 @@ object TestArgumentsCalculatorElement : TestArguments {
             }
         }
 
-    fun provideElementTestCases(elements: Sequence<Button>): Sequence<TestCase<Input, Expected>> =
+    fun provideButtonTestCases(buttons: Sequence<Button>): Sequence<TestCase<Input, Expected>> =
         sequence {
-            elements.forEach { button ->
+            buttons.forEach { button ->
                 val category = buildButtonCategoriesMap()[button] ?: error("No category found for ${button.javaClass}")
                 val background = buildButtonColorsMap()[button]?.first ?: error("No background found for ${button.javaClass}")
                 val foreground = buildButtonColorsMap()[button]?.second ?: error("No foreground found for ${button.javaClass}")
                 val isPrefix = button is ButtonCalculatorUnary.Sign
                 yield(
                     TestCase(
-                        InputElement(element = button),
+                        InputElement.Button(element = button),
                         ExpectedElement.Button(
                             background = background,
                             foreground = foreground,
