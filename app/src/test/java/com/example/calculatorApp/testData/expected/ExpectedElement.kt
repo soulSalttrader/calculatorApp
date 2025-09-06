@@ -9,11 +9,12 @@ import com.example.calculatorApp.model.symbols.Symbol
 sealed interface ExpectedElement : Expected {
     val background: Color
     val foreground: Color
+    val category: ElementCategory<ElementColorStyle>
 
     data class Button(
         override val background: Color,
         override val foreground: Color,
-        val category: ElementCategory<ElementColorStyle>,
+        override val category: ElementCategory<ElementColorStyle>,
         val symbol: Symbol,
         val isPrefix: Boolean? = null,
     ) : ExpectedElement
@@ -21,11 +22,13 @@ sealed interface ExpectedElement : Expected {
     data class Display(
         override val background: Color,
         override val foreground: Color,
+        override val category: ElementCategory<ElementColorStyle>,
     ) : ExpectedElement
 
     data class Row(
         override val background: Color,
         override val foreground: Color,
+        override val category: ElementCategory<ElementColorStyle>,
         val buttonData: Sequence<ButtonData>,
     ) : ExpectedElement
 }
