@@ -5,14 +5,24 @@ import com.example.calculatorApp.model.elements.ElementCategory
 import com.example.calculatorApp.model.elements.ElementCategoryStyleCollection
 import com.example.calculatorApp.model.elements.ElementColorStyle
 
-sealed class InputElement : Input {
+typealias UIElement = Element<
+        ElementCategory<ElementColorStyle>,
+        ElementCategoryStyleCollection<ElementColorStyle>,
+        ElementColorStyle
+    >
+
+sealed interface InputElement : Input {
+    val element: UIElement
 
     data class Button(
-        val element: Element
-        <
-            ElementCategory<ElementColorStyle>,
-            ElementCategoryStyleCollection<ElementColorStyle>,
-            ElementColorStyle
-        >
-    ) : InputElement()
+        override val element: UIElement
+    ) : InputElement
+
+    data class Display(
+        override val element: UIElement
+    ) : InputElement
+
+    data class Row(
+        override val element: UIElement
+    ) : InputElement
 }
