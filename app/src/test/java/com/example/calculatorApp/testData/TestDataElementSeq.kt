@@ -1,5 +1,6 @@
 package com.example.calculatorApp.testData
 
+import com.example.calculatorApp.annotations.ConceptClass
 import com.example.calculatorApp.domain.ast.Operator
 import com.example.calculatorApp.domain.ast.OperatorBinary
 import com.example.calculatorApp.domain.ast.OperatorParenthesis
@@ -13,7 +14,9 @@ import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
 import com.example.calculatorApp.model.elements.button.ButtonCategory
 import com.example.calculatorApp.model.elements.button.ButtonData
 import com.example.calculatorApp.model.elements.display.DisplayCalculatorInput
+import com.example.calculatorApp.model.elements.display.DisplayCategory
 import com.example.calculatorApp.model.elements.row.RowCalculatorStandard
+import com.example.calculatorApp.ui.theme.Black
 import com.example.calculatorApp.ui.theme.Onyx
 import com.example.calculatorApp.ui.theme.SilverGrey
 import com.example.calculatorApp.ui.theme.VividGamboge
@@ -78,5 +81,18 @@ object TestDataElementSeq {
     val iButtonStyleMappingOverrides = mapOf(
         ButtonCalculatorControl.Decimal to Pair(Onyx, White),
         ButtonCalculatorControl.Equals to Pair(VividGamboge, White),
+    )
+
+    val displayCategoryMappingBase = listOf(
+        displaysInputsTest to DisplayCategory.Input,
+    )
+
+    val iDisplayStyleMappingBase = listOf(
+        displaysInputsTest to Pair(Black, White),
+    )
+
+    @OptIn(ConceptClass::class)
+    val iDisplayStyleMappingOverrides = mapOf(
+        DisplayCalculatorInput.Scientific to Pair(Black, White),
     )
 }
