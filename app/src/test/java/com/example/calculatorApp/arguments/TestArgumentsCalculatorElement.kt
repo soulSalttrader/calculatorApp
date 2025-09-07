@@ -1,10 +1,7 @@
 package com.example.calculatorApp.arguments
 
-import androidx.compose.ui.graphics.Color
-import com.example.calculatorApp.model.elements.ElementColorStyle
 import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
-import com.example.calculatorApp.model.elements.button.ButtonCategory
 import com.example.calculatorApp.testData.TestCase
 import com.example.calculatorApp.testData.TestDataElementSeq.buttonCategoryMappingBase
 import com.example.calculatorApp.testData.TestDataElementSeq.iButtonStyleMappingBase
@@ -13,11 +10,8 @@ import com.example.calculatorApp.testData.expected.Expected
 import com.example.calculatorApp.testData.expected.ExpectedElement
 import com.example.calculatorApp.testData.input.Input
 import com.example.calculatorApp.testData.input.InputElement
+import com.example.calculatorApp.testData.input.UIElement
 import kotlin.reflect.KClass
-
-typealias ButtonCategoryMapping = List<Pair<Sequence<Button>, ButtonCategory<ElementColorStyle>>>
-typealias ButtonColors = Pair<Color, Color>
-typealias ButtonGroupMapping = List<Pair<Sequence<Button>, ButtonColors>>
 
 object TestArgumentsCalculatorElement : TestArguments {
 
@@ -39,10 +33,9 @@ object TestArgumentsCalculatorElement : TestArguments {
     fun provideButtonTestCases(buttons: Sequence<Button>): Sequence<TestCase<Input, Expected>> =
         sequence {
             buttons.forEach { button ->
-                val category = buildButtonCategoriesMap()[button] ?: error("No category found for ${button.javaClass}")
-                val background = buildButtonColorsMap()[button]?.first ?: error("No background found for ${button.javaClass}")
-                val foreground = buildButtonColorsMap()[button]?.second ?: error("No foreground found for ${button.javaClass}")
-                val isPrefix = button is ButtonCalculatorUnary.Sign
+                val category = buildElementCategoriesMap(buttonCategoryMappingBase)[button] ?: error("No category found for ${button.javaClass}")
+                val (background, foreground) = buildElementColorsMap(iButtonStyleMappingBase, iButtonStyleMappingOverrides)[button] ?: error("No colors found for ${button.javaClass}")
+
                 yield(
                     TestCase(
                         InputElement.Button(element = button),
@@ -51,27 +44,27 @@ object TestArgumentsCalculatorElement : TestArguments {
                             foreground = foreground,
                             category = category,
                             symbol = button.symbol,
-                            isPrefix = isPrefix,
+                            isPrefix = button is ButtonCalculatorUnary.Sign,
                         )
                     )
                 )
             }
         }
 
-    private fun buildButtonCategoriesMap(
-        baseMappings: ButtonCategoryMapping = buttonCategoryMappingBase,
-    ): Map<Button, ButtonCategory<ElementColorStyle>> = buildMap {
-        baseMappings.forEach { (buttons, category) ->
-            putAll(buttons.associateWith { category })
+    private fun <T, R : UIElement> buildElementCategoriesMap(
+        baseMappings: List<Pair<Sequence<R>, T>>,
+    ): Map<R, T> = buildMap {
+        baseMappings.forEach { (elements, value) ->
+            putAll(elements.associateWith { value })
         }
     }
 
-    private fun buildButtonColorsMap(
-        baseMappings: ButtonGroupMapping = iButtonStyleMappingBase,
-        overrides: Map<out Button, ButtonColors> = iButtonStyleMappingOverrides,
-    ): Map<Button, ButtonColors> = buildMap {
-        baseMappings.forEach { (buttons, colors) ->
-            putAll(buttons.associateWith { colors })
+    private fun <T, R : UIElement> buildElementColorsMap(
+        baseMappings: List<Pair<Sequence<R>, T>>,
+        overrides: Map<out R, T> = emptyMap()
+    ): Map<R, T> = buildMap {
+        baseMappings.forEach { (elements, value) ->
+            putAll(elements.associateWith { value })
         }
         putAll(overrides)
     }
@@ -79,10 +72,10 @@ object TestArgumentsCalculatorElement : TestArguments {
     // TODO: investigate why buildButtonMap causes java.lang.NoClassDefFoundError at runtime
     // Seems to happen when using typealiases ButtonCategoryMapping / ButtonGroupMapping
     // Temporary workaround: using category/colors-specific builders instead
-    private fun <T> buildButtonMap(
-        baseMappings: List<Pair<Sequence<Button>, T>>,
-        overrides: Map<out Button, T> = emptyMap()
-    ): Map<Button, T> = buildMap {
+    private fun <T, R : UIElement> buildButtonMap(
+        baseMappings: List<Pair<Sequence<R>, T>>,
+        overrides: Map<out R, T> = emptyMap()
+    ): Map<R, T> = buildMap {
         baseMappings.forEach { (buttons, value) ->
             putAll(buttons.associateWith { value })
         }
