@@ -1,5 +1,8 @@
 package com.example.calculatorApp.arguments
 
+import androidx.compose.ui.graphics.Color
+import com.example.calculatorApp.model.elements.ElementCategory
+import com.example.calculatorApp.model.elements.ElementColorStyle
 import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
 import com.example.calculatorApp.testData.TestCase
@@ -31,22 +34,36 @@ object TestArgumentsCalculatorElement : TestArguments {
         }
 
     fun provideButtonTestCases(buttons: Sequence<Button>): Sequence<TestCase<Input, Expected>> =
-        sequence {
-            buttons.forEach { button ->
-                val category = buildElementCategoriesMap(buttonCategoryMappingBase)[button] ?: error("No category found for ${button.javaClass}")
-                val (background, foreground) = buildElementColorsMap(iButtonStyleMappingBase, iButtonStyleMappingOverrides)[button] ?: error("No colors found for ${button.javaClass}")
+        provideElementTestCases(
+            elements = buttons,
+            categoryMap = buildElementCategoriesMap(buttonCategoryMappingBase),
+            colorMap = buildElementColorsMap(iButtonStyleMappingBase, iButtonStyleMappingOverrides)
+        ) { button, category, background, foreground ->
 
+            TestCase(
+                InputElement.Button(button),
+                ExpectedElement.Button(
+                    background = background,
+                    foreground = foreground,
+                    category = category,
+                    symbol = button.symbol,
+                    isPrefix = button is ButtonCalculatorUnary.Sign
+                )
+            )
+        }
+
+    fun <E : UIElement> provideElementTestCases(
+        elements: Sequence<E>,
+        categoryMap: Map<UIElement, ElementCategory<ElementColorStyle>>,
+        colorMap: Map<UIElement, Pair<Color, Color>>,
+        factory: (E, ElementCategory<ElementColorStyle>, Color, Color) -> TestCase<Input, Expected>
+    ): Sequence<TestCase<Input, Expected>> =
+        sequence {
+            elements.forEach { element ->
+                val category = categoryMap[element] ?: error("No category found for ${element.javaClass}")
+                val (background, foreground) = colorMap[element] ?: error("No colors found for ${element.javaClass}")
                 yield(
-                    TestCase(
-                        InputElement.Button(element = button),
-                        ExpectedElement.Button(
-                            background = background,
-                            foreground = foreground,
-                            category = category,
-                            symbol = button.symbol,
-                            isPrefix = button is ButtonCalculatorUnary.Sign,
-                        )
-                    )
+                    factory(element, category, background, foreground)
                 )
             }
         }
