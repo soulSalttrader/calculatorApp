@@ -1,14 +1,19 @@
 package com.example.calculatorApp.arguments
 
 import androidx.compose.ui.graphics.Color
+import com.example.calculatorApp.annotations.ConceptClass
 import com.example.calculatorApp.model.elements.ElementCategory
 import com.example.calculatorApp.model.elements.ElementColorStyle
 import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
+import com.example.calculatorApp.model.elements.display.Display
 import com.example.calculatorApp.testData.TestCase
 import com.example.calculatorApp.testData.TestDataElementSeq.buttonCategoryMappingBase
+import com.example.calculatorApp.testData.TestDataElementSeq.displayCategoryMappingBase
 import com.example.calculatorApp.testData.TestDataElementSeq.iButtonStyleMappingBase
 import com.example.calculatorApp.testData.TestDataElementSeq.iButtonStyleMappingOverrides
+import com.example.calculatorApp.testData.TestDataElementSeq.iDisplayStyleMappingBase
+import com.example.calculatorApp.testData.TestDataElementSeq.iDisplayStyleMappingOverrides
 import com.example.calculatorApp.testData.expected.Expected
 import com.example.calculatorApp.testData.expected.ExpectedElement
 import com.example.calculatorApp.testData.input.Input
@@ -52,6 +57,24 @@ object TestArgumentsCalculatorElement : TestArguments {
             )
         }
 
+    @OptIn(ConceptClass::class)
+    fun provideDisplayTestCases(displays: Sequence<Display>): Sequence<TestCase<Input, Expected>> =
+        provideElementTestCases(
+            elements = displays,
+            categoryMap = buildElementCategoriesMap(displayCategoryMappingBase),
+            colorMap = buildElementColorsMap(iDisplayStyleMappingBase, iDisplayStyleMappingOverrides)
+        ) { display, category, background, foreground ->
+
+            TestCase(
+                InputElement.Display(element = display),
+                ExpectedElement.Display(
+                    background = background,
+                    foreground = foreground,
+                    category = category,
+                )
+            )
+        }
+
     fun <E : UIElement> provideElementTestCases(
         elements: Sequence<E>,
         categoryMap: Map<UIElement, ElementCategory<ElementColorStyle>>,
@@ -62,6 +85,7 @@ object TestArgumentsCalculatorElement : TestArguments {
             elements.forEach { element ->
                 val category = categoryMap[element] ?: error("No category found for ${element.javaClass}")
                 val (background, foreground) = colorMap[element] ?: error("No colors found for ${element.javaClass}")
+
                 yield(
                     factory(element, category, background, foreground)
                 )
