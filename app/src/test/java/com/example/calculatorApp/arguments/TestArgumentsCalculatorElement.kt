@@ -7,6 +7,7 @@ import com.example.calculatorApp.model.elements.ElementColorStyle
 import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
 import com.example.calculatorApp.model.elements.display.Display
+import com.example.calculatorApp.model.elements.row.Row
 import com.example.calculatorApp.testData.TestCase
 import com.example.calculatorApp.testData.TestDataElementSeq.buttonCategoryMappingBase
 import com.example.calculatorApp.testData.TestDataElementSeq.displayCategoryMappingBase
@@ -14,6 +15,8 @@ import com.example.calculatorApp.testData.TestDataElementSeq.iButtonStyleMapping
 import com.example.calculatorApp.testData.TestDataElementSeq.iButtonStyleMappingOverrides
 import com.example.calculatorApp.testData.TestDataElementSeq.iDisplayStyleMappingBase
 import com.example.calculatorApp.testData.TestDataElementSeq.iDisplayStyleMappingOverrides
+import com.example.calculatorApp.testData.TestDataElementSeq.iRowStyleMappingBase
+import com.example.calculatorApp.testData.TestDataElementSeq.rowCategoryMappingBase
 import com.example.calculatorApp.testData.expected.Expected
 import com.example.calculatorApp.testData.expected.ExpectedElement
 import com.example.calculatorApp.testData.input.Input
@@ -71,6 +74,24 @@ object TestArgumentsCalculatorElement : TestArguments {
                     background = background,
                     foreground = foreground,
                     category = category,
+                )
+            )
+        }
+
+    fun provideRowTestCases(rows: Sequence<Row>): Sequence<TestCase<Input, Expected>> =
+        provideElementTestCases(
+            elements = rows,
+            categoryMap = buildElementCategoriesMap(rowCategoryMappingBase),
+            colorMap = buildElementColorsMap(iRowStyleMappingBase)
+        ) { row, category, background, foreground ->
+
+            TestCase(
+                InputElement.Row(element = row),
+                ExpectedElement.Row(
+                    background = background,
+                    foreground = foreground,
+                    category = category,
+                    buttonData = row.buttons,
                 )
             )
         }
