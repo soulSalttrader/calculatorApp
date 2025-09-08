@@ -1,15 +1,16 @@
 package com.example.calculatorApp.model.elements.row
 
-import com.example.calculatorApp.arguments.TestArgumentsCalculatorElement.provideMappedTestData
+import com.example.calculatorApp.arguments.TestArgumentsCalculatorElement.provideRowTestCases
 import com.example.calculatorApp.model.elements.ElementCategoryStyleCollectionImpl
 import com.example.calculatorApp.model.elements.ElementColorStyle
 import com.example.calculatorApp.model.elements.button.ButtonData
 import com.example.calculatorApp.model.styles.StylesRow
 import com.example.calculatorApp.testData.TestCase
-import com.example.calculatorApp.testData.TestDataElementExpectedMap.standardExpectedMapTest
 import com.example.calculatorApp.testData.TestDataElementSeq.rowsStandardTest
 import com.example.calculatorApp.testData.expected.Expected
 import com.example.calculatorApp.testData.expected.ExpectedElement
+import com.example.calculatorApp.testData.input.Input
+import com.example.calculatorApp.testData.input.InputElement
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
 import io.kotest.matchers.shouldBe
@@ -25,21 +26,28 @@ class RowCalculatorStandardTest {
     inner class GetCategory {
 
         // Arrange:
-        private fun provideArguments(): Stream<Row> = rowsStandardTest.asStream()
+        private fun provideArguments(): Stream<TestCase<Input, Expected>> =
+            provideRowTestCases(rowsStandardTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
-        fun `should get the right category for each standard row`(row: RowCalculatorStandard) {
+        fun `should get the right category for each standard row`(
+            testData: TestCase<InputElement.Row, ExpectedElement.Row>
+        ) {
             // Act & Assert: Check if the row's category matches the expected category
-            RowCategory.Standard shouldBe row.getCategory()
+            testData.input.element.getCategory() shouldBe testData.expected.category
         }
 
         @ParameterizedTest
         @MethodSource("provideArguments")
-        fun `should throw exception when category is not found`(row: RowCalculatorStandard) {
+        fun `should throw exception when category is not found`(
+            testData: TestCase<InputElement.Row, ExpectedElement.Row>
+        ) {
             // Arrange: Create an empty style collection (default is empty)
             val emptyStyleCollection = ElementCategoryStyleCollectionImpl<ElementColorStyle>()
             // Act & Assert: Call getBackgroundColor, which internally calls getStyle and should throw an exception
+            val row = testData.input.element
+
             row.let {
                 val exception = shouldThrow<IllegalArgumentException> {
                     row.getBackgroundColor(emptyStyleCollection)
@@ -54,18 +62,18 @@ class RowCalculatorStandardTest {
     inner class GetBackgroundColor {
 
         // Arrange:
-        private fun provideArguments(): Stream<TestCase<Row, Expected>> =
-            provideMappedTestData(rowsStandardTest, standardExpectedMapTest).asStream()
+        private fun provideArguments(): Stream<TestCase<Input, Expected>> =
+            provideRowTestCases(rowsStandardTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should get the right backgroundColor for each standard row in iRowStyle`(
-            testData: TestCase<Row, ExpectedElement.Row>
+            testData: TestCase<InputElement.Row, ExpectedElement.Row>
         ) {
             // Arrange:
             val style = StylesRow.iRowStyle
             // Act:
-            val actualColor = testData.input.getBackgroundColor(style)
+            val actualColor = testData.input.element.getBackgroundColor(style)
             // Assert:
             actualColor shouldBe (testData.expected).background
         }
@@ -74,18 +82,18 @@ class RowCalculatorStandardTest {
     @Nested
     inner class GetForegroundColor {
 
-        private fun provideArguments(): Stream<TestCase<Row, Expected>> =
-            provideMappedTestData(rowsStandardTest, standardExpectedMapTest).asStream()
+        private fun provideArguments(): Stream<TestCase<Input, Expected>> =
+            provideRowTestCases(rowsStandardTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should get the right foreground color for each standard row in iRowStyle`(
-            testData: TestCase<Row, ExpectedElement.Row>
+            testData: TestCase<InputElement.Row, ExpectedElement.Row>
         ) {
             // Arrange:
             val style = StylesRow.iRowStyle
             // Act:
-            val actualColor = testData.input.getForegroundColor(style)
+            val actualColor = testData.input.element.getForegroundColor(style)
             // Assert:
             actualColor shouldBe (testData.expected).foreground
         }
@@ -95,16 +103,16 @@ class RowCalculatorStandardTest {
     inner class GetButtons {
 
         // Arrange:
-        private fun provideArguments(): Stream<TestCase<Row, Expected>> =
-            provideMappedTestData(rowsStandardTest, standardExpectedMapTest).asStream()
+        private fun provideArguments(): Stream<TestCase<Input, Expected>> =
+            provideRowTestCases(rowsStandardTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
         fun `should correctly map buttons to rows`(
-            testData: TestCase<Row, ExpectedElement.Row>
+            testData: TestCase<InputElement.Row, ExpectedElement.Row>
         ) {
             // Act & Assert:
-            (testData.expected).buttonData.shouldBeEqualToIgnoringFields(testData.input.buttons, ButtonData::layout)
+            (testData.expected).buttonData.shouldBeEqualToIgnoringFields((testData.input.element as Row).buttons, ButtonData::layout)
         }
     }
 }
