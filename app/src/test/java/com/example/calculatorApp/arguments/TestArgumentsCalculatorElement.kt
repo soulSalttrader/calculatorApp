@@ -75,37 +75,35 @@ object TestArgumentsCalculatorElement : TestArguments {
             )
         }
 
-    fun <E : UIElement> provideElementTestCases(
+    private fun <E : UIElement> provideElementTestCases(
         elements: Sequence<E>,
-        categoryMap: Map<UIElement, ElementCategory<ElementColorStyle>>,
-        colorMap: Map<UIElement, Pair<Color, Color>>,
+        categoryMap: Map<KClass<out E>, ElementCategory<ElementColorStyle>>,
+        colorMap: Map<KClass<out E>, Pair<Color, Color>>,
         factory: (E, ElementCategory<ElementColorStyle>, Color, Color) -> TestCase<Input, Expected>
     ): Sequence<TestCase<Input, Expected>> =
         sequence {
             elements.forEach { element ->
-                val category = categoryMap[element] ?: error("No category found for ${element.javaClass}")
-                val (background, foreground) = colorMap[element] ?: error("No colors found for ${element.javaClass}")
+                val category = categoryMap[element::class] ?: error("No category found for ${element::class}")
+                val (background, foreground) = colorMap[element::class] ?: error("No colors found for ${element ::class}")
 
-                yield(
-                    factory(element, category, background, foreground)
-                )
+                yield(factory(element, category, background, foreground))
             }
         }
 
     private fun <T, R : UIElement> buildElementCategoriesMap(
-        baseMappings: List<Pair<Sequence<R>, T>>,
-    ): Map<R, T> = buildMap {
-        baseMappings.forEach { (elements, value) ->
-            putAll(elements.associateWith { value })
+        baseMappings: List<Pair<Sequence<KClass<out R>>, T>>,
+    ): Map<KClass<out R>, T> = buildMap {
+        baseMappings.forEach { (classes, value) ->
+            putAll(classes.associateWith { value })
         }
     }
 
     private fun <T, R : UIElement> buildElementColorsMap(
-        baseMappings: List<Pair<Sequence<R>, T>>,
-        overrides: Map<out R, T> = emptyMap()
-    ): Map<R, T> = buildMap {
-        baseMappings.forEach { (elements, value) ->
-            putAll(elements.associateWith { value })
+        baseMappings: List<Pair<Sequence<KClass<out R>>, T>>,
+        overrides: Map<KClass<out R>, T> = emptyMap()
+    ): Map<KClass<out R>, T> = buildMap {
+        baseMappings.forEach { (classes, value) ->
+            putAll(classes.associateWith { value })
         }
         putAll(overrides)
     }
