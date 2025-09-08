@@ -27,7 +27,7 @@ import com.example.calculatorApp.ui.theme.White
 import com.example.calculatorApp.utils.TestUtils.provideSequenceOfSingletons
 import kotlin.reflect.KClass
 
-object TestDataElementSeq {
+object TestDataElement {
 
     // Buttons
     val buttonsBinaryTest = provideSequenceOfSingletons(ButtonCalculatorBinary::class)

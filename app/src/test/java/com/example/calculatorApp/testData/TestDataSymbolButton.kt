@@ -6,10 +6,10 @@ import com.example.calculatorApp.domain.ast.OperatorParenthesis
 import com.example.calculatorApp.domain.ast.OperatorUnary
 import com.example.calculatorApp.model.symbols.SymbolButton
 import com.example.calculatorApp.model.symbols.SymbolCategory
-import com.example.calculatorApp.testData.TestDataElementSeq.operatorsBinaryTest
-import com.example.calculatorApp.testData.TestDataElementSeq.operatorsParenthesisTest
-import com.example.calculatorApp.testData.TestDataElementSeq.operatorsUnaryPrefixTest
-import com.example.calculatorApp.testData.TestDataElementSeq.operatorsUnarySuffixTest
+import com.example.calculatorApp.testData.TestDataElement.operatorsBinaryTest
+import com.example.calculatorApp.testData.TestDataElement.operatorsParenthesisTest
+import com.example.calculatorApp.testData.TestDataElement.operatorsUnaryPrefixTest
+import com.example.calculatorApp.testData.TestDataElement.operatorsUnarySuffixTest
 
 object TestDataSymbolButton {
 

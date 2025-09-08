@@ -7,7 +7,7 @@ import com.example.calculatorApp.model.elements.ElementColorStyleImpl
 import com.example.calculatorApp.model.elements.display.Display
 import com.example.calculatorApp.model.elements.display.DisplayCalculatorInput
 import com.example.calculatorApp.model.styles.StylesDisplay
-import com.example.calculatorApp.testData.TestDataElementSeq.displaysInputsTest
+import com.example.calculatorApp.testData.TestDataElement.displaysInputsTest
 import com.example.calculatorApp.ui.theme.Black
 import com.example.calculatorApp.ui.theme.White
 import org.junit.jupiter.params.provider.Arguments

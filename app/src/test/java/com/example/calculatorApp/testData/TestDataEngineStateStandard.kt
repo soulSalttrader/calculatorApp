@@ -12,7 +12,7 @@ data class TestDataEngineStateStandard(
     val lastOperand: String = SymbolButton.ZERO.label,
     val buttonBinary: Button = ButtonCalculatorBinary.Addition,
     val buttonUnary: Button = ButtonCalculatorUnary.Sign,
-    val buttonControls: Sequence<Button> = TestDataElementSeq.buttonsControlsTest,
+    val buttonControls: Sequence<Button> = TestDataElement.buttonsControlsTest,
     val buttonNumber: Button = ButtonCalculatorNumber.Three,
 ) {
     fun expectedSign(): Map<String, String> = mapOf(

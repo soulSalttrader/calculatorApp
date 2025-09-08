@@ -2,13 +2,13 @@ package com.example.calculatorApp.domain.ast
 
 import com.example.calculatorApp.arguments.TestArgumentsTokenizer.provideTokenizerTestCases
 import com.example.calculatorApp.testData.TestCase
-import com.example.calculatorApp.testData.TestDataElementSeq.buttonsNumbersTest
-import com.example.calculatorApp.testData.TestDataElementSeq.operatorsBinaryTest
-import com.example.calculatorApp.testData.TestDataElementSeq.operatorsParenthesisTest
-import com.example.calculatorApp.testData.TestDataElementSeq.operatorsUnaryPrefixTest
-import com.example.calculatorApp.testData.TestDataElementSeq.operatorsUnarySuffixTest
-import com.example.calculatorApp.testData.TestDataTokenizerSeq.expectedMixed
-import com.example.calculatorApp.testData.TestDataTokenizerSeq.inputMixed
+import com.example.calculatorApp.testData.TestDataElement.buttonsNumbersTest
+import com.example.calculatorApp.testData.TestDataElement.operatorsBinaryTest
+import com.example.calculatorApp.testData.TestDataElement.operatorsParenthesisTest
+import com.example.calculatorApp.testData.TestDataElement.operatorsUnaryPrefixTest
+import com.example.calculatorApp.testData.TestDataElement.operatorsUnarySuffixTest
+import com.example.calculatorApp.testData.TestDataTokenizer.expectedMixed
+import com.example.calculatorApp.testData.TestDataTokenizer.inputMixed
 import com.example.calculatorApp.testData.expected.Expected
 import com.example.calculatorApp.testData.expected.ExpectedToken
 import com.example.calculatorApp.testData.input.Input

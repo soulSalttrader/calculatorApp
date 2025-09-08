@@ -6,7 +6,7 @@ import com.example.calculatorApp.testData.TestDataEngineMathStandardSign
 import com.example.calculatorApp.domain.BinaryOperation
 import com.example.calculatorApp.domain.ast.Operator
 import com.example.calculatorApp.domain.ast.OperatorBinary
-import com.example.calculatorApp.testData.TestDataElementSeq.operatorsAllTest
+import com.example.calculatorApp.testData.TestDataElement.operatorsAllTest
 
 object TestArgumentsEngineMath {
 

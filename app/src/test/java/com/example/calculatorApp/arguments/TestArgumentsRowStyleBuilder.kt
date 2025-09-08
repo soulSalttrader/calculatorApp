@@ -4,7 +4,7 @@ import com.example.calculatorApp.model.elements.ElementCategoryStyleCollection
 import com.example.calculatorApp.model.elements.ElementColorStyle
 import com.example.calculatorApp.model.elements.ElementColorStyleImpl
 import com.example.calculatorApp.model.styles.StylesRow
-import com.example.calculatorApp.testData.TestDataElementSeq.rowsStandardTest
+import com.example.calculatorApp.testData.TestDataElement.rowsStandardTest
 import com.example.calculatorApp.ui.theme.Black
 import com.example.calculatorApp.ui.theme.White
 import org.junit.jupiter.params.provider.Arguments
