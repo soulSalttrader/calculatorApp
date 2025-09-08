@@ -6,7 +6,7 @@ import com.example.calculatorApp.model.elements.ElementCategoryStyleCollectionIm
 import com.example.calculatorApp.model.elements.ElementColorStyle
 import com.example.calculatorApp.model.styles.StylesDisplay
 import com.example.calculatorApp.testData.TestCase
-import com.example.calculatorApp.testData.TestDataElementSeq.displaysInputsTest
+import com.example.calculatorApp.testData.TestDataElement.displaysInputsTest
 import com.example.calculatorApp.testData.expected.Expected
 import com.example.calculatorApp.testData.expected.ExpectedElement
 import com.example.calculatorApp.testData.input.Input

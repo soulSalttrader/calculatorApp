@@ -5,13 +5,13 @@ import com.example.calculatorApp.domain.ast.TokenizerUtils.toBinaryOperator
 import com.example.calculatorApp.domain.ast.TokenizerUtils.toParenthesisOperator
 import com.example.calculatorApp.domain.ast.TokenizerUtils.toUnaryOperator
 import com.example.calculatorApp.model.symbols.HasSymbol
-import com.example.calculatorApp.testData.TestDataElementSeq.buttonsNumbersTest
-import com.example.calculatorApp.testData.TestDataElementSeq.operatorsBinaryTest
-import com.example.calculatorApp.testData.TestDataElementSeq.operatorsParenthesisTest
-import com.example.calculatorApp.testData.TestDataElementSeq.operatorsUnaryPrefixTest
-import com.example.calculatorApp.testData.TestDataElementSeq.operatorsUnarySuffixTest
+import com.example.calculatorApp.testData.TestDataElement.buttonsNumbersTest
+import com.example.calculatorApp.testData.TestDataElement.operatorsBinaryTest
+import com.example.calculatorApp.testData.TestDataElement.operatorsParenthesisTest
+import com.example.calculatorApp.testData.TestDataElement.operatorsUnaryPrefixTest
+import com.example.calculatorApp.testData.TestDataElement.operatorsUnarySuffixTest
 
-object TestDataTokenizerSeq {
+object TestDataTokenizer {
 
     private inline fun <reified T : HasSymbol, R : Token> Sequence<T>.toTokens(
         noinline transform: (String) -> R

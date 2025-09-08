@@ -4,7 +4,7 @@ import com.example.calculatorApp.testData.TestDataParserToken
 import com.example.calculatorApp.domain.ast.Operator
 import com.example.calculatorApp.domain.ast.OperatorBinary
 import com.example.calculatorApp.domain.ast.Token
-import com.example.calculatorApp.testData.TestDataElementSeq.operatorsBinaryTest
+import com.example.calculatorApp.testData.TestDataElement.operatorsBinaryTest
 
 object TestArgumentsParserToken {
 

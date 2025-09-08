@@ -7,7 +7,7 @@ import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
-import com.example.calculatorApp.testData.TestDataElementSeq
+import com.example.calculatorApp.testData.TestDataElement
 import io.kotest.matchers.shouldBe
 import io.mockk.clearMocks
 import io.mockk.junit5.MockKExtension
@@ -37,22 +37,22 @@ class CommandFactoryStandardTest {
 
         // Arrange:
         private fun provideArithmetics(): Stream<Button> {
-            return TestDataElementSeq.buttonsBinaryTest.asStream()
+            return TestDataElement.buttonsBinaryTest.asStream()
         }
 
         // Arrange:
         private fun provideUnary(): Stream<Button> {
-            return TestDataElementSeq.buttonsUnaryTest.asStream()
+            return TestDataElement.buttonsUnaryTest.asStream()
         }
 
         // Arrange:
         private fun provideControls(): Stream<Button> {
-            return TestDataElementSeq.buttonsControlsTest.asStream()
+            return TestDataElement.buttonsControlsTest.asStream()
         }
 
         // Arrange:
         private fun provideNumbers(): Stream<Button> {
-            return TestDataElementSeq.buttonsNumbersTest.asStream()
+            return TestDataElement.buttonsNumbersTest.asStream()
         }
 
         @ParameterizedTest
