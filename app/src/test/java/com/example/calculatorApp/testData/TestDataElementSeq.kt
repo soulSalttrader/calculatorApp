@@ -17,6 +17,8 @@ import com.example.calculatorApp.model.elements.button.ButtonData
 import com.example.calculatorApp.model.elements.display.Display
 import com.example.calculatorApp.model.elements.display.DisplayCalculatorInput
 import com.example.calculatorApp.model.elements.display.DisplayCategory
+import com.example.calculatorApp.model.elements.row.RowCalculatorStandard
+import com.example.calculatorApp.model.elements.row.RowCategory
 import com.example.calculatorApp.ui.theme.Black
 import com.example.calculatorApp.ui.theme.Onyx
 import com.example.calculatorApp.ui.theme.SilverGrey
@@ -56,10 +58,21 @@ object TestDataElementSeq {
     val buttonDataControlsTest = buttonsControlsTest.map { ButtonData(it) }
     val buttonDataNumbersTest = buttonsNumbersTest.map { ButtonData(it) }
 
-//    val rowsStandardTest = provideSequenceConstructed(
-//        type = RowCalculatorStandard::class,
-//        constructorArgs = TestDataElementExpectedMap.standardExpectedMapTest,
-//    )
+    val rowsStandardClassTest = sequenceOf(
+        RowCalculatorStandard.Standard1::class,
+        RowCalculatorStandard.Standard2::class,
+        RowCalculatorStandard.Standard3::class,
+        RowCalculatorStandard.Standard4::class,
+        RowCalculatorStandard.Standard5::class,
+    )
+
+    val rowsStandardTest = sequenceOf(
+        RowCalculatorStandard.Standard1(buttonDataBinaryTest),
+        RowCalculatorStandard.Standard2(buttonDataControlsTest),
+        RowCalculatorStandard.Standard3(buttonDataNumbersTest),
+        RowCalculatorStandard.Standard4(buttonDataBinaryTest),
+        RowCalculatorStandard.Standard5(buttonDataNumbersTest),
+    )
 
     // Operators
     val operatorsBinaryTest = provideSequenceOfSingletons(OperatorBinary::class)
@@ -101,5 +114,13 @@ object TestDataElementSeq {
     @OptIn(ConceptClass::class)
     val iDisplayStyleMappingOverrides: Map<KClass<out Display>, Pair<Color, Color>> = mapOf(
         DisplayCalculatorInput.Scientific::class to Pair(Black, White),
+    )
+
+    val rowCategoryMappingBase = listOf(
+        rowsStandardClassTest to RowCategory.Standard,
+    )
+
+    val iRowStyleMappingBase = listOf(
+        rowsStandardClassTest to Pair(Black, White),
     )
 }
