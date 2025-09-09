@@ -55,7 +55,7 @@ object TestArgumentsCalculatorElementLayout : TestArguments {
             else -> throw IllegalArgumentException("Unknown elementLayout: ${elementLayout::class}")
         }
 
-    fun layoutPropertyChecks(): List<Pair<String, (ExpectedLayout.Button, ElementLayout) -> Pair<Any?, Any?>>> =
+    fun <E> layoutPropertyChecks(): List<Pair<String, (E, ElementLayout) -> Pair<Any?, Any?>>> where E: ExpectedLayout, E: ElementLayout =
         listOf(
             "alignment"  to { expected, actual -> expected.alignment to actual.alignment },
             "modifier"   to { expected, actual -> expected.modifier  to actual.modifier },
@@ -63,7 +63,7 @@ object TestArgumentsCalculatorElementLayout : TestArguments {
             "weight"     to { expected, actual -> expected.weight    to actual.weight },
         )
 
-    fun layoutTextPropertyChecks(): List<Pair<String, (ExpectedLayout.Button, ElementLayoutText) -> Pair<Any?, Any?>>> =
+    fun <E> layoutTextPropertyChecks(): List<Pair<String, (E, ElementLayoutText) -> Pair<Any?, Any?>>> where E: ExpectedLayout, E: ElementLayoutText =
         listOf(
             "alignText"  to { expected, actual -> expected.alignText  to actual.alignText },
             "sizeFont"   to { expected, actual -> expected.sizeFont   to actual.sizeFont },
