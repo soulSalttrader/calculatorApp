@@ -1,6 +1,8 @@
 package com.example.calculatorApp.arguments
 
 import com.example.calculatorApp.model.layout.ElementLayout
+import com.example.calculatorApp.model.layout.ElementLayoutPositioning
+import com.example.calculatorApp.model.layout.ElementLayoutText
 import com.example.calculatorApp.model.layout.button.ButtonLayoutRegular
 import com.example.calculatorApp.model.layout.button.ButtonLayoutWide
 import com.example.calculatorApp.model.layout.display.DisplayLayoutInput
@@ -52,4 +54,26 @@ object TestArgumentsButtonLayout : TestArguments {
 
             else -> throw IllegalArgumentException("Unknown elementLayout: ${elementLayout::class}")
         }
+
+    fun layoutPropertyChecks(): List<Pair<String, (ExpectedLayout.Button, ElementLayout) -> Pair<Any?, Any?>>> =
+        listOf(
+            "alignment"  to { expected, actual -> expected.alignment to actual.alignment },
+            "modifier"   to { expected, actual -> expected.modifier  to actual.modifier },
+            "shape"      to { expected, actual -> expected.shape     to actual.shape },
+            "weight"     to { expected, actual -> expected.weight    to actual.weight },
+        )
+
+    fun layoutTextPropertyChecks(): List<Pair<String, (ExpectedLayout.Button, ElementLayoutText) -> Pair<Any?, Any?>>> =
+        listOf(
+            "alignText"  to { expected, actual -> expected.alignText  to actual.alignText },
+            "sizeFont"   to { expected, actual -> expected.sizeFont   to actual.sizeFont },
+            "weightFont" to { expected, actual -> expected.weightFont to actual.weightFont },
+        )
+
+    fun layoutPositioningPropertyChecks(): List<Pair<String, (ExpectedLayout.Row, ElementLayoutPositioning) -> Pair<Any?, Any?>>> =
+        listOf(
+            "alignmentVertical"     to { expected, actual -> expected.alignmentVertical     to actual.alignmentVertical },
+            "arrangementHorizontal" to { expected, actual -> expected.arrangementHorizontal to actual.arrangementHorizontal },
+            "arrangementVertical"   to { expected, actual -> expected.arrangementVertical   to actual.arrangementVertical },
+        )
 }
