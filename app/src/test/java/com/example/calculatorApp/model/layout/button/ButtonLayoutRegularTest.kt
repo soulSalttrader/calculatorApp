@@ -3,6 +3,7 @@ package com.example.calculatorApp.model.layout.button
 import com.example.calculatorApp.arguments.TestArgumentsCalculatorElementLayout.layoutPropertyChecks
 import com.example.calculatorApp.arguments.TestArgumentsCalculatorElementLayout.layoutTextPropertyChecks
 import com.example.calculatorApp.arguments.TestArgumentsCalculatorElementLayout.provideElementLayoutTestCases
+import com.example.calculatorApp.model.layout.ElementLayout
 import com.example.calculatorApp.testData.TestCase
 import com.example.calculatorApp.testData.expected.Expected
 import com.example.calculatorApp.testData.expected.ExpectedLayout
@@ -33,8 +34,8 @@ class ButtonLayoutRegularTest {
             // Arrange:
             val actual = testData.input.elementLayout
             val expected = testData.expected
-            val layoutChecks = layoutPropertyChecks()
-            val layoutTextChecks = layoutTextPropertyChecks()
+            val layoutChecks = layoutPropertyChecks<ExpectedLayout.Button>()
+            val layoutTextChecks = layoutTextPropertyChecks<ExpectedLayout.Button>()
 
             // Act & Assert:
             layoutChecks.forEach { (propertyName, extractor) ->
