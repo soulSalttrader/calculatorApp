@@ -17,7 +17,7 @@ import com.example.calculatorApp.testData.expected.ExpectedLayout
 import com.example.calculatorApp.testData.input.Input
 import com.example.calculatorApp.testData.input.InputLayout
 
-object TestArgumentsButtonLayout : TestArguments {
+object TestArgumentsCalculatorElementLayout : TestArguments {
 
     fun provideElementLayoutTestCases(
         elementLayout: ElementLayout,
