@@ -1,5 +1,6 @@
 package com.example.calculatorApp.domain
 
+import com.example.calculatorApp.domain.ast.BinaryOperation
 import com.example.calculatorApp.domain.ast.EvaluationResult
 import com.example.calculatorApp.domain.ast.Operator
 import com.example.calculatorApp.domain.ast.OperatorBinary
@@ -12,7 +13,7 @@ class EngineMathStandard : EngineMath {
     ): EvaluationResult {
         val normalizedLeft = EvaluationResult.DoubleResult(leftOperand)
         val normalizedRight = EvaluationResult.DoubleResult(rightOperand)
-        val result = operation(normalizedLeft, normalizedRight)
+        val result = operation.apply(normalizedLeft, normalizedRight)
 
         return EvaluationResult.normalizeResult(result.value.toDouble())
     }
