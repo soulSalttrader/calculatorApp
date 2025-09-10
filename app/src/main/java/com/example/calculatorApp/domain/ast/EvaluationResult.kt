@@ -1,7 +1,6 @@
 package com.example.calculatorApp.domain.ast
 
-sealed interface EvaluationResult {
-    val value: Number
+sealed interface EvaluationResult : NumericResult {
 
     data class IntegerResult(override val value: Long) : EvaluationResult
     data class DoubleResult(override val value: Double) : EvaluationResult
