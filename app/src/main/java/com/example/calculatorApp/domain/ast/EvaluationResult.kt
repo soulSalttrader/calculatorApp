@@ -11,32 +11,4 @@ sealed interface EvaluationResult : NumericResult {
             else -> DoubleResult(expression)
         }
     }
-
-    operator fun plus(r: EvaluationResult): EvaluationResult {
-        val expression = this.value.toDouble() + r.value.toDouble()
-
-        return normalizeResult(expression)
-    }
-
-    operator fun minus(r: EvaluationResult): EvaluationResult {
-        val expression = this.value.toDouble() - r.value.toDouble()
-
-        return normalizeResult(expression)
-    }
-
-    operator fun times(r: EvaluationResult): EvaluationResult {
-        val expression = this.value.toDouble() * r.value.toDouble()
-
-        return normalizeResult(expression)
-    }
-
-    operator fun div(r: EvaluationResult): EvaluationResult {
-        val expression = this.value.toDouble().safeDiv(r.value.toDouble())
-
-        return normalizeResult(expression)
-    }
-
-    private fun Double.safeDiv(right: Double): Double {
-        return if (right != 0.0) this / right else Double.NaN
-    }
 }
