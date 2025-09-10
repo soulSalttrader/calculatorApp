@@ -1,9 +1,8 @@
 package com.example.calculatorApp.domain
 
+import com.example.calculatorApp.domain.ast.BinaryOperation
 import com.example.calculatorApp.domain.ast.EvaluationResult
 import com.example.calculatorApp.domain.ast.Operator
-
-typealias BinaryOperation = (EvaluationResult, EvaluationResult) -> EvaluationResult
 
 interface EngineMath : Engine {
     fun evalBinary(leftOperand: Double, rightOperand: Double, operation: BinaryOperation): EvaluationResult
