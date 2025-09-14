@@ -1,37 +1,26 @@
 package com.example.calculatorApp.testData
 
-import com.example.calculatorApp.domain.BinaryOperation
-import com.example.calculatorApp.domain.ast.EvaluationResult
-import com.example.calculatorApp.domain.ast.EvaluationResult.Companion.normalizeResult
+import com.example.calculatorApp.domain.ast.BinaryOperation
+import com.example.calculatorApp.domain.ast.BinaryOperations
+import com.example.calculatorApp.testData.expected.ExpectedEngineMathEval
+import com.example.calculatorApp.testData.expected.ExpectedEngineMathResult
 
-data class TestDataEngineMathStandardBinary(
-    val leftOperand: Double,
-    val rightOperand: Double,
-    val operation: BinaryOperation,
-) {
+object TestDataEngineMathStandardBinary {
 
-    fun expectedResult(operation: BinaryOperation): EvaluationResult {
-        return when (operation) {
-            ADDITION -> expectedAddition()
-            SUBTRACTION -> expectedSubtraction()
-            MULTIPLICATION -> expectedMultiplication()
-            DIVISION -> expectedDivision()
+     fun binaryOperationsTest(): Sequence<BinaryOperation> = sequenceOf(
+        BinaryOperations.Add,
+        BinaryOperations.Sub,
+        BinaryOperations.Mul,
+        BinaryOperations.Div,
+    )
 
-            else -> throw IllegalArgumentException("Unknown operation: $operation")
-        }
-    }
+    val addTest = ExpectedEngineMathEval { l, r -> ExpectedEngineMathResult.normalizeResultTest(l.value.toDouble() + r.value.toDouble()) }
+    val subTest = ExpectedEngineMathEval { l, r -> ExpectedEngineMathResult.normalizeResultTest(l.value.toDouble() - r.value.toDouble()) }
+    val mulTest = ExpectedEngineMathEval { l, r -> ExpectedEngineMathResult.normalizeResultTest(l.value.toDouble() * r.value.toDouble()) }
 
-    fun expectedAddition() = normalizeResult(leftOperand + rightOperand)
-    fun expectedSubtraction() = normalizeResult(leftOperand - rightOperand)
-    fun expectedMultiplication() = normalizeResult(leftOperand * rightOperand)
-
-    fun expectedDivision() = normalizeResult(leftOperand / rightOperand)
-        .takeUnless { rightOperand == 0.0 } ?: EvaluationResult.DoubleResult(Double.NaN)
-
-    companion object {
-        val ADDITION: BinaryOperation = { a, b -> a + b }
-        val SUBTRACTION: BinaryOperation = { a, b -> a - b }
-        val MULTIPLICATION: BinaryOperation = { a, b -> a * b }
-        val DIVISION: BinaryOperation = { a, b -> if (b.value != 0.0) a / b else EvaluationResult.DoubleResult(Double.NaN) }
+    val divTest = ExpectedEngineMathEval { l, r ->
+        val denominator = r.value.toDouble()
+        require(denominator != 0.0) { "Division by zero" }
+        ExpectedEngineMathResult.normalizeResultTest(l.value.toDouble() / denominator)
     }
 }
