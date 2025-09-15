@@ -59,4 +59,21 @@ object TestDataEngineMathStandardBinary {
     private fun BinaryOperation.toTestEval(
         mapping: Map<BinaryOperation, ExpectedEngineMathEval> = operationTestMap,
     ): ExpectedEngineMathEval = mapping[this] ?: error("Unknown operation: $this")
+
+    enum class OperandCategoryTest { NEG_INT, NEG_DEC, ZERO, POS_INT, POS_DEC }
+
+    private val valuesByOperandCategoryTest: Map<OperandCategoryTest, List<Number>> = mapOf(
+        OperandCategoryTest.NEG_INT to listOf(-3),
+        OperandCategoryTest.NEG_DEC to listOf(-3.5),
+        OperandCategoryTest.ZERO   to listOf(0.0),
+        OperandCategoryTest.POS_INT to listOf(3),
+        OperandCategoryTest.POS_DEC to listOf(3.5),
+    )
+
+    fun provideOperandsTest(mapping: Map<OperandCategoryTest, List<Number>> = valuesByOperandCategoryTest): Sequence<Pair<Number, Number>> =
+        mapping.values.asSequence().flatten().flatMap { left ->
+            mapping.values.asSequence().flatten().map { right ->
+                        left to right
+            }
+        }
 }
