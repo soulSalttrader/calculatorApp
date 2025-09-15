@@ -1,32 +1,45 @@
 package com.example.calculatorApp.arguments
 
-import com.example.calculatorApp.testData.TestDataEngineMathStandardBinary
-import com.example.calculatorApp.testData.TestDataEngineMathStandardPercent
-import com.example.calculatorApp.testData.TestDataEngineMathStandardSign
-import com.example.calculatorApp.domain.BinaryOperation
+import com.example.calculatorApp.domain.ast.BinaryOperation
 import com.example.calculatorApp.domain.ast.Operator
 import com.example.calculatorApp.domain.ast.OperatorBinary
+import com.example.calculatorApp.testData.TestCase
 import com.example.calculatorApp.testData.TestDataElement.operatorsAllTest
+import com.example.calculatorApp.testData.TestDataEngineMathStandardBinary.binaryOperationsTest
+import com.example.calculatorApp.testData.TestDataEngineMathStandardBinary.engineMathBinaryExpected
+import com.example.calculatorApp.testData.TestDataEngineMathStandardBinary.engineMathBinaryInput
+import com.example.calculatorApp.testData.TestDataEngineMathStandardPercent
+import com.example.calculatorApp.testData.TestDataEngineMathStandardSign
+import com.example.calculatorApp.testData.expected.Expected
+import com.example.calculatorApp.testData.expected.ExpectedEngineMath
+import com.example.calculatorApp.testData.input.Input
+import com.example.calculatorApp.testData.input.InputEngineMath
 
 object TestArgumentsEngineMath {
 
-    fun provideBinary(
-        operations: Sequence<BinaryOperation> = binaryOperations,
+    fun provideEngineMathBinaryTestCases(
+        operations: Sequence<BinaryOperation> = binaryOperationsTest(),
         operands: Sequence<Pair<Double, Double>> = testOperands,
-    ): Sequence<TestDataEngineMathStandardBinary>  =
+        factoryInput: (Double, Double, BinaryOperation) -> InputEngineMath.Binary = ::engineMathBinaryInput,
+        factoryExpected: (Double, Double, BinaryOperation) -> ExpectedEngineMath.Binary = ::engineMathBinaryExpected
+    ): Sequence<TestCase<Input, Expected>> =
         sequence {
             operations.forEach { operation ->
                 operands.forEach { (operand, previousNumber) ->
-                    yield(TestDataEngineMathStandardBinary(operand, previousNumber, operation))
+                    yield(
+                        TestCase(
+                            input = factoryInput(operand, previousNumber, operation),
+                            expected = factoryExpected(operand, previousNumber, operation)
+                        )
+                    )
                 }
             }
         }
 
-
     fun providePercent(
         operators: Sequence<Operator> = testOperators,
         operands: Sequence<Pair<Double, Double>> = testOperands,
-    ) : Sequence<TestDataEngineMathStandardPercent>  =
+    ): Sequence<TestDataEngineMathStandardPercent> =
         sequence {
             operators.forEach { operator ->
                 operands.forEach { (operand, previousNumber) ->
@@ -38,20 +51,12 @@ object TestArgumentsEngineMath {
 
     fun provideSign(
         operands: Sequence<Double> = testOperands.map { it.first }.distinct(),
-    ): Sequence<TestDataEngineMathStandardSign>  =
+    ): Sequence<TestDataEngineMathStandardSign> =
         sequence {
             operands.forEach { operator ->
                 yield(TestDataEngineMathStandardSign(operator))
             }
         }
-
-
-    private val binaryOperations: Sequence<BinaryOperation> = sequenceOf(
-        TestDataEngineMathStandardBinary.ADDITION,
-        TestDataEngineMathStandardBinary.SUBTRACTION,
-        TestDataEngineMathStandardBinary.MULTIPLICATION,
-        TestDataEngineMathStandardBinary.DIVISION,
-    )
 
     // Skipping Subtraction and Division to avoid redundant test cases.
     // Addition and Multiplication cover the same result patterns,
