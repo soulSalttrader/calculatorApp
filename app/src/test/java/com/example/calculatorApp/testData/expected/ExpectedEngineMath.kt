@@ -8,4 +8,14 @@ sealed interface ExpectedEngineMath : Expected {
         private val delegateExpected: NumericResult
     ) : ExpectedEngineMath,
         NumericResult by delegateExpected
+
+    data class Sign(
+        private val delegateExpected: NumericResult
+    ) : ExpectedEngineMath,
+        NumericResult by delegateExpected
+
+    data class Percentage(
+        private val delegateExpected: NumericResult
+    ) : ExpectedEngineMath,
+        NumericResult by delegateExpected
 }
