@@ -9,6 +9,7 @@ interface ExpectedEngineMathResult : NumericResult {
     companion object {
         fun normalizeResultTest(n: Number): ExpectedEngineMathResult =
             when (n) {
+                is Int -> IntegerResultTest(n.toLong())
                 is Long -> IntegerResultTest(n)
                 is Double -> if (n % 1.0 == 0.0) IntegerResultTest(n.toLong()) else DoubleResultTest(n)
                 else -> error("Unsupported type: ${n::class}")
