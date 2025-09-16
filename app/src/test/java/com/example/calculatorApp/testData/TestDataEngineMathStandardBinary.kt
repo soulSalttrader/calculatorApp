@@ -37,15 +37,15 @@ object TestDataEngineMathStandardBinary {
     )
 
     fun engineMathBinaryExpected(
-        left: Number,
-        right: Number,
+        operand: Number,
+        previousNumber: Number,
         operation: BinaryOperation,
     ): ExpectedEngineMath.Binary {
         val eval = operation.toTestEval()
 
         val delegate = eval.applyTest(
-            ExpectedEngineMathResult.DoubleResultTest(left.toDouble()),
-            ExpectedEngineMathResult.DoubleResultTest(right.toDouble())
+            ExpectedEngineMathResult.DoubleResultTest(operand.toDouble()),
+            ExpectedEngineMathResult.DoubleResultTest(previousNumber.toDouble())
         ) as ExpectedEngineMathResult
 
         return ExpectedEngineMath.Binary(delegate)
