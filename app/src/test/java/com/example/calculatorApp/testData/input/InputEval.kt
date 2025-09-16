@@ -18,6 +18,6 @@ sealed interface InputEval {
     }
 
     interface Sign : InputEval {
-        val operand: Double
+        val operand: Number
     }
 }
