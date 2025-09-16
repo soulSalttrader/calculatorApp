@@ -25,27 +25,27 @@ object TestDataEngineMathStandardBinary {
     }
 
     fun engineMathBinaryInput(
-        operand: Double,
-        previousNumber: Double,
+        operand: Number,
+        previousNumber: Number,
         operation: BinaryOperation,
     ): InputEngineMath.Binary = InputEngineMath.Binary(
         object : InputEval.Binary {
-            override val leftOperand: Double = operand
-            override val rightOperand: Double = previousNumber
+            override val leftOperand: Double = operand.toDouble()
+            override val rightOperand: Double = previousNumber.toDouble()
             override val operation: BinaryOperation = operation
         }
     )
 
     fun engineMathBinaryExpected(
-        left: Double,
-        right: Double,
+        left: Number,
+        right: Number,
         operation: BinaryOperation,
     ): ExpectedEngineMath.Binary {
         val eval = operation.toTestEval()
 
         val delegate = eval.applyTest(
-            ExpectedEngineMathResult.DoubleResultTest(left),
-            ExpectedEngineMathResult.DoubleResultTest(right)
+            ExpectedEngineMathResult.DoubleResultTest(left.toDouble()),
+            ExpectedEngineMathResult.DoubleResultTest(right.toDouble())
         ) as ExpectedEngineMathResult
 
         return ExpectedEngineMath.Binary(delegate)
