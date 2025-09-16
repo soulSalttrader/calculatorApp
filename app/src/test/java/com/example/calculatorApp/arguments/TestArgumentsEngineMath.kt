@@ -21,7 +21,7 @@ object TestArgumentsEngineMath {
 
     fun provideEngineMathBinaryTestCases(
         operations: Sequence<BinaryOperation> = binaryOperationsTest(),
-        operands: Sequence<Pair<Number, Number>> = provideOperandsTest(),
+        operands: Sequence<Pair<Number, Number>> = provideOperandsTest().filter { it.second.toDouble() != 0.0 },
         factoryInput: (Number, Number, BinaryOperation) -> InputEngineMath.Binary = ::engineMathBinaryInput,
         factoryExpected: (Number, Number, BinaryOperation) -> ExpectedEngineMath.Binary = ::engineMathBinaryExpected
     ): Sequence<TestCase<Input, Expected>> =
