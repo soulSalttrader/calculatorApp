@@ -8,8 +8,10 @@ import com.example.calculatorApp.testData.TestDataElement.operatorsAllTest
 import com.example.calculatorApp.testData.TestDataEngineMathStandardBinary.binaryOperationsTest
 import com.example.calculatorApp.testData.TestDataEngineMathStandardBinary.engineMathBinaryExpected
 import com.example.calculatorApp.testData.TestDataEngineMathStandardBinary.engineMathBinaryInput
+import com.example.calculatorApp.testData.TestDataEngineMathStandardBinary.provideOperandsTest
 import com.example.calculatorApp.testData.TestDataEngineMathStandardPercent
-import com.example.calculatorApp.testData.TestDataEngineMathStandardSign
+import com.example.calculatorApp.testData.TestDataEngineMathStandardSign.engineMathSignExpected
+import com.example.calculatorApp.testData.TestDataEngineMathStandardSign.engineMathSignInput
 import com.example.calculatorApp.testData.expected.Expected
 import com.example.calculatorApp.testData.expected.ExpectedEngineMath
 import com.example.calculatorApp.testData.input.Input
@@ -48,13 +50,19 @@ object TestArgumentsEngineMath {
             }
         }
 
-
-    fun provideSign(
-        operands: Sequence<Double> = testOperands.map { it.first }.distinct(),
-    ): Sequence<TestDataEngineMathStandardSign> =
+    fun provideEngineMathSignTestCases(
+        operands: Sequence<Pair<Number, Number>> = provideOperandsTest(),
+        factoryInput: (Number) -> InputEngineMath.Sign = ::engineMathSignInput,
+        factoryExpected: (Number) -> ExpectedEngineMath.Sign = ::engineMathSignExpected,
+    ): Sequence<TestCase<Input, Expected>> =
         sequence {
-            operands.forEach { operator ->
-                yield(TestDataEngineMathStandardSign(operator))
+            operands.forEach { (operand, _) ->
+                yield(
+                    TestCase(
+                        factoryInput(operand),
+                        factoryExpected(operand)
+                    )
+                )
             }
         }
 
