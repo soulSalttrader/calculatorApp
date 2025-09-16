@@ -35,4 +35,12 @@ object TestDataEngineMathStandardPercent {
     // making Subtraction and Division unnecessary for efficiency.
     val testOperators = operatorsAllTest
         .filter { it != OperatorBinary.Subtraction && it != OperatorBinary.Division }
+
+    fun Number.isWholeNonZero() = toDouble().let { it % 1.0 == 0.0 && it != 0.0 }
+    fun Number.isDecimalNonZero() = toDouble().let { it % 1.0 != 0.0 && it != 0.0 }
+    fun Number.isZero() = toDouble() == 0.0
+
+    fun InputEngineMath.Percentage.hasWholeNonZeroOperands() = operand.isWholeNonZero()
+    fun InputEngineMath.Percentage.hasDecimalNonZeroOperands() = operand.isDecimalNonZero()
+    fun InputEngineMath.Percentage.hasZerosOperands() = operand.isZero() || previousNumber?.isZero() ?: false
 }
