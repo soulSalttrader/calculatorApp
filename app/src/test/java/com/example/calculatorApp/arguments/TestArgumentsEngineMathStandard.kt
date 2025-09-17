@@ -17,7 +17,7 @@ import com.example.calculatorApp.testData.expected.ExpectedEngineMath
 import com.example.calculatorApp.testData.input.Input
 import com.example.calculatorApp.testData.input.InputEngineMath
 
-object TestArgumentsEngineMath {
+object TestArgumentsEngineMathStandard {
 
     fun provideEngineMathBinaryTestCases(
         operations: Sequence<BinaryOperation> = binaryOperationsTest(),
