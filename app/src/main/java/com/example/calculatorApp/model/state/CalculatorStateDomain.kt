@@ -10,27 +10,31 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class CalculatorStateDomain(
-    @IgnoredOnParcel val expression: List<Token> = emptyList(),
-    val lastOperand: String = SymbolButton.ZERO.label,
-    val lastResult: String? = null,
-    @IgnoredOnParcel val lastOperator: Operator? = null,
-    val cachedOperand: String? = null,
-    @IgnoredOnParcel val activeButton: Button? = null,
-    val isComputed: Boolean = false,
-    val hasError: Boolean = false,
-    val errorMessage: String? = null,
-) : Parcelable {
+    @IgnoredOnParcel override val expression: List<Token> = emptyList(),
+    override val lastOperand: String = SymbolButton.ZERO.label,
+    @IgnoredOnParcel override val activeButton: Button? = null,
+
+    @IgnoredOnParcel override val lastOperator: Operator? = null,
+
+    override val lastResult: String? = null,
+    override val cachedOperand: String? = null,
+    override val isComputed: Boolean = false,
+
+    override val hasError: Boolean = false,
+    override val errorMessage: String? = null,
+) : Parcelable,
+    HasExpression,
+    HasInteraction,
+    HasResult,
+    HasError
+{
     fun modifyWith(
         vararg transformations: Pair<() -> Boolean, CalculatorStateDomain.() -> CalculatorStateDomain>,
         errorMessage: String? = null,
-    ): CalculatorStateDomain {
-        return try {
-            transformations
-                .firstOrNull { it.first() }
-                ?.second?.invoke(this)
+    ): CalculatorStateDomain =
+        runCatching {
+            transformations.firstOrNull { it.first() }
+                ?.second(this)
                 ?: this
-        } catch (e: Exception) {
-            this.copy(hasError = true, errorMessage = errorMessage ?: e.message)
-        }
-    }
+        }.getOrElse { e -> this.copy(hasError = true, errorMessage = errorMessage ?: e.message) }
 }
