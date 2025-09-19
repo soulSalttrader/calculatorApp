@@ -22,12 +22,8 @@ data class CalculatorStateDomain(
 
     override val hasError: Boolean = false,
     override val errorMessage: String? = null,
-) : Parcelable,
-    HasExpression,
-    HasInteraction,
-    HasResult,
-    HasError
-{
+) : Parcelable, HasState {
+
     fun modifyWith(
         vararg transformations: Pair<() -> Boolean, CalculatorStateDomain.() -> CalculatorStateDomain>,
         errorMessage: String? = null,
