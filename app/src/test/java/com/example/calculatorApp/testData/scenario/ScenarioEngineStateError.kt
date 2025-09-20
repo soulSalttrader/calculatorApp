@@ -6,6 +6,7 @@ import com.example.calculatorApp.testData.expected.ExpectedEngineStateDelegate
 import com.example.calculatorApp.testData.input.InputEngineState
 import com.example.calculatorApp.testData.input.InputEngineStateDelegate
 import com.example.calculatorApp.testData.scenario.context.ContextEngineState
+import com.example.calculatorApp.testData.scenario.context.requireContext
 
 object ScenarioEngineStateError : ScenarioEngineState {
 
@@ -19,27 +20,17 @@ object ScenarioEngineStateError : ScenarioEngineState {
         hasState.hasError, hasState.errorMessage
     )
 
-    fun engineStateBinaryInputError(context: ContextEngineState): InputEngineState.Binary {
-        require(context is ContextEngineState.Error) {
-            "engineStateBinaryInputError requires ContextEngineState.Error but got ${context::class.simpleName}"
-        }
-
-        return InputEngineState.Binary(
+    fun engineStateBinaryInputError(context: ContextEngineState): InputEngineState.Binary =
+        InputEngineState.Binary(
             object : InputEngineStateDelegate.Binary {
-                override val context: ContextEngineState.Base = context
+                override val context: ContextEngineState.Base = context.requireContext<ContextEngineState.Error>()
             }
         )
-    }
 
-    fun engineStateBinaryExpectedError(context: ContextEngineState): ExpectedEngineState.Binary {
-        require(context is ContextEngineState.Error) {
-            "engineStateBinaryExpectedError requires ContextEngineState.Error but got ${context::class.simpleName}"
-        }
-
-        return ExpectedEngineState.Binary(
+    fun engineStateBinaryExpectedError(context: ContextEngineState): ExpectedEngineState.Binary =
+        ExpectedEngineState.Binary(
             object : ExpectedEngineStateDelegate.Binary {
-                override val context: ContextEngineState.Base = context
+                override val context: ContextEngineState.Base = context.requireContext<ContextEngineState.Error>()
             }
         )
-    }
 }
