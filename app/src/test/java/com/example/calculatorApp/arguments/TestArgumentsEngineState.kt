@@ -1,15 +1,8 @@
 package com.example.calculatorApp.arguments
 
-import com.example.calculatorApp.domain.ast.Operator
-import com.example.calculatorApp.domain.ast.Token
-import com.example.calculatorApp.domain.ast.TokenizerUtils.toOperator
-import com.example.calculatorApp.model.elements.button.Button
-import com.example.calculatorApp.model.state.HasState
+import com.example.calculatorApp.arguments.builder.ArgumentsBuilder
+import com.example.calculatorApp.arguments.builder.ArgumentsBuilderEngineState
 import com.example.calculatorApp.testData.TestCase
-import com.example.calculatorApp.testData.TestDataElement.buttonsBinaryTest
-import com.example.calculatorApp.testData.TestDataEngineMathStandardBinary.provideOperandsTest
-import com.example.calculatorApp.testData.TestDataEngineStateStandard.buildHasState
-import com.example.calculatorApp.testData.TestDataEngineStateStandard.buildTokensFrom
 import com.example.calculatorApp.testData.expected.Expected
 import com.example.calculatorApp.testData.input.Input
 import com.example.calculatorApp.testData.scenario.ScenarioEngineState
@@ -18,35 +11,9 @@ object TestArgumentsEngineState : TestArguments {
 
     fun provideEngineStateBinaryTestCases(
         scenario: ScenarioEngineState,
-        lastOperands: Sequence<Pair<Number, Number>> = provideOperandsTest(),
-        buttonsBinary: Sequence<Button> = buttonsBinaryTest,
-        buildExpression: (Number, Button) -> List<Token> = ::buildTokensFrom,
-        buildHasState: (List<Token>, String, Operator?, Button, ScenarioEngineState) -> HasState = ::buildHasState,
+        builder: ArgumentsBuilder<Input, Expected> = ArgumentsBuilderEngineState()
     ): Sequence<TestCase<Input, Expected>> =
-        sequence {
-            buttonsBinary.forEach { button ->
-                lastOperands.forEach { (previousOperand, lastOperand) ->
-
-                    val expression = buildExpression(previousOperand, button)
-                    val context = scenario.factoryContext(
-                        buildHasState(
-                            expression,
-                            lastOperand.toString(),
-                            button.toOperator(),
-                            button,
-                            scenario
-                        )
-                    )
-
-                    yield(
-                        TestCase(
-                            input = scenario.factoryInput(context),
-                            expected = scenario.factoryExpected(context)
-                        )
-                    )
-                }
-            }
-        }
+        builder.provideTestCases(scenario)
 
 //    // Skipping Subtraction and Division to avoid redundant test cases.
 //    // Addition and Multiplication cover the same result patterns,
