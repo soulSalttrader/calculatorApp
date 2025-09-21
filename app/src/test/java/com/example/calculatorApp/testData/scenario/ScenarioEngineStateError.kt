@@ -1,6 +1,8 @@
 package com.example.calculatorApp.testData.scenario
 
-import com.example.calculatorApp.model.state.HasState
+import com.example.calculatorApp.domain.ast.Token
+import com.example.calculatorApp.domain.ast.TokenizerUtils.toOperator
+import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.testData.expected.ExpectedEngineState
 import com.example.calculatorApp.testData.expected.ExpectedEngineStateDelegate
 import com.example.calculatorApp.testData.input.InputEngineState
@@ -10,15 +12,24 @@ import com.example.calculatorApp.testData.scenario.context.requireContext
 
 object ScenarioEngineStateError : ScenarioEngineState {
 
-    override val factoryContext = ::engineStateContextError
-    override val factoryInput = ::engineStateBinaryInputError
-    override val factoryExpected = ::engineStateBinaryExpectedError
+    override val buildInput = ::engineStateBinaryInputError
+    override val buildExpected = ::engineStateBinaryExpectedError
 
-    fun engineStateContextError(hasState: HasState): ContextEngineState = ContextEngineState.Error(
-        hasState.expression, hasState.lastOperand,
-        hasState.lastOperator, hasState.activeButton,
-        hasState.hasError, hasState.errorMessage
-    )
+    override fun buildContexts(
+        expressionInput: List<Token>,
+        lastOperand: String,
+        button: Button
+    ): Pair<ContextEngineState, ContextEngineState> {
+        val context = ContextEngineState.Error(
+            expression = expressionInput,
+            lastOperand = lastOperand,
+            lastOperator = button.toOperator(),
+            activeButton = button,
+            hasError = true,
+            errorMessage = "Error"
+        )
+        return context to context
+    }
 
     fun engineStateBinaryInputError(context: ContextEngineState): InputEngineState.Binary =
         InputEngineState.Binary(

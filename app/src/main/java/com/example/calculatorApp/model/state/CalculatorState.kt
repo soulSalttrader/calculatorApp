@@ -12,9 +12,9 @@ import kotlinx.parcelize.Parcelize
 data class CalculatorStateDomain(
     @IgnoredOnParcel override val expression: List<Token> = emptyList(),
     override val lastOperand: String = SymbolButton.ZERO.label,
-    @IgnoredOnParcel override val activeButton: Button? = null,
-
     @IgnoredOnParcel override val lastOperator: Operator? = null,
+
+    @IgnoredOnParcel override val activeButton: Button? = null,
 
     override val lastResult: String? = null,
     override val cachedOperand: String? = null,
