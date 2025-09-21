@@ -13,4 +13,5 @@ sealed interface ScenarioEngineState : Scenario {
     fun buildContexts(expressionInput: List<Token>, lastOperand: String, button: Button): Pair<ContextEngineState, ContextEngineState>
 
     object Error : ScenarioEngineState by ScenarioEngineStateError
+    object Update : ScenarioEngineState by ScenarioEngineStateUpdate
 }
