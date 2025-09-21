@@ -6,6 +6,7 @@ import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.model.state.HasError
 import com.example.calculatorApp.model.state.HasExpression
 import com.example.calculatorApp.model.state.HasInteraction
+import com.example.calculatorApp.model.state.HasResult
 
 sealed interface ContextEngineState : Context {
     interface Base : HasExpression, HasInteraction
@@ -20,4 +21,19 @@ sealed interface ContextEngineState : Context {
         override val hasError: Boolean,
         override val errorMessage: String?,
     ) : ContextEngineState, Base, HasError
+
+    data class Update(
+        override val expression: List<Token>,
+        override val lastOperand: String,
+        override val lastOperator: Operator?,
+
+        override val activeButton: Button?,
+
+        override val lastResult: String?,
+        override val cachedOperand: String?,
+        override val isComputed: Boolean,
+
+        override val hasError: Boolean,
+        override val errorMessage: String?,
+    ) : ContextEngineState, Base, HasError, HasResult
 }
