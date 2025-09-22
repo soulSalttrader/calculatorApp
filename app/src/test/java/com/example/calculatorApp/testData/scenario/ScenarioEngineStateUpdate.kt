@@ -4,17 +4,12 @@ import com.example.calculatorApp.domain.ast.OperatorBinary
 import com.example.calculatorApp.domain.ast.Token
 import com.example.calculatorApp.domain.ast.TokenizerUtils.toOperator
 import com.example.calculatorApp.model.elements.button.Button
-import com.example.calculatorApp.testData.expected.ExpectedEngineState
-import com.example.calculatorApp.testData.expected.ExpectedEngineStateDelegate
-import com.example.calculatorApp.testData.input.InputEngineState
-import com.example.calculatorApp.testData.input.InputEngineStateDelegate
 import com.example.calculatorApp.testData.scenario.context.ContextEngineState
-import com.example.calculatorApp.testData.scenario.context.requireContext
 
 object ScenarioEngineStateUpdate : ScenarioEngineState {
 
-    override val buildInput = ::engineStateBinaryInputUpdate
-    override val buildExpected = ::engineStateBinaryExpectedUpdate
+    override val buildInput = { context: ContextEngineState -> buildInputState<ContextEngineState.Update>(context) }
+    override val buildExpected = { context: ContextEngineState -> buildExpectedState<ContextEngineState.Update>(context) }
 
     override fun buildContexts(
         expressionInput: List<Token>,
@@ -46,18 +41,4 @@ object ScenarioEngineStateUpdate : ScenarioEngineState {
         )
         return input to expected
     }
-
-    fun engineStateBinaryInputUpdate(context: ContextEngineState): InputEngineState.Binary =
-        InputEngineState.Binary(
-            object : InputEngineStateDelegate.Binary {
-                override val context: ContextEngineState.Base = context.requireContext<ContextEngineState.Update>()
-            }
-        )
-
-    fun engineStateBinaryExpectedUpdate(context: ContextEngineState): ExpectedEngineState.Binary =
-        ExpectedEngineState.Binary(
-            object : ExpectedEngineStateDelegate.Binary {
-                override val context: ContextEngineState.Base = context.requireContext<ContextEngineState.Update>()
-            }
-        )
 }
