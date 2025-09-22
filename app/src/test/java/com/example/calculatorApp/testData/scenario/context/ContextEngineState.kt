@@ -36,4 +36,19 @@ sealed interface ContextEngineState : Context {
         override val hasError: Boolean,
         override val errorMessage: String?,
     ) : ContextEngineState, Base, HasError, HasResult
+
+    data class Success(
+        override val expression: List<Token>,
+        override val lastOperand: String,
+        override val lastOperator: Operator?,
+
+        override val activeButton: Button?,
+
+        override val lastResult: String?,
+        override val cachedOperand: String?,
+        override val isComputed: Boolean,
+
+        override val hasError: Boolean,
+        override val errorMessage: String?,
+    ) : ContextEngineState, Base, HasError, HasResult
 }
