@@ -19,9 +19,15 @@ object ScenarioEngineStateError : ScenarioEngineState {
             expression = expressionInput,
             lastOperand = lastOperand,
             lastOperator = button.toOperator(),
+
             activeButton = button,
+
+            lastResult = null,
+            cachedOperand = null,
+            isComputed = false,
+
             hasError = true,
-            errorMessage = "Error"
+            errorMessage = "Error",
         )
         return context to context
     }
