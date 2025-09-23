@@ -23,6 +23,7 @@ object ScenarioEngineStateSuccess : ScenarioEngineState {
             lastOperator = button.toOperator(),
 
             activeButton = button,
+
             lastResult = null,
             cachedOperand = null,
             isComputed = false,
