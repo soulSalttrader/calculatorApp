@@ -121,9 +121,9 @@ class EngineStateStandard(
         )
     }
 
-    private fun enterBinary(state: CalculatorStateDomain, binary: OperatorBinary): CalculatorStateDomain {
+    fun enterBinary(state: CalculatorStateDomain, binary: OperatorBinary): CalculatorStateDomain {
         return state.modifyWith(
-            { state.hasError } to { this },
+            { state.hasError } to { this.copy(errorMessage = "Error") },
             { true } to {
                 val operand = state.lastOperand.toDoubleOrNull() ?: lastResult?.toDouble()
                 val newTokens = buildTokenList(state.expression, operand, binary)
