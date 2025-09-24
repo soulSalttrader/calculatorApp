@@ -10,7 +10,7 @@ sealed interface ScenarioEngineState : Scenario {
 
     val buildInput: (ContextEngineState) -> InputEngineState.Binary
     val buildExpected: (ContextEngineState) -> ExpectedEngineState.Binary
-    fun buildContexts(expressionInput: List<Token>, lastOperand: String, button: Button): Pair<ContextEngineState, ContextEngineState>
+    fun buildContexts(expressionInput: List<Token>, lastOperand: Number, button: Button): Pair<ContextEngineState, ContextEngineState>
 
     object Error : ScenarioEngineState by ScenarioEngineStateError
     object Update : ScenarioEngineState by ScenarioEngineStateUpdate

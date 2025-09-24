@@ -13,13 +13,13 @@ object ScenarioEngineStateSuccess : ScenarioEngineState {
 
     override fun buildContexts(
         expressionInput: List<Token>,
-        lastOperand: String,
+        lastOperand: Number,
         button: Button
     ): Pair<ContextEngineState, ContextEngineState> {
 
         val input = ContextEngineState.Success(
             expression = expressionInput,
-            lastOperand = lastOperand,
+            lastOperand = lastOperand.toString(),
             lastOperator = button.toOperator(),
 
             activeButton = button,
