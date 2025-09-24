@@ -27,3 +27,8 @@ inline fun <reified T : ContextEngineState> buildExpectedState(
             override val context: ContextEngineState.Base = context.requireContext<T>() as ContextEngineState.Base
         }
     )
+
+fun Number.lastDigit(): Int {
+    val value = this.toString().removePrefix("-").replace(".", "")
+    return value.last().digitToInt()
+}
