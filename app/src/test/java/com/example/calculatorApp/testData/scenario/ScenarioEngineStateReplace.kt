@@ -13,7 +13,7 @@ object ScenarioEngineStateReplace : ScenarioEngineState {
 
     override fun buildContexts(
         expressionInput: List<Token>,
-        lastOperand: String,
+        lastOperand: Number,
         button: Button,
     ): Pair<ContextEngineState, ContextEngineState> {
 

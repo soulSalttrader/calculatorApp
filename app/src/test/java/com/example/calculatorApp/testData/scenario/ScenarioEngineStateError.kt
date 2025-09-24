@@ -12,12 +12,12 @@ object ScenarioEngineStateError : ScenarioEngineState {
 
     override fun buildContexts(
         expressionInput: List<Token>,
-        lastOperand: String,
+        lastOperand: Number,
         button: Button
     ): Pair<ContextEngineState, ContextEngineState> {
         val context = ContextEngineState.Error(
             expression = expressionInput,
-            lastOperand = lastOperand,
+            lastOperand = lastOperand.toString(),
             lastOperator = button.toOperator(),
 
             activeButton = button,

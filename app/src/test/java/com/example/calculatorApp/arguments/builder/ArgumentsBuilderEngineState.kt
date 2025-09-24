@@ -28,7 +28,7 @@ class ArgumentsBuilderEngineState(
                 val expressionInput = buildExpression(previousOperand, button)
 
                 val (contextInput, contextExpected) =
-                    engineStateScenario.buildContexts(expressionInput, lastOperand.toString(), button)
+                    engineStateScenario.buildContexts(expressionInput, lastOperand, button)
 
                 yield(
                     TestCase(
