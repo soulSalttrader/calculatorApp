@@ -19,4 +19,5 @@ sealed interface ScenarioEngineState : Scenario {
     object Sign : ScenarioEngineState by ScenarioEngineStateSign
     object PercentageOperand : ScenarioEngineState by ScenarioEngineStatePercentageOperand
     object PercentageAddSub : ScenarioEngineState by ScenarioEngineStatePercentageAddSub
+    object PercentageMulDiv : ScenarioEngineState by ScenarioEngineStatePercentageMulDiv
 }
