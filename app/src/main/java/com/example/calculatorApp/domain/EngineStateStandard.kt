@@ -40,7 +40,7 @@ class EngineStateStandard(
                     ButtonCalculatorUnary.Percentage -> engineMath.evalPercent(lastInput, previousNumber, operator)
                 }
 
-                state.copy(lastOperand = newValue.value.toString())
+                state.copy(lastOperand = newValue.value.toString(), activeButton = unary)
             }
         )
     }
