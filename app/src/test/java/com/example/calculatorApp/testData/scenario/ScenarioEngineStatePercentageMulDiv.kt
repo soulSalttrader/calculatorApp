@@ -1,7 +1,6 @@
 package com.example.calculatorApp.testData.scenario
 
 import com.example.calculatorApp.domain.ast.Token
-import com.example.calculatorApp.domain.ast.Token.Companion.firstNumberOrNull
 import com.example.calculatorApp.domain.ast.TokenizerUtils.toOperator
 import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
@@ -11,9 +10,9 @@ import com.example.calculatorApp.testData.scenario.context.ContextEngineState
 object ScenarioEngineStatePercentageMulDiv : ScenarioEngineState {
 
     override val buildInput =
-        { context: ContextEngineState -> buildInputState<ContextEngineState.Success>(context) }
+        { context: ContextEngineState -> buildBinaryInputState<ContextEngineState.Success>(context) }
     override val buildExpected =
-        { context: ContextEngineState -> buildExpectedState<ContextEngineState.Success>(context) }
+        { context: ContextEngineState -> buildBinaryExpectedState<ContextEngineState.Success>(context) }
 
     override fun buildContexts(
         expressionInput: List<Token>,
