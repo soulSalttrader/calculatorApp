@@ -8,8 +8,8 @@ import com.example.calculatorApp.testData.scenario.context.ContextEngineState
 
 object ScenarioEngineStateUpdate : ScenarioEngineState {
 
-    override val buildInput = { context: ContextEngineState -> buildInputState<ContextEngineState.Update>(context) }
-    override val buildExpected = { context: ContextEngineState -> buildExpectedState<ContextEngineState.Update>(context) }
+    override val buildInput = { context: ContextEngineState -> buildBinaryInputState<ContextEngineState.Update>(context) }
+    override val buildExpected = { context: ContextEngineState -> buildBinaryExpectedState<ContextEngineState.Update>(context) }
 
     override fun buildContexts(
         expressionInput: List<Token>,

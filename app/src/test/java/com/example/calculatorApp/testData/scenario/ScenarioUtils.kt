@@ -10,7 +10,7 @@ import com.example.calculatorApp.testData.scenario.context.requireContext
 inline fun <reified T : Scenario> Scenario.requireScenario(): T =
     this as? T ?: error("Requires ${T::class.simpleName} but got ${this::class.simpleName}")
 
-inline fun <reified T : ContextEngineState> buildInputState(
+inline fun <reified T : ContextEngineState> buildBinaryInputState(
     context: ContextEngineState
 ): InputEngineState.Binary =
     InputEngineState.Binary(
@@ -19,7 +19,7 @@ inline fun <reified T : ContextEngineState> buildInputState(
         }
     )
 
-inline fun <reified T : ContextEngineState> buildExpectedState(
+inline fun <reified T : ContextEngineState> buildBinaryExpectedState(
     context: ContextEngineState
 ): ExpectedEngineState.Binary =
     ExpectedEngineState.Binary(

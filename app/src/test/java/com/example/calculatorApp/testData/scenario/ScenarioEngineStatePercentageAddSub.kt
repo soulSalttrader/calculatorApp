@@ -11,9 +11,9 @@ import com.example.calculatorApp.testData.scenario.context.ContextEngineState
 object ScenarioEngineStatePercentageAddSub : ScenarioEngineState {
 
     override val buildInput =
-        { context: ContextEngineState -> buildInputState<ContextEngineState.Success>(context) }
+        { context: ContextEngineState -> buildBinaryInputState<ContextEngineState.Success>(context) }
     override val buildExpected =
-        { context: ContextEngineState -> buildExpectedState<ContextEngineState.Success>(context) }
+        { context: ContextEngineState -> buildBinaryExpectedState<ContextEngineState.Success>(context) }
 
     override fun buildContexts(
         expressionInput: List<Token>,

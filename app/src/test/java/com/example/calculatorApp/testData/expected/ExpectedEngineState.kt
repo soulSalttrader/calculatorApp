@@ -1,6 +1,6 @@
 package com.example.calculatorApp.testData.expected
 
-sealed interface ExpectedEngineState {
+sealed interface ExpectedEngineState : Expected {
 
     data class Binary(
         private val delegate: ExpectedEngineStateDelegate.Base
