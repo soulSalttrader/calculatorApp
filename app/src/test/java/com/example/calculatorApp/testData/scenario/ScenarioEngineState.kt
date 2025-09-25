@@ -8,7 +8,7 @@ import com.example.calculatorApp.testData.scenario.context.ContextEngineState
 
 sealed interface ScenarioEngineState : Scenario {
 
-    val buildInput: (ContextEngineState) -> InputEngineState.Binary
+    val buildInput: (ContextEngineState) -> InputEngineState
     val buildExpected: (ContextEngineState) -> ExpectedEngineState.Binary
     fun buildContexts(expressionInput: List<Token>, lastOperand: Number, button: Button): Pair<ContextEngineState, ContextEngineState>
 

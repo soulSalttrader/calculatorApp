@@ -4,7 +4,7 @@ import com.example.calculatorApp.testData.scenario.context.ContextEngineState
 
 sealed interface InputEngineStateDelegate : Input {
 
-    interface Binary : InputEngineStateDelegate  {
+    interface Operation : InputEngineStateDelegate  {
         val context: ContextEngineState.Base
     }
 }
