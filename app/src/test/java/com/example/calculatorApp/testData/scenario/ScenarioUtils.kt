@@ -23,7 +23,7 @@ inline fun <reified T : ContextEngineState> buildExpectedState(
     context: ContextEngineState
 ): ExpectedEngineState.Binary =
     ExpectedEngineState.Binary(
-        object : ExpectedEngineStateDelegate.Binary {
+        object : ExpectedEngineStateDelegate.Base {
             override val context: ContextEngineState.Base = context.requireContext<T>() as ContextEngineState.Base
         }
     )
