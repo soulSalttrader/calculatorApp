@@ -12,8 +12,17 @@ inline fun <reified T : Scenario> Scenario.requireScenario(): T =
 
 inline fun <reified T : ContextEngineState> buildBinaryInputState(
     context: ContextEngineState
-): InputEngineState.Binary =
+): InputEngineState =
     InputEngineState.Binary(
+        object : InputEngineStateDelegate.Base {
+            override val context: ContextEngineState.Base = context.requireContext<T>() as ContextEngineState.Base
+        }
+    )
+
+inline fun <reified T : ContextEngineState> buildUnaryInputState(
+    context: ContextEngineState
+): InputEngineState =
+    InputEngineState.Unary(
         object : InputEngineStateDelegate.Base {
             override val context: ContextEngineState.Base = context.requireContext<T>() as ContextEngineState.Base
         }
@@ -21,8 +30,17 @@ inline fun <reified T : ContextEngineState> buildBinaryInputState(
 
 inline fun <reified T : ContextEngineState> buildBinaryExpectedState(
     context: ContextEngineState
-): ExpectedEngineState.Binary =
+): ExpectedEngineState =
     ExpectedEngineState.Binary(
+        object : ExpectedEngineStateDelegate.Base {
+            override val context: ContextEngineState.Base = context.requireContext<T>() as ContextEngineState.Base
+        }
+    )
+
+inline fun <reified T : ContextEngineState> buildUnaryExpectedState(
+    context: ContextEngineState
+): ExpectedEngineState =
+    ExpectedEngineState.Unary(
         object : ExpectedEngineStateDelegate.Base {
             override val context: ContextEngineState.Base = context.requireContext<T>() as ContextEngineState.Base
         }
