@@ -5,12 +5,12 @@ import com.example.calculatorApp.arguments.builder.ArgumentsBuilderEngineState
 import com.example.calculatorApp.testData.TestCase
 import com.example.calculatorApp.testData.expected.Expected
 import com.example.calculatorApp.testData.input.Input
-import com.example.calculatorApp.testData.scenario.ScenarioEngineState
+import com.example.calculatorApp.testData.scenario.engineState.EngineState
 
 object TestArgumentsEngineState : TestArguments {
 
     fun provideEngineStateBinaryTestCases(
-        scenario: ScenarioEngineState,
+        scenario: EngineState,
         builder: ArgumentsBuilder<Input, Expected> = ArgumentsBuilderEngineState()
     ): Sequence<TestCase<Input, Expected>> =
         builder.provideTestCases(scenario)

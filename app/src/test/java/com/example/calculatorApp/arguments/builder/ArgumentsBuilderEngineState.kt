@@ -9,7 +9,7 @@ import com.example.calculatorApp.testData.TestDataEngineStateStandard.buildToken
 import com.example.calculatorApp.testData.expected.Expected
 import com.example.calculatorApp.testData.input.Input
 import com.example.calculatorApp.testData.scenario.Scenario
-import com.example.calculatorApp.testData.scenario.ScenarioEngineState
+import com.example.calculatorApp.testData.scenario.engineState.EngineState
 import com.example.calculatorApp.testData.scenario.requireScenario
 
 class ArgumentsBuilderEngineState(
@@ -21,7 +21,7 @@ class ArgumentsBuilderEngineState(
     override fun provideTestCases(
         scenario: Scenario
     ): Sequence<TestCase<Input, Expected>> = sequence {
-        val engineStateScenario = scenario.requireScenario<ScenarioEngineState>()
+        val engineStateScenario = scenario.requireScenario<EngineState>()
 
         buttonsBinary.forEach { button ->
             lastOperands.forEach { (previousOperand, lastOperand) ->

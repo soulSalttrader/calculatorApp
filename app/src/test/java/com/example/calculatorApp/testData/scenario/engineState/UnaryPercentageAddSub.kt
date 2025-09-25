@@ -1,13 +1,17 @@
-package com.example.calculatorApp.testData.scenario
+package com.example.calculatorApp.testData.scenario.engineState
 
 import com.example.calculatorApp.domain.ast.Token
+import com.example.calculatorApp.domain.ast.Token.Companion.firstNumberOrNull
 import com.example.calculatorApp.domain.ast.TokenizerUtils.toOperator
 import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
-import com.example.calculatorApp.testData.TestDataEngineMathStandardSign.unaryMinus
+import com.example.calculatorApp.model.symbols.SymbolButtonUtils.toButton
+import com.example.calculatorApp.testData.scenario.buildUnaryExpectedState
+import com.example.calculatorApp.testData.scenario.buildUnaryInputState
 import com.example.calculatorApp.testData.scenario.context.ContextEngineState
+import com.example.calculatorApp.testData.scenario.lastDigit
 
-object ScenarioEngineStateSign : ScenarioEngineState {
+object UnaryPercentageAddSub : EngineState.Unary {
 
     override val buildInput =
         { context: ContextEngineState -> buildUnaryInputState<ContextEngineState.Success>(context) }
@@ -25,7 +29,7 @@ object ScenarioEngineStateSign : ScenarioEngineState {
             lastOperand = lastOperand.toString(),
             lastOperator = button.toOperator(),
 
-            activeButton = button,
+            activeButton = lastOperand.lastDigit().toString().toButton(),
 
             lastResult = null,
             cachedOperand = null,
@@ -35,12 +39,13 @@ object ScenarioEngineStateSign : ScenarioEngineState {
             errorMessage = null,
         )
 
+        val previousOperand = expressionInput.firstNumberOrNull()?.value ?: 1.0
+
         val expected = input.copy(
             expression = expressionInput,
-            lastOperand = lastOperand.unaryMinus().toString(),
-            lastOperator = button.toOperator(),
+            lastOperand = (previousOperand * (lastOperand.toDouble() / 100)).toString(),
 
-            activeButton = ButtonCalculatorUnary.Sign,
+            activeButton = ButtonCalculatorUnary.Percentage,
         )
         return input to expected
     }

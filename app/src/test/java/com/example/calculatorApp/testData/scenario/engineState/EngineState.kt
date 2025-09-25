@@ -1,0 +1,28 @@
+package com.example.calculatorApp.testData.scenario.engineState
+
+import com.example.calculatorApp.domain.ast.Token
+import com.example.calculatorApp.model.elements.button.Button
+import com.example.calculatorApp.testData.expected.ExpectedEngineState
+import com.example.calculatorApp.testData.input.InputEngineState
+import com.example.calculatorApp.testData.scenario.Scenario
+import com.example.calculatorApp.testData.scenario.context.ContextEngineState
+
+sealed interface EngineState : Scenario {
+    val buildInput: (ContextEngineState) -> InputEngineState
+    val buildExpected: (ContextEngineState) -> ExpectedEngineState
+    fun buildContexts(expressionInput: List<Token>, lastOperand: Number, button: Button): Pair<ContextEngineState, ContextEngineState>
+
+    sealed interface Binary : EngineState {
+        object Error : EngineState by BinaryError
+        object Update : EngineState by BinaryUpdate
+        object Success : EngineState by BinarySuccess
+        object Replace : EngineState by BinaryReplace
+    }
+
+    sealed interface Unary : EngineState {
+        object Sign : EngineState by UnarySign
+        object PercentageOperand : EngineState by UnaryPercentageOperand
+        object PercentageAddSub : EngineState by UnaryPercentageAddSub
+        object PercentageMulDiv : EngineState by UnaryPercentageMulDiv
+    }
+}
