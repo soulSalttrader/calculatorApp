@@ -1,13 +1,16 @@
-package com.example.calculatorApp.testData.scenario
+package com.example.calculatorApp.testData.scenario.engineState
 
 import com.example.calculatorApp.domain.ast.Token
 import com.example.calculatorApp.domain.ast.TokenizerUtils.toOperator
 import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
 import com.example.calculatorApp.model.symbols.SymbolButtonUtils.toButton
+import com.example.calculatorApp.testData.scenario.buildUnaryExpectedState
+import com.example.calculatorApp.testData.scenario.buildUnaryInputState
 import com.example.calculatorApp.testData.scenario.context.ContextEngineState
+import com.example.calculatorApp.testData.scenario.lastDigit
 
-object ScenarioEngineStatePercentageMulDiv : ScenarioEngineState {
+object UnaryPercentageMulDiv : EngineState.Unary {
 
     override val buildInput =
         { context: ContextEngineState -> buildUnaryInputState<ContextEngineState.Success>(context) }

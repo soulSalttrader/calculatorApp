@@ -1,15 +1,25 @@
-package com.example.calculatorApp.testData.scenario
+package com.example.calculatorApp.testData.scenario.engineState
 
 import com.example.calculatorApp.domain.ast.OperatorBinary
 import com.example.calculatorApp.domain.ast.Token
 import com.example.calculatorApp.domain.ast.TokenizerUtils.toOperator
 import com.example.calculatorApp.model.elements.button.Button
+import com.example.calculatorApp.testData.scenario.buildBinaryExpectedState
+import com.example.calculatorApp.testData.scenario.buildBinaryInputState
 import com.example.calculatorApp.testData.scenario.context.ContextEngineState
 
-object ScenarioEngineStateSuccess : ScenarioEngineState {
+object BinaryUpdate : EngineState.Binary {
 
-    override val buildInput = { context: ContextEngineState -> buildBinaryInputState<ContextEngineState.Success>(context)}
-    override val buildExpected = { context: ContextEngineState -> buildBinaryExpectedState<ContextEngineState.Success>(context)}
+    override val buildInput = { context: ContextEngineState ->
+        buildBinaryInputState<ContextEngineState.Update>(
+            context
+        )
+    }
+    override val buildExpected = { context: ContextEngineState ->
+        buildBinaryExpectedState<ContextEngineState.Update>(
+            context
+        )
+    }
 
     override fun buildContexts(
         expressionInput: List<Token>,
@@ -17,13 +27,12 @@ object ScenarioEngineStateSuccess : ScenarioEngineState {
         button: Button
     ): Pair<ContextEngineState, ContextEngineState> {
 
-        val input = ContextEngineState.Success(
+        val input = ContextEngineState.Update(
             expression = expressionInput,
             lastOperand = lastOperand.toString(),
             lastOperator = button.toOperator(),
 
             activeButton = button,
-
             lastResult = null,
             cachedOperand = null,
             isComputed = false,
