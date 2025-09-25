@@ -14,7 +14,7 @@ inline fun <reified T : ContextEngineState> buildInputState(
     context: ContextEngineState
 ): InputEngineState.Binary =
     InputEngineState.Binary(
-        object : InputEngineStateDelegate.Binary {
+        object : InputEngineStateDelegate.Operation {
             override val context: ContextEngineState.Base = context.requireContext<T>() as ContextEngineState.Base
         }
     )
