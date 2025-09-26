@@ -25,4 +25,8 @@ sealed interface EngineState : Scenario {
         object PercentageAddSub : EngineState by UnaryPercentageAddSub
         object PercentageMulDiv : EngineState by UnaryPercentageMulDiv
     }
+
+    sealed interface Control : EngineState {
+        object ClearAll : EngineState by ControlClearAll
+    }
 }
