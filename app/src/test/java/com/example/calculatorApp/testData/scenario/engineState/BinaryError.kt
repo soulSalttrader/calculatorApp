@@ -3,6 +3,7 @@ package com.example.calculatorApp.testData.scenario.engineState
 import com.example.calculatorApp.domain.ast.Token
 import com.example.calculatorApp.domain.ast.TokenizerUtils.toOperator
 import com.example.calculatorApp.model.elements.button.Button
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.testData.scenario.buildBinaryExpectedState
 import com.example.calculatorApp.testData.scenario.buildBinaryInputState
 import com.example.calculatorApp.testData.scenario.context.ContextEngineState
@@ -25,7 +26,7 @@ object BinaryError : EngineState.Binary {
         lastOperand: Number,
         button: Button
     ): Pair<ContextEngineState, ContextEngineState> {
-        val context = ContextEngineState.Error(
+        val input = ContextEngineState.Error(
             expression = expressionInput,
             lastOperand = lastOperand.toString(),
             lastOperator = button.toOperator(),
@@ -39,6 +40,10 @@ object BinaryError : EngineState.Binary {
             hasError = true,
             errorMessage = "Error",
         )
-        return context to context
+
+        val expected = input.copy(
+            activeButton = ButtonCalculatorBinary.Multiplication
+        )
+        return input to expected
     }
 }
