@@ -11,7 +11,7 @@ import com.example.calculatorApp.testData.scenario.buildControlInputState
 import com.example.calculatorApp.testData.scenario.context.ContextEngineState
 import com.example.calculatorApp.testData.scenario.lastDigit
 
-object ControlClearAll : EngineState.Control {
+object ControlClear : EngineState.Control {
 
     override val buildInput =
         { context: ContextEngineState -> buildControlInputState<ContextEngineState.Success>(context) }
@@ -40,11 +40,11 @@ object ControlClearAll : EngineState.Control {
         )
 
         val expected = input.copy(
-            expression = emptyList(),
+            expression = expressionInput,
             lastOperand = SymbolButton.ZERO.label,
-            lastOperator = null,
+            lastOperator = button.toOperator(),
 
-            activeButton = ButtonCalculatorControl.AllClear,
+            activeButton = ButtonCalculatorControl.Clear,
 
             lastResult = null,
             cachedOperand = null,

@@ -28,5 +28,6 @@ sealed interface EngineState : Scenario {
 
     sealed interface Control : EngineState {
         object ClearAll : EngineState by ControlClearAll
+        object Clear : EngineState by ControlClear
     }
 }
