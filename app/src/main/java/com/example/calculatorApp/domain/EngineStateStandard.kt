@@ -82,10 +82,10 @@ class EngineStateStandard(
 
     private fun applyClear(state: CalculatorStateDomain): CalculatorStateDomain {
         return state.modifyWith(
-            { state.hasError } to { applyClearAll() },
-            { state.activeButton == ButtonCalculatorControl.Equals } to { applyClearAll() },
+            { state.hasError } to { applyClearAll().copy(activeButton = ButtonCalculatorControl.Clear) },
+            { state.activeButton == ButtonCalculatorControl.Equals } to { applyClearAll().copy(activeButton = ButtonCalculatorControl.Clear) },
             { state.lastOperand.isNotBlank() } to { state.copy(lastOperand = "0", activeButton = ButtonCalculatorControl.Clear) },
-            { true } to { applyClearAll() }
+            { true } to { applyClearAll().copy(activeButton = ButtonCalculatorControl.Clear) }
         )
     }
 
