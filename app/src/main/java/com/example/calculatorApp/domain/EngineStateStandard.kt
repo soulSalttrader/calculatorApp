@@ -29,7 +29,7 @@ class EngineStateStandard(
 
     override fun handleUnary(state: CalculatorStateDomain, unary: ButtonCalculatorUnary): CalculatorStateDomain {
         return state.modifyWith(
-            { state.hasError } to { this },
+            { state.hasError } to { this.copy(activeButton = unary) },
             { true } to {
                 val lastInput = state.lastOperand.toDoubleOrNull() ?: state.expression.lastNumberOrNull()?.value
                 ?: return@to state.copy(hasError = true, errorMessage = "Invalid number")
@@ -124,7 +124,7 @@ class EngineStateStandard(
 
     fun enterBinary(state: CalculatorStateDomain, binary: OperatorBinary): CalculatorStateDomain {
         return state.modifyWith(
-            { state.hasError } to { this.copy(errorMessage = "Error") },
+            { state.hasError } to { this.copy(errorMessage = "Error", activeButton = binary.symbol.label.toButton()) },
             { true } to {
                 val operand = state.lastOperand.toDoubleOrNull() ?: lastResult?.toDouble()
                 val newTokens = buildTokenList(state.expression, operand, binary)
