@@ -12,6 +12,7 @@ import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
 import com.example.calculatorApp.model.state.CalculatorStateDomain
+import com.example.calculatorApp.model.symbols.SymbolButtonUtils.toButton
 import com.example.calculatorApp.utils.Constants.MAX_NUM_LENGTH
 
 class EngineStateStandard(
@@ -60,7 +61,7 @@ class EngineStateStandard(
 
     override fun handleNumber(state: CalculatorStateDomain, number: ButtonCalculatorNumber): CalculatorStateDomain {
         return state.modifyWith(
-            { state.hasError } to { this },
+            { state.hasError } to { this.copy(activeButton = number) },
             { state.lastOperand == "NaN" } to { this },
             { state.lastOperand == "0" } to { state.copy(lastOperand = number.symbol.label) },
             { state.lastOperand.length >= MAX_NUM_LENGTH } to { this },
@@ -72,10 +73,10 @@ class EngineStateStandard(
 
     private fun enterDecimal(state: CalculatorStateDomain): CalculatorStateDomain {
         return state.modifyWith(
-            { state.hasError } to { this },
-            { state.lastOperand == "NaN" } to { this },
-            { !state.lastOperand.contains(".") && state.lastOperand.isNotBlank() } to { state.copy(lastOperand = state.lastOperand  + ".") },
-            { !state.lastOperand.contains(".") && state.lastOperand.isBlank() } to { state.copy(lastOperand = "0" + ".") }
+            { state.hasError } to { this.copy(activeButton = ButtonCalculatorControl.Decimal) },
+            { state.lastOperand == "NaN" } to { this.copy(activeButton = ButtonCalculatorControl.Decimal) },
+            { !state.lastOperand.contains(".") && state.lastOperand.isNotBlank() } to { state.copy(lastOperand = state.lastOperand  + ".", activeButton = ButtonCalculatorControl.Decimal) },
+            { !state.lastOperand.contains(".") && state.lastOperand.isBlank() } to { state.copy(lastOperand = "0" + ".", activeButton = ButtonCalculatorControl.Decimal) }
         ).also { println(it) }
     }
 
@@ -83,13 +84,13 @@ class EngineStateStandard(
         return state.modifyWith(
             { state.hasError } to { applyClearAll() },
             { state.activeButton == ButtonCalculatorControl.Equals } to { applyClearAll() },
-            { state.lastOperand.isNotBlank() } to { state.copy(lastOperand = "0") },
+            { state.lastOperand.isNotBlank() } to { state.copy(lastOperand = "0", activeButton = ButtonCalculatorControl.Clear) },
             { true } to { applyClearAll() }
         )
     }
 
     private fun applyClearAll(): CalculatorStateDomain {
-        return CalculatorStateDomain()
+        return CalculatorStateDomain().copy(activeButton = ButtonCalculatorControl.AllClear)
     }
 
     private fun applyEquals(state: CalculatorStateDomain): CalculatorStateDomain {
@@ -127,7 +128,7 @@ class EngineStateStandard(
             { true } to {
                 val operand = state.lastOperand.toDoubleOrNull() ?: lastResult?.toDouble()
                 val newTokens = buildTokenList(state.expression, operand, binary)
-                state.copy(expression = newTokens, lastOperand = "", lastOperator = binary, cachedOperand = null)
+                state.copy(expression = newTokens, lastOperand = "", lastOperator = binary, activeButton = binary.symbol.label.toButton(), cachedOperand = null)
             }
         )
     }
@@ -162,6 +163,9 @@ class EngineStateStandard(
         return state.copy(
             lastResult = null,
             lastOperand = "",
+
+            activeButton = ButtonCalculatorControl.Equals,
+
             expression = listOf(Token.Number(result.value.toDouble()), lastOperator),
             isComputed = true,
             cachedOperand = operand.toString()
