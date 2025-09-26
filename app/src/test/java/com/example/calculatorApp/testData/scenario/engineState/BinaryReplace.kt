@@ -4,6 +4,7 @@ import com.example.calculatorApp.domain.ast.OperatorBinary
 import com.example.calculatorApp.domain.ast.Token
 import com.example.calculatorApp.domain.ast.TokenizerUtils.toOperator
 import com.example.calculatorApp.model.elements.button.Button
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.testData.scenario.buildBinaryExpectedState
 import com.example.calculatorApp.testData.scenario.buildBinaryInputState
 import com.example.calculatorApp.testData.scenario.context.ContextEngineState
@@ -46,6 +47,7 @@ object BinaryReplace : EngineState.Binary {
             expression = expressionInput.toMutableList().dropLast(1) + Token.Binary(OperatorBinary.Multiplication),
             lastOperand = "",
             lastOperator = OperatorBinary.Multiplication,
+            activeButton = ButtonCalculatorBinary.Multiplication,
         )
         return input to expected
     }
