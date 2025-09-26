@@ -28,6 +28,15 @@ inline fun <reified T : ContextEngineState> buildUnaryInputState(
         }
     )
 
+inline fun <reified T : ContextEngineState> buildControlInputState(
+    context: ContextEngineState
+): InputEngineState =
+    InputEngineState.Control(
+        object : InputEngineStateDelegate.Base {
+            override val context: ContextEngineState.Base = context.requireContext<T>() as ContextEngineState.Base
+        }
+    )
+
 inline fun <reified T : ContextEngineState> buildBinaryExpectedState(
     context: ContextEngineState
 ): ExpectedEngineState =
@@ -41,6 +50,15 @@ inline fun <reified T : ContextEngineState> buildUnaryExpectedState(
     context: ContextEngineState
 ): ExpectedEngineState =
     ExpectedEngineState.Unary(
+        object : ExpectedEngineStateDelegate.Base {
+            override val context: ContextEngineState.Base = context.requireContext<T>() as ContextEngineState.Base
+        }
+    )
+
+inline fun <reified T : ContextEngineState> buildControlExpectedState(
+    context: ContextEngineState
+): ExpectedEngineState =
+    ExpectedEngineState.Control(
         object : ExpectedEngineStateDelegate.Base {
             override val context: ContextEngineState.Base = context.requireContext<T>() as ContextEngineState.Base
         }

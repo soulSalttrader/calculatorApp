@@ -15,4 +15,11 @@ sealed interface InputEngineState : Input {
         InputEngineStateDelegate.Base by delegate {
         override fun toString(): String = "InputEngineState.Unary(state=${delegate.context})"
     }
+
+    data class Control(
+        private val delegate: InputEngineStateDelegate.Base
+    ) : InputEngineState,
+        InputEngineStateDelegate.Base by delegate {
+        override fun toString(): String = "InputEngineState.Control(state=${delegate.context})"
+    }
 }
