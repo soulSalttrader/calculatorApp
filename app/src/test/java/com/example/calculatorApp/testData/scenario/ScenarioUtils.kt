@@ -1,5 +1,7 @@
 package com.example.calculatorApp.testData.scenario
 
+import com.example.calculatorApp.domain.ast.Operator
+import com.example.calculatorApp.domain.ast.OperatorBinary
 import com.example.calculatorApp.testData.expected.ExpectedEngineState
 import com.example.calculatorApp.testData.expected.ExpectedEngineStateDelegate
 import com.example.calculatorApp.testData.input.InputEngineState
@@ -67,4 +69,12 @@ inline fun <reified T : ContextEngineState> buildControlExpectedState(
 fun Number.lastDigit(): Int {
     val value = this.toString().removePrefix("-").replace(".", "")
     return value.last().digitToInt()
+}
+
+fun Operator.toFunction(): (Double, Double) -> Double = when (this) {
+    OperatorBinary.Addition       -> Double::plus
+    OperatorBinary.Division       -> Double::div
+    OperatorBinary.Multiplication -> Double::times
+    OperatorBinary.Subtraction    -> Double::minus
+    else -> throw IllegalArgumentException("Unknown Operator.")
 }
