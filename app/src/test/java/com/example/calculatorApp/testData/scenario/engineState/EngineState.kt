@@ -21,6 +21,8 @@ sealed interface EngineState : Scenario {
 
     sealed interface Unary : EngineState {
         object Sign : EngineState by UnarySign
+        object SignError : EngineState by UnarySignError
+        object PercentageError : EngineState by UnaryPercentageError
         object PercentageOperand : EngineState by UnaryPercentageOperand
         object PercentageAddSub : EngineState by UnaryPercentageAddSub
         object PercentageMulDiv : EngineState by UnaryPercentageMulDiv
