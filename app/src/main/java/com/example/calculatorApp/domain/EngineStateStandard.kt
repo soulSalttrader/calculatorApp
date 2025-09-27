@@ -75,9 +75,10 @@ class EngineStateStandard(
         return state.modifyWith(
             { state.hasError } to { this.copy(activeButton = ButtonCalculatorControl.Decimal) },
             { state.lastOperand == "NaN" } to { this.copy(activeButton = ButtonCalculatorControl.Decimal) },
+            { state.lastOperand.contains(".") } to { this.copy(activeButton = ButtonCalculatorControl.Decimal) },
             { !state.lastOperand.contains(".") && state.lastOperand.isNotBlank() } to { state.copy(lastOperand = state.lastOperand  + ".", activeButton = ButtonCalculatorControl.Decimal) },
             { !state.lastOperand.contains(".") && state.lastOperand.isBlank() } to { state.copy(lastOperand = "0" + ".", activeButton = ButtonCalculatorControl.Decimal) }
-        ).also { println(it) }
+        )
     }
 
     private fun applyClear(state: CalculatorStateDomain): CalculatorStateDomain {
