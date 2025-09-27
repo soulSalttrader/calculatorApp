@@ -1,22 +1,24 @@
 package com.example.calculatorApp.testData.scenario.engineState
 
+import com.example.calculatorApp.domain.ast.OperatorBinary
 import com.example.calculatorApp.domain.ast.Token
+import com.example.calculatorApp.domain.ast.Token.Companion.firstNumberOrNull
 import com.example.calculatorApp.domain.ast.TokenizerUtils.toOperator
 import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
-import com.example.calculatorApp.model.symbols.SymbolButton
 import com.example.calculatorApp.model.symbols.SymbolButtonUtils.toButton
 import com.example.calculatorApp.testData.scenario.buildControlExpectedState
 import com.example.calculatorApp.testData.scenario.buildControlInputState
 import com.example.calculatorApp.testData.scenario.context.ContextEngineState
 import com.example.calculatorApp.testData.scenario.lastDigit
+import com.example.calculatorApp.testData.scenario.toFunction
 
-object ControlClearError : EngineState.Control {
+object ControlEquals : EngineState.Control {
 
     override val buildInput =
-        { context: ContextEngineState -> buildControlInputState<ContextEngineState.Error>(context) }
+        { context: ContextEngineState -> buildControlInputState<ContextEngineState.Success>(context) }
     override val buildExpected =
-        { context: ContextEngineState -> buildControlExpectedState<ContextEngineState.Error>(context) }
+        { context: ContextEngineState -> buildControlExpectedState<ContextEngineState.Success>(context) }
 
     override fun buildContexts(
         expressionInput: List<Token>,
@@ -24,7 +26,7 @@ object ControlClearError : EngineState.Control {
         button: Button,
     ): Pair<ContextEngineState, ContextEngineState> {
 
-        val input = ContextEngineState.Error(
+        val input = ContextEngineState.Success(
             expression = expressionInput,
             lastOperand = lastOperand.toString(),
             lastOperator = button.toOperator(),
@@ -35,23 +37,28 @@ object ControlClearError : EngineState.Control {
             cachedOperand = null,
             isComputed = false,
 
-            hasError = true,
-            errorMessage = "Error",
-        )
-
-        val expected = input.copy(
-            expression = emptyList(),
-            lastOperand = SymbolButton.ZERO.label,
-            lastOperator = null,
-
-            activeButton = ButtonCalculatorControl.Clear,
-
-            lastResult = null,
-            cachedOperand = null,
-            isComputed = false,
-
             hasError = false,
             errorMessage = null,
+        )
+
+        val lastOperand = lastOperand.toDouble()
+
+        val value = expressionInput.firstNumberOrNull()?.value ?: 1.0
+        val operator = button.toOperator() as OperatorBinary
+        val newValue = operator.toFunction()(value, lastOperand)
+
+        val expected = input.copy(
+            expression = listOf(
+                Token.Number(newValue),
+                Token.Binary(operator)
+            ),
+            lastOperand = "",
+            lastOperator = operator,
+
+            activeButton = ButtonCalculatorControl.Equals,
+
+            cachedOperand = lastOperand.toString(),
+            isComputed = true,
         )
         return input to expected
     }
