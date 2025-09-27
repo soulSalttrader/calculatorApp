@@ -32,5 +32,8 @@ sealed interface EngineState : Scenario {
         object ClearAll : EngineState by ControlClearAll
         object Clear : EngineState by ControlClear
         object ClearError : EngineState by ControlClearError
+        object Decimal : EngineState by ControlDecimal
+        object DecimalError : EngineState by ControlDecimalError
+        object DecimalZero : EngineState by ControlDecimalZero
     }
 }
