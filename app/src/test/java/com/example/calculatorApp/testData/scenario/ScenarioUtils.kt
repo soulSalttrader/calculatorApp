@@ -2,12 +2,14 @@ package com.example.calculatorApp.testData.scenario
 
 import com.example.calculatorApp.domain.ast.Operator
 import com.example.calculatorApp.domain.ast.OperatorBinary
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.testData.expected.ExpectedEngineState
 import com.example.calculatorApp.testData.expected.ExpectedEngineStateDelegate
 import com.example.calculatorApp.testData.input.InputEngineState
 import com.example.calculatorApp.testData.input.InputEngineStateDelegate
 import com.example.calculatorApp.testData.scenario.context.ContextEngineState
 import com.example.calculatorApp.testData.scenario.context.requireContext
+import kotlin.math.pow
 
 inline fun <reified T : Scenario> Scenario.requireScenario(): T =
     this as? T ?: error("Requires ${T::class.simpleName} but got ${this::class.simpleName}")
@@ -77,4 +79,18 @@ fun Operator.toFunction(): (Double, Double) -> Double = when (this) {
     OperatorBinary.Multiplication -> Double::times
     OperatorBinary.Subtraction    -> Double::minus
     else -> throw IllegalArgumentException("Unknown Operator.")
+}
+
+fun Double.expectedRepeatEqualsResult(
+    repeatedOperand: Double,
+    repeatCount: Int,
+    operatorButton: ButtonCalculatorBinary,
+): Double {
+
+    return when (operatorButton) {
+        is ButtonCalculatorBinary.Addition       -> this + repeatedOperand * repeatCount
+        is ButtonCalculatorBinary.Subtraction    -> this - repeatedOperand * repeatCount
+        is ButtonCalculatorBinary.Multiplication -> this * repeatedOperand.pow(repeatCount)
+        is ButtonCalculatorBinary.Division       -> this / repeatedOperand.pow(repeatCount)
+    }
 }
