@@ -36,5 +36,8 @@ sealed interface EngineState : Scenario {
         object DecimalError : EngineState by ControlDecimalError
         object DecimalZero : EngineState by ControlDecimalZero
         object Equals : EngineState by ControlEquals
+        object EqualsError : EngineState by ControlEqualsError
+        object EqualsInvalid : EngineState by ControlEqualsInvalid
+        object EqualsRepeatable : EngineState by ControlEqualsRepeatable
     }
 }
