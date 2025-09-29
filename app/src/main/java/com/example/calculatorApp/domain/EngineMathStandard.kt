@@ -38,7 +38,14 @@ class EngineMathStandard : EngineMath {
         }
     }
 
-    override fun evalSign(operand: Double): EvaluationResult {
-        return EvaluationResult.normalizeResult(-operand)
+    override fun evalSign(operand: Number): EvaluationResult {
+        val negated = when (operand) {
+            is Int    -> -operand
+            is Long   -> -operand
+            is Float  -> -operand
+            is Double -> -operand
+            else -> throw IllegalArgumentException("Unsupported type: ${operand::class}")
+        }
+        return EvaluationResult.normalizeResult(negated)
     }
 }

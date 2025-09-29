@@ -39,7 +39,7 @@ object UnarySign : EngineState.Unary {
 
         val expected = input.copy(
             expression = expressionInput,
-            lastOperand = lastOperand.unaryMinus().toString(),
+            lastOperand = if (lastOperand is Int && lastOperand == 0) "-0" else lastOperand.unaryMinus().toString(),
             lastOperator = button.toOperator(),
 
             activeButton = ButtonCalculatorUnary.Sign,

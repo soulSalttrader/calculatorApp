@@ -6,9 +6,10 @@ sealed interface EvaluationResult : NumericResult {
     data class DoubleResult(override val value: Double) : EvaluationResult
 
     companion object {
-        fun normalizeResult(expression: Double) = when (expression % 1.0 == 0.0 && expression != 0.0) {
-            true -> IntegerResult(expression.toLong())
-            else -> DoubleResult(expression)
+        fun normalizeResult(number: Number) = when (number) {
+            is Int, is Long -> IntegerResult(number.toLong())
+            is Double, is Float -> DoubleResult(number.toDouble())
+            else -> throw IllegalArgumentException("Unsupported type: ${number::class}")
         }
     }
 }
