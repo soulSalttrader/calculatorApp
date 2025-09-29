@@ -14,5 +14,9 @@ sealed class Token {
         fun List<Token>.lastNumberOrNull(): Number? {
             return this.findLast { it is Number } as? Number
         }
+
+        fun List<Token>.lastBinaryOrNull(): Binary? {
+            return this.findLast { it is Binary } as? Binary
+        }
     }
 }
