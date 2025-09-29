@@ -1,5 +1,7 @@
 package com.example.calculatorApp.testData.expected
 
+import com.example.calculatorApp.domain.ast.EvaluationResult.DoubleResult
+import com.example.calculatorApp.domain.ast.EvaluationResult.IntegerResult
 import com.example.calculatorApp.domain.ast.NumericResult
 import com.example.calculatorApp.domain.ast.Operator
 import com.example.calculatorApp.domain.ast.OperatorBinary
@@ -9,13 +11,11 @@ interface ExpectedEngineMathResult : NumericResult {
     data class DoubleResultTest(override val value: Double) : ExpectedEngineMathResult
 
     companion object {
-        fun normalizeResultTest(n: Number): ExpectedEngineMathResult =
-            when (n) {
-                is Int -> IntegerResultTest(n.toLong())
-                is Long -> IntegerResultTest(n)
-                is Double -> if (n % 1.0 == 0.0 && n != 0.0) IntegerResultTest(n.toLong()) else DoubleResultTest(n)
-                else -> error("Unsupported type: ${n::class}")
-            }
+        fun normalizeResultTest(n: Number): ExpectedEngineMathResult = when (n) {
+            is Int, is Long -> IntegerResultTest(n.toLong())
+            is Double, is Float -> DoubleResultTest(n.toDouble())
+            else -> throw IllegalArgumentException("Unsupported type: ${n::class}")
+        }
 
         fun evalPercentTest(
             operand: Number,

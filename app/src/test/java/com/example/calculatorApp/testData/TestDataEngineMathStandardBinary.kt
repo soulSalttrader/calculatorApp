@@ -44,8 +44,8 @@ object TestDataEngineMathStandardBinary {
         val eval = operation.toTestEval()
 
         val delegate = eval.applyTest(
-            ExpectedEngineMathResult.DoubleResultTest(operand.toDouble()),
-            ExpectedEngineMathResult.DoubleResultTest(previousNumber.toDouble())
+            ExpectedEngineMathResult.normalizeResultTest(operand.toDouble()),
+            ExpectedEngineMathResult.normalizeResultTest(previousNumber.toDouble())
         ) as ExpectedEngineMathResult
 
         return ExpectedEngineMath.Binary(delegate)
@@ -60,12 +60,13 @@ object TestDataEngineMathStandardBinary {
         mapping: Map<BinaryOperation, ExpectedEngineMathEval> = operationTestMap,
     ): ExpectedEngineMathEval = mapping[this] ?: error("Unknown operation: $this")
 
-    enum class OperandCategoryTest { NEG_INT, NEG_DEC, ZERO, POS_INT, POS_DEC }
+    enum class OperandCategoryTest { NEG_INT, NEG_DEC, ZERO_DOUBLE, ZERO_INT, POS_INT, POS_DEC }
 
     private val valuesByOperandCategoryTest: Map<OperandCategoryTest, List<Number>> = mapOf(
         OperandCategoryTest.NEG_INT to listOf(-3),
         OperandCategoryTest.NEG_DEC to listOf(-3.5),
-        OperandCategoryTest.ZERO   to listOf(0.0),
+        OperandCategoryTest.ZERO_DOUBLE to listOf(0.0),
+        OperandCategoryTest.ZERO_INT to listOf(0),
         OperandCategoryTest.POS_INT to listOf(3),
         OperandCategoryTest.POS_DEC to listOf(3.5),
     )

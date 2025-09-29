@@ -32,17 +32,16 @@ class EngineStateStandard(
         return state.modifyWith(
             { state.hasError } to { this.copy(activeButton = unary) },
             { true } to {
-                val lastInput = state.lastOperand.toDoubleOrNull() ?: state.expression.lastNumberOrNull()?.value
-                ?: return@to state.copy(hasError = true, errorMessage = "Invalid number")
+                val lastInput = state.lastOperand
                 val previousNumber = state.expression.lastNumberOrNull()?.value
                 val operator = state.lastOperator
 
                 val newValue = when (unary) {
-                    ButtonCalculatorUnary.Sign -> engineMath.evalSign(lastInput)
-                    ButtonCalculatorUnary.Percentage -> engineMath.evalPercent(lastInput, previousNumber, operator)
+                    ButtonCalculatorUnary.Sign -> lastInput.formatNegated()
+                    ButtonCalculatorUnary.Percentage -> engineMath.evalPercent(lastInput.toDouble(), previousNumber, operator).value.toString()
                 }
 
-                state.copy(lastOperand = newValue.value.toString(), activeButton = unary)
+                state.copy(lastOperand = newValue, activeButton = unary)
             }
         )
     }
@@ -64,13 +63,28 @@ class EngineStateStandard(
         return state.modifyWith(
             { state.hasError } to { this.copy(activeButton = number) },
             { state.lastOperand == "NaN" } to { this },
-            { state.lastOperand == "0" } to { state.copy(lastOperand = number.symbol.label) },
+            { state.lastOperand == "0" } to { state.copy(lastOperand = number.symbol.label, activeButton = number) },
             { state.lastOperand.length >= MAX_NUM_LENGTH } to { this },
             { true } to {
-                state.copy(lastOperand = state.lastOperand + number.symbol.label, lastResult = null)
+                state.copy(lastOperand = state.lastOperand + number.symbol.label, activeButton = number, lastResult = null)
             }
         )
     }
+
+    private fun String.formatNegated(): String {
+        val operand = this.toNumber() ?: throw IllegalArgumentException("Invalid operand: $this")
+
+        return when (this) {
+            "0" -> "-0"
+            "-0" -> "0"
+            else -> engineMath.evalSign(operand).value.toString()
+        }
+    }
+
+    fun String.toNumber(): Number? =
+        this.toIntOrNull()
+            ?: this.toLongOrNull()
+            ?: this.toDouble()
 
     private fun enterDecimal(state: CalculatorStateDomain): CalculatorStateDomain {
         return state.modifyWith(

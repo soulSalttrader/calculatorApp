@@ -173,7 +173,6 @@ class EngineMathStandardTest {
                 testData.input.previousNumber,
                 testData.input.lastOperator,
             ).value
-
             evalPercent shouldBe testData.expected.value
         }
 
@@ -188,7 +187,6 @@ class EngineMathStandardTest {
                 testData.input.previousNumber,
                 testData.input.lastOperator,
             ).value
-
             evalPercent shouldBe testData.expected.value
         }
 
@@ -203,7 +201,6 @@ class EngineMathStandardTest {
                 testData.input.previousNumber,
                 testData.input.lastOperator,
             ).value
-
             evalPercent shouldBe testData.expected.value
         }
     }
@@ -237,7 +234,7 @@ class EngineMathStandardTest {
             testData: TestCase<InputEngineMath.Sign, ExpectedEngineMath.Sign>
         ) {
             // Act & Assert:
-            val sign = engineMath.evalSign(testData.input.operand.toDouble())
+            val sign = engineMath.evalSign(testData.input.operand)
             sign.value shouldBe testData.expected.value
         }
 
@@ -247,7 +244,7 @@ class EngineMathStandardTest {
             testData: TestCase<InputEngineMath.Sign, ExpectedEngineMath.Sign>
         ) {
             // Act & Assert:
-            val sign = engineMath.evalSign(testData.input.operand.toDouble())
+            val sign = engineMath.evalSign(testData.input.operand)
             sign.value shouldBe testData.expected.value
         }
 
@@ -257,7 +254,7 @@ class EngineMathStandardTest {
             testData: TestCase<InputEngineMath.Sign, ExpectedEngineMath.Sign>
         ) {
             // Act & Assert:
-            val sign = engineMath.evalSign(testData.input.operand.toDouble())
+            val sign = engineMath.evalSign(testData.input.operand)
             sign.value shouldBe testData.expected.value
         }
     }
