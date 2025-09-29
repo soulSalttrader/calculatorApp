@@ -39,5 +39,7 @@ sealed interface EngineState : Scenario {
         object EqualsError : EngineState by ControlEqualsError
         object EqualsInvalid : EngineState by ControlEqualsInvalid
         object EqualsRepeatable : EngineState by ControlEqualsRepeatable
+        object EqualsRepeatableOperand : EngineState by ControlEqualsRepeatableOperand
+        object EqualsPercentage : EngineState by ControlEqualsPercentage
     }
 }
