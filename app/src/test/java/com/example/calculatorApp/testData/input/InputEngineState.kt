@@ -22,4 +22,11 @@ sealed interface InputEngineState : Input {
         InputEngineStateDelegate.Base by delegate {
         override fun toString(): String = "InputEngineState.Control(state=${delegate.context})"
     }
+
+    data class Number(
+        private val delegate: InputEngineStateDelegate.Base
+    ) : InputEngineState,
+        InputEngineStateDelegate.Base by delegate {
+        override fun toString(): String = "InputEngineState.Number(state=${delegate.context})"
+    }
 }

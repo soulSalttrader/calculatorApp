@@ -41,6 +41,15 @@ inline fun <reified T : ContextEngineState> buildControlInputState(
         }
     )
 
+inline fun <reified T : ContextEngineState> buildNumberInputState(
+    context: ContextEngineState
+): InputEngineState =
+    InputEngineState.Number(
+        object : InputEngineStateDelegate.Base {
+            override val context: ContextEngineState.Base = context.requireContext<T>() as ContextEngineState.Base
+        }
+    )
+
 inline fun <reified T : ContextEngineState> buildBinaryExpectedState(
     context: ContextEngineState
 ): ExpectedEngineState =
@@ -63,6 +72,15 @@ inline fun <reified T : ContextEngineState> buildControlExpectedState(
     context: ContextEngineState
 ): ExpectedEngineState =
     ExpectedEngineState.Control(
+        object : ExpectedEngineStateDelegate.Base {
+            override val context: ContextEngineState.Base = context.requireContext<T>() as ContextEngineState.Base
+        }
+    )
+
+inline fun <reified T : ContextEngineState> buildNumberExpectedState(
+    context: ContextEngineState
+): ExpectedEngineState =
+    ExpectedEngineState.Number(
         object : ExpectedEngineStateDelegate.Base {
             override val context: ContextEngineState.Base = context.requireContext<T>() as ContextEngineState.Base
         }
