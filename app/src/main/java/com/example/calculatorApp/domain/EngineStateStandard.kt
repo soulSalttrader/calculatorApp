@@ -5,6 +5,7 @@ import com.example.calculatorApp.domain.ast.Operator
 import com.example.calculatorApp.domain.ast.OperatorBinary
 import com.example.calculatorApp.domain.ast.Parser
 import com.example.calculatorApp.domain.ast.Token
+import com.example.calculatorApp.domain.ast.Token.Companion.firstNumberOrNull
 import com.example.calculatorApp.domain.ast.Token.Companion.lastNumberOrNull
 import com.example.calculatorApp.domain.ast.TokenizerUtils.toBinaryOperator
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
@@ -96,8 +97,9 @@ class EngineStateStandard(
 
     private fun applyEquals(state: CalculatorStateDomain): CalculatorStateDomain {
         return state.modifyWith(
-            { state.hasError } to { this },
-            { state.expression.isEmpty() && state.lastOperand.isNotBlank() } to { state.copy(lastOperand = "", lastResult = state.lastOperand) },
+            { state.hasError } to { this.copy(activeButton = ButtonCalculatorControl.Equals) },
+            { state.expression.isEmpty() && state.lastOperand.isNotBlank() } to { state.copy(lastOperand = "", lastResult = state.lastOperand, activeButton = ButtonCalculatorControl.Equals) },
+            { isInvalidExpression(state) } to { this.copy(expression = emptyList(), lastOperand = "", hasError = true, errorMessage = "Invalid expression", activeButton = ButtonCalculatorControl.Equals) },
             { state.lastOperand.isNotBlank() && state.cachedOperand != null } to {
                 val lastOperator = extractBinaryOperator(state) ?: return@to state.copy(hasError = true, errorMessage = "No last operator I.")
                 val newState = state.copy(
@@ -119,8 +121,14 @@ class EngineStateStandard(
                 val result = engineNode.evaluate(ast)
 
                 assessState(result, state, lastOperator, operand)
-            }
+            },
         )
+    }
+
+    private fun isInvalidExpression(state: CalculatorStateDomain): Boolean {
+        val expressionNumber = state.expression.firstNumberOrNull()?.value
+
+        return expressionNumber == null || expressionNumber.isInfinite()
     }
 
     fun enterBinary(state: CalculatorStateDomain, binary: OperatorBinary): CalculatorStateDomain {
@@ -169,7 +177,7 @@ class EngineStateStandard(
 
             expression = listOf(Token.Number(result.value.toDouble()), lastOperator),
             isComputed = true,
-            cachedOperand = operand.toString()
+            cachedOperand = operand.toString(),
         )
     }
 
