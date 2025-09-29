@@ -79,7 +79,12 @@ object TestDataElement {
     val operatorsUnaryPrefixTest = provideSequenceOfSingletons(OperatorUnary.Prefix::class)
     val operatorsUnarySuffixTest = provideSequenceOfSingletons(OperatorUnary.Suffix::class)
     val operatorsParenthesisTest = provideSequenceOfSingletons(OperatorParenthesis::class)
-    val operatorsAllTest: Sequence<Operator> = sequenceOf(operatorsBinaryTest).flatMap { it }
+    val operatorsAllTest: Sequence<Operator> = sequenceOf(
+        operatorsBinaryTest,
+                operatorsUnaryPrefixTest,
+                operatorsUnarySuffixTest,
+                operatorsParenthesisTest,
+    ).flatMap { it }
 
     //
     val buttonCategoryMappingBase = listOf(
