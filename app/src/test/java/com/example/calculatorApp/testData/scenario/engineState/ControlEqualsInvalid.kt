@@ -1,5 +1,6 @@
 package com.example.calculatorApp.testData.scenario.engineState
 
+import com.example.calculatorApp.domain.ast.OperatorBinary
 import com.example.calculatorApp.domain.ast.Token
 import com.example.calculatorApp.domain.ast.TokenizerUtils.toOperator
 import com.example.calculatorApp.model.elements.button.Button
@@ -24,8 +25,11 @@ object ControlEqualsInvalid : EngineState.Control {
     ): Pair<ContextEngineState, ContextEngineState> {
 
         val input = ContextEngineState.Error(
-            expression = expressionInput,
-            lastOperand = Double.POSITIVE_INFINITY.toString(),
+            expression = listOf(
+                Token.Number(Double.POSITIVE_INFINITY),
+                Token.Binary(button.toOperator() as OperatorBinary)
+            ),
+            lastOperand = lastOperand.toString(),
             lastOperator = button.toOperator(),
 
             activeButton = lastOperand.lastDigit().toString().toButton(),
@@ -39,15 +43,15 @@ object ControlEqualsInvalid : EngineState.Control {
         )
 
         val expected = input.copy(
-            expression = expressionInput,
-            lastOperand = Double.POSITIVE_INFINITY.toString(),
+            expression = emptyList(),
+            lastOperand = "",
 
             activeButton = ButtonCalculatorControl.Equals,
 
             isComputed = false,
 
             hasError = true,
-            errorMessage = "Invalid Operand"
+            errorMessage = "Invalid expression"
         )
         return input to expected
     }
