@@ -42,4 +42,9 @@ sealed interface EngineState : Scenario {
         object EqualsRepeatableOperand : EngineState by ControlEqualsRepeatableOperand
         object EqualsPercentage : EngineState by ControlEqualsPercentage
     }
+
+    sealed interface Numeric : EngineState {
+        object Success : EngineState by NumberSuccess
+        object Error : EngineState by NumberError
+    }
 }

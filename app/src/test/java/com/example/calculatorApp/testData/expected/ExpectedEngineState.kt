@@ -22,4 +22,11 @@ sealed interface ExpectedEngineState : Expected {
         ExpectedEngineStateDelegate.Base by delegate {
         override fun toString(): String = "ExpectedEngineState.Control(state=${delegate.context})"
     }
+
+    data class Number(
+        private val delegate: ExpectedEngineStateDelegate.Base
+    ) : ExpectedEngineState,
+        ExpectedEngineStateDelegate.Base by delegate {
+        override fun toString(): String = "ExpectedEngineState.Number(state=${delegate.context})"
+    }
 }
