@@ -64,7 +64,7 @@ class EngineStateStandard(
             { state.hasError } to { this.copy(activeButton = number) },
             { state.lastOperand == "NaN" } to { this },
             { state.lastOperand == "0" } to { state.copy(lastOperand = number.symbol.label, activeButton = number) },
-            { state.lastOperand.length >= MAX_NUM_LENGTH } to { this },
+            { state.lastOperand.length >= MAX_NUM_LENGTH } to { this.copy(activeButton = number) },
             { true } to {
                 state.copy(lastOperand = state.lastOperand + number.symbol.label, activeButton = number, lastResult = null)
             }
