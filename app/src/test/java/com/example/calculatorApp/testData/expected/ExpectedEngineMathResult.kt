@@ -1,7 +1,5 @@
 package com.example.calculatorApp.testData.expected
 
-import com.example.calculatorApp.domain.ast.EvaluationResult.DoubleResult
-import com.example.calculatorApp.domain.ast.EvaluationResult.IntegerResult
 import com.example.calculatorApp.domain.ast.NumericResult
 import com.example.calculatorApp.domain.ast.Operator
 import com.example.calculatorApp.domain.ast.OperatorBinary
