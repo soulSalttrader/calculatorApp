@@ -305,7 +305,7 @@ class EngineMathStandard : EngineMath {
       val normalizedRight = EvaluationResult.DoubleResult(rightOperand)
       val result = operation(normalizedLeft, normalizedRight)
 
-      return EvaluationResult.normalizeResult(result.value.toDouble())
+      return EvaluationResult.normalizeResult(result.value)
   }
 
   override fun evalPercent(
@@ -328,8 +328,15 @@ class EngineMathStandard : EngineMath {
       }
   }
 
-  override fun evalSign(operand: Double): EvaluationResult {
-      return EvaluationResult.normalizeResult(-operand)
+  override fun evalSign(operand: Number): EvaluationResult {
+      val negated = when (operand) {
+          is Int    -> -operand
+          is Long   -> -operand
+          is Float  -> -operand
+          is Double -> -operand
+          else -> throw IllegalArgumentException("Unsupported type: ${operand::class}")
+      }
+      return EvaluationResult.normalizeResult(negated)
   }
 }
 ```
@@ -359,66 +366,20 @@ class EngineNodeStandard(private val engineMath: EngineMath) : EngineNode {
             is ASTNode.Binary -> evalBinaryExpression(astNode)
         }
     }
-  
+
     private fun evalBinaryExpression(astNode: ASTNode.Binary): EvaluationResult {
         val left = evaluate(astNode.left).value.toDouble()
         val right = evaluate(astNode.right).value.toDouble()
 
-        return when (astNode.operator) {
-            is OperatorBinary.Addition -> engineMath.evalBinary(left, right) { l, r -> l + r }
-            is OperatorBinary.Subtraction -> engineMath.evalBinary(left, right) { l, r -> l - r }
-            is OperatorBinary.Multiplication -> engineMath.evalBinary(left, right) { l, r -> l * r }
-            is OperatorBinary.Division -> engineMath.evalBinary(left, right) { l, r -> l / r }
+        val operation = when (astNode.operator) {
+            is OperatorBinary.Addition       -> BinaryOperations.Add
+            is OperatorBinary.Subtraction    -> BinaryOperations.Sub
+            is OperatorBinary.Multiplication -> BinaryOperations.Mul
+            is OperatorBinary.Division       -> BinaryOperations.Div
         }
+
+        return engineMath.evalBinary(left, right, operation)
     }
-}
-```
-
-#### 🔵 5.3.1 **Token**
-- Tokens represent parsed user inputs, categorized into numerical values, operators (binary or unary), or parentheses. These tokens serve as input to the parser.
-```kotlin
-sealed class Token {
-   data class Number(val value: Double) : Token()
-   data class Binary(val operator: OperatorBinary) : Token()
-   data class Unary(val operator: OperatorUnary) : Token()
-   data class Parenthesis(val type: OperatorParenthesis) : Token()
-}
-```
-
-#### 🔵 5.3.2 **Node**
-- ASTNodes represent the syntactic structure of an expression. Nodes are recursively evaluated to compute a result.
-```kotlin
-sealed class ASTNode {
-   data class Number(val value: Double) : ASTNode()
-   data class Binary(val operator: OperatorBinary, val left: ASTNode, val right: ASTNode) : ASTNode()
-}
-```
-
-#### 🔵 5.3.3 **Parser**
-- The Parser component converts a list of tokens into a tree of ASTNode objects. It handles operator precedence and builds nested nodes for binary operations.
-```kotlin
-class ParserToken : Parser {
-
- override fun parse(tokens: List<Token>): ASTNode {
-     val output = mutableListOf<ASTNode>()
-     val operators = mutableListOf<Token>()
-
-     tokens.forEach { token ->
-         when (token) {
-             is Token.Number -> output.add(ASTNode.Number(token.value))
-             is Token.Binary -> handleBinaryOperator(token, output, operators)
-             else -> throw IllegalArgumentException("Invalid token for: $token")
-         }
-     }
-
-     while (operators.isNotEmpty()) { buildOperatorNode(output, operators.removeLast()) }
-     require(output.size == 1) { "Invalid expression" }
-
-     return output.single()
- }
-
-//...
-
 }
 ```
 
@@ -446,56 +407,70 @@ interface EngineState : Engine {
 
 ##### **Implementation**:
 ```kotlin
-class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
+class EngineStateStandard(
+    private val engineMath: EngineMath,
+    private val engineNode: EngineNode,
+    private val parser: Parser,
+) : EngineState {
 
-    override fun handleBinary(state: CalculatorState, binary: ButtonCalculatorBinary): CalculatorState {
-        return state.modifyWith(
-            { state.lastOperand == "NaN" || state.expression.contains("NaN") } to { this },
-            { state.activeButton == ButtonCalculatorControl.Equals } to { state.copy(lastOperator = binary, lastOperand = "", lastResult = null) },
-            { state.lastOperator != null && state.lastOperand.isNotBlank() } to {
-            val newState = applyBinary(state)
-            enterBinary(newState, binary)
-            },
-            { true } to { enterBinary(state, binary) }
-        )
-    }
+    override fun handleBinary(
+        state: CalculatorStateDomain,
+        binary: ButtonCalculatorBinary
+    ): CalculatorStateDomain = state.modifyWith( { true } to { enterBinary(state, binary.toBinaryOperator()) } )
 
-    override fun handleUnary(state: CalculatorState, unary: ButtonCalculatorUnary): CalculatorState {
-        return state.modifyWith(
+    override fun handleUnary(
+        state: CalculatorStateDomain,
+        unary: ButtonCalculatorUnary
+    ): CalculatorStateDomain =
+        state.modifyWith(
+            { state.hasError } to { this.copy(activeButton = unary) },
             { true } to {
-                when (unary) {
-                    is ButtonCalculatorUnary.Sign -> applySign(state)
-                    is ButtonCalculatorUnary.Percentage -> applyPercent(state)
+                val lastInput = state.lastOperand
+                val previousNumber = state.expression.lastNumberOrNull()?.value
+                val operator = state.lastOperator
+
+                val newValue = when (unary) {
+                    ButtonCalculatorUnary.Sign -> lastInput.formatNegated()
+                    ButtonCalculatorUnary.Percentage -> engineMath.evalPercent(lastInput.toDouble(), previousNumber, operator).value.toString()
                 }
+
+                state.copy(lastOperand = newValue, activeButton = unary)
             }
         )
-    }
 
-    override fun handleControl(state: CalculatorState, control: ButtonCalculatorControl): CalculatorState {
-        return state.modifyWith(
+    override fun handleControl(
+        state: CalculatorStateDomain,
+        control: ButtonCalculatorControl
+    ): CalculatorStateDomain = 
+        state.modifyWith(
             { true } to {
                 when (control) {
                     is ButtonCalculatorControl.AllClear -> applyClearAll()
-                    is ButtonCalculatorControl.Clear -> applyClear(state)
-                    is ButtonCalculatorControl.Decimal -> enterDecimal(state)
-                    is ButtonCalculatorControl.Equals -> applyEquals(state)
+                    is ButtonCalculatorControl.Clear    -> applyClear(state)
+                    is ButtonCalculatorControl.Decimal  -> enterDecimal(state)
+                    is ButtonCalculatorControl.Equals   -> applyEquals(state)
                 }
             }
         )
-    }
 
-    override fun handleNumber(state: CalculatorState, number: ButtonCalculatorNumber): CalculatorState {
-        return state.modifyWith(
-            { true } to {
-                applyNumber(state, number)
-            }
+    override fun handleNumber(
+        state: CalculatorStateDomain,
+        number: ButtonCalculatorNumber
+    ): CalculatorStateDomain =
+        state.modifyWith(
+            { state.hasError } to { this.copy(activeButton = number) },
+            { state.lastOperand == "NaN" } to { this },
+            { state.lastOperand == "0" } to { state.copy(lastOperand = number.symbol.label, activeButton = number) },
+            { state.lastOperand.length >= MAX_NUM_LENGTH } to { this.copy(activeButton = number) },
+            { true } to { state.copy(lastOperand = state.lastOperand + number.symbol.label, activeButton = number, lastResult = null) }
         )
-    }
+    // ...
 }
 ```
 
-#### 🔵 5.4.1 **CalculatorState**
-CalculatorState represents the current state of the calculator, maintaining essential data for computations, user interactions, and error handling.
+#### 🔵 5.4.1 **CalculatorStateDomain**
+CalculatorStateDomain represents the current state of the calculator, maintaining essential data for computations, user interactions, and error handling.
+It implements the HasState interface, providing a unified way to access and manipulate the calculator’s state across different components and operations.
 
 ##### **State properties**:
 - `expression` – Stores the sequence of inputs for an ongoing operation.
@@ -509,12 +484,12 @@ CalculatorState represents the current state of the calculator, maintaining esse
 - `errorMessage` – Describes the error when hasError is true.
 
 ##### **State Modification with `modifyWith`**:
-The `modifyWith` function conditionally applies transformations to CalculatorState based on a set of conditions.
+The `modifyWith` function conditionally applies transformations to CalculatorStateDomain based on a set of conditions.
 
 ##### - **Functionality**:
 - Accepts a list of transformation pairs, where each:
   - Condition: A function returning Boolean that determines if the transformation should apply.
-  - Action: A function that modifies CalculatorState when the condition is met.
+  - Action: A function that modifies CalculatorStateDomain when the condition is met.
 - The first matching transformation is applied.
 - If no conditions match, the state remains unchanged.
 - If an exception occurs, the state is updated with an error message.
@@ -524,38 +499,41 @@ The `modifyWith` function conditionally applies transformations to CalculatorSta
 - errorMessage (optional) – A message set if an exception occurs during modification.
 
 ##### - **Returns**:
-- A new CalculatorState reflecting the applied transformation.
+- A new CalculatorStateDomain reflecting the applied transformation.
 - The original state if no condition matches.
 - An error state if an exception occurs.
 
 ##### **Implementation**:
+
 ```kotlin
-data class CalculatorState(
-  val expression: List<Token> = emptyList(),
-  val lastOperand: String = SymbolButton.ZERO.label,
-  val lastResult: String? = null,
-  val lastOperator: Operator? = null,
-  val cachedOperand: String? = null,
-  val activeButton: Button? = null,
-  val isComputed: Boolean = false,
-  val hasError: Boolean = false,
-  val errorMessage: String? = null,
-) {
-  fun modifyWith(
-      vararg transformations: Pair<() -> Boolean, CalculatorState.() -> CalculatorState>,
-      errorMessage: String? = null,
-  ): CalculatorState {
-      return try {
-          transformations
-              .firstOrNull { it.first() }
-              ?.second?.invoke(this)
-              ?: this
-      } catch (e: Exception) {
-          this.copy(hasError = true, errorMessage = errorMessage ?: e.message)
-      }
-  }
+@Parcelize
+data class CalculatorStateDomain(
+    @IgnoredOnParcel override val expression: List<Token> = emptyList(),
+    override val lastOperand: String = SymbolButton.ZERO.label,
+    @IgnoredOnParcel override val lastOperator: Operator? = null,
+
+    @IgnoredOnParcel override val activeButton: Button? = null,
+
+    override val lastResult: String? = null,
+    override val cachedOperand: String? = null,
+    override val isComputed: Boolean = false,
+
+    override val hasError: Boolean = false,
+    override val errorMessage: String? = null,
+) : Parcelable, HasState {
+
+    fun modifyWith(
+        vararg transformations: Pair<() -> Boolean, CalculatorStateDomain.() -> CalculatorStateDomain>,
+        errorMessage: String? = null,
+    ): CalculatorStateDomain =
+        runCatching {
+            transformations.firstOrNull { it.first() }
+                ?.second(this)
+                ?: this
+        }.getOrElse { e -> this.copy(hasError = true, errorMessage = errorMessage ?: e.message) }
 }
 ```
+
 ##### Why `modifyWith`?
 - Improves readability – Avoids deeply nested if statements.
 - Encapsulates state logic – Centralized modification logic improves maintainability.
@@ -623,6 +601,131 @@ class CommandFactoryStandard(
 ```
 
 The CommandFactoryStandard simplifies the process of translating user interactions into executable commands while ensuring modularity and readability. It dynamically generates CommandHandler instances based on the button type, allowing the calculator to process different operations efficiently.
+
+___
+<br>
+
+### 🧶 7. **ASTNode**
+
+#### 7.1 **Token**
+Tokens represent parsed user inputs, categorized into numerical values, operators (binary or unary), or parentheses. These tokens serve as input to the parser.
+
+  ```kotlin
+  sealed interface Token {
+     data class Number(val value: Double) : Token()
+     data class Binary(val operator: OperatorBinary) : Token()
+     data class Unary(val operator: OperatorUnary) : Token()
+     data class Parenthesis(val type: OperatorParenthesis) : Token()
+  }
+  ```
+
+#### 7.2 **Node**
+ASTNodes represent the syntactic structure of an expression. Nodes are recursively evaluated to compute a result.
+
+  ```kotlin
+  sealed class ASTNode {
+     data class Number(val value: Double) : ASTNode()
+     data class Binary(val operator: OperatorBinary, val left: ASTNode, val right: ASTNode) : ASTNode()
+  }
+  ```
+
+#### 7.3 Precedence
+Precedence defines operator priority for parsing expressions. 
+Each operator type is associated with a numeric level to resolve parsing order correctly.
+
+  ```kotlin
+  sealed class Precedence(val level: Int) {
+      data object Lowest : Precedence(0)  // Default for unknown tokens
+      data object Sum : Precedence(1)     // +, -
+      data object Product : Precedence(2) // *, /
+      data object Prefix : Precedence(3)  // -x, +x
+      data object Suffix : Precedence(4)  // x!, x², %
+      data object Power : Precedence(5)   // x^y
+      data object Group : Precedence(6)   // (, )
+  
+      companion object {
+          fun fromToken(token: Token): Precedence {
+              return when (token) {
+                  is Token.Binary -> when (token.operator) {
+                      OperatorBinary.Addition,
+                      OperatorBinary.Subtraction -> Sum
+                      OperatorBinary.Multiplication,
+                      OperatorBinary.Division -> Product
+                  }
+                  is Token.Unary -> when (token.operator) {
+                      OperatorUnary.Prefix.Sign -> Prefix
+                      OperatorUnary.Suffix.Percentage -> Suffix
+                  }
+                  is Token.Parenthesis -> Group
+                  else -> Lowest
+              }
+          }
+      }
+  }
+  ```
+
+#### 7.4 Tokenizer
+The TokenizerStandard converts a list of raw string tokens into structured Token objects. 
+It detects numbers, binary operators, unary operators, and parentheses.
+
+  ```kotlin
+  class TokenizerStandard : Tokenizer {
+  
+      override fun tokenize(expression: List<String>): List<Token> {
+          val tokens = mutableListOf<Token>()
+  
+          for (token in expression) {
+              tokens.add(
+                  when {
+                      token.isNumber() -> Token.Number(token.toDouble())
+                      token.isBinary() -> Token.Binary(token.toBinaryOperator())
+                      token.isParenthesis() -> Token.Parenthesis(token.toParenthesisOperator())
+                      token.isUnaryPrefix() || token.isUnarySuffix() -> Token.Unary(token.toUnaryOperator())
+                      else -> throw IllegalArgumentException("Invalid token: $token")
+                  }
+              )
+          }
+  
+          return tokens
+      }
+  }
+  ```
+- Design Note
+  - Precedence levels ensure operators are evaluated in the correct order when building the AST.
+  - TokenizerStandard separates lexical analysis from parsing, enabling modularity and easier testing.
+
+#### 7.6 **Parser**
+The Parser component converts a list of tokens into a tree of ASTNode objects. It handles operator precedence and builds nested nodes for binary operations.
+
+  ```kotlin
+  class ParserToken : Parser {
+  
+   override fun parse(tokens: List<Token>): ASTNode {
+       val output = mutableListOf<ASTNode>()
+       val operators = mutableListOf<Token>()
+  
+       tokens.forEach { token ->
+           when (token) {
+               is Token.Number -> output.add(ASTNode.Number(token.value))
+               is Token.Binary -> handleBinaryOperator(token, output, operators)
+               else -> throw IllegalArgumentException("Invalid token for: $token")
+           }
+       }
+  
+       while (operators.isNotEmpty()) { buildOperatorNode(output, operators.removeLast()) }
+       require(output.size == 1) { "Invalid expression" }
+  
+       return output.single()
+   }
+  
+  //...
+  
+  }
+  ```
+___
+<br>
+
+### 🪟 8. **ViewModel**
 
 ___
 <br>
@@ -925,7 +1028,7 @@ The framework is built around five key abstractions:
   }
   ```
   
-#### Summary
+#### 🟢 Summary
 
 - This test infrastructure provides a structured and reusable approach to scenario-based testing. By abstracting test design into distinct roles, it enables both clarity and flexibility:
   - Declarative scenario definitions
@@ -940,7 +1043,7 @@ The framework is built around five key abstractions:
     - With Kotest and JUnit integration, tests become small, expressive, and easy to extend with new scenarios.
 - Together, these elements form a lightweight yet extensible test framework. The abstractions are generic enough to be applied beyond `EngineState`, while still allowing specialized implementations for domain-specific needs.
 
-### **Concept Annotations:**
+### 📘 **Concept Annotations:**
 
 The **Concept Annotations** feature is designed to help manage experimental or under development ideas within the project code. These annotations mark classes, methods, or other elements that are part of concepts still being explored, with the intention to separate them from the production code. This mechanism helps track potential future work and experimental features that may evolve, change, or even be removed in future versions of the project.
 
