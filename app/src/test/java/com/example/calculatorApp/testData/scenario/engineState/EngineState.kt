@@ -46,5 +46,7 @@ sealed interface EngineState : Scenario {
     sealed interface Numeric : EngineState {
         object Success : EngineState by NumberSuccess
         object Error : EngineState by NumberError
+        object Operand : EngineState by NumberOperand
+        object MaxLength : EngineState by NumberMaxLength
     }
 }
