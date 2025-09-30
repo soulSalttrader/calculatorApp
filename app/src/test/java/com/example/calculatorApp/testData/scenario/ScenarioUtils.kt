@@ -86,10 +86,7 @@ inline fun <reified T : ContextEngineState> buildNumberExpectedState(
         }
     )
 
-fun Number.lastDigit(): Int {
-    val value = this.toString().removePrefix("-").replace(".", "")
-    return value.last().digitToInt()
-}
+fun Number.lastDigit(): Int = this.toString().last { it.isDigit() }.digitToInt()
 
 fun Operator.toFunction(): (Double, Double) -> Double = when (this) {
     OperatorBinary.Addition       -> Double::plus
