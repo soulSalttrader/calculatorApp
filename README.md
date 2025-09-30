@@ -46,7 +46,7 @@ The calculator supports a full suite of intuitive, responsive operations designe
 - [x] 5. Engine
 - [x] 6. Command
 - [x] 7. ASTNode
-- [ ] 8. ViewModel
+- [x] 8. ViewModel
 - [ ] 9. UI
 
 ---
@@ -628,6 +628,317 @@ ___
 <br>
 
 ## 💻 Development Practices:
+
+### 🧪 **Scenario-Based Testing:**
+
+- The testing approach generalizes the process into reusable abstractions that make test cases easier to define, extend, and maintain.
+
+#### 🟢 Core Abstractions
+
+The framework is built around five key abstractions:
+- `Input` – represents the initial state or data given to the system under test.
+- `Expected` – captures the target outcome or state to assert against.
+- `Context` – a richer representation of the environment.
+- `Scenario` – describes a situation under test, defining how to construct Input, Expected, and Context.
+- `TestCase` - the atomic unit of testing, pairing a concrete Input with its corresponding Expected result.
+- `ArgumentsBuilder` – a generator that provides sequences of reusable test cases from Scenario definitions.
+
+#### 🟢 Input
+- Definition (Framework-level)
+  - `Input` represents the initial state before an operation.
+  - It is a marker interface, and each domain (e.g., `EngineState`) provides its own concrete implementations.
+
+    ```kotlin
+    interface Input
+    ```
+
+- `EngineState` Example (Concrete Implementation)
+    - In the case of `EngineState`, inputs are grouped by categories (`Binary`, `Unary`, `Control`, `Number`) and delegate to shared base logic.
+      
+      ```kotlin
+      sealed interface InputEngineState : Input {
+          data class Binary(
+              private val delegate: InputEngineStateDelegate.Base
+          ) : InputEngineState,
+              InputEngineStateDelegate.Base by delegate {
+              override fun toString(): String =
+                  "InputEngineState.Binary(state=${delegate.context})"
+          }
+          // Unary, Control, Number ...
+      }
+      ```
+
+- Design Note
+  - In this (and most) cases, `Binary`, `Unary`, `Control`, and `Number` are essentially semantic wrappers — they could be consolidated into a single implementation and even share a single delegate.
+  - They were separated here deliberately to provide better versatility and future extension points, even though the current behavior is nearly identical.
+
+#### 🟢 Expected
+- Definition (Framework-level)
+  - `Expected` mirrors Input, but instead of representing the initial state, it captures the target state after an operation.
+  - It is a marker interface, with domain-specific implementations.
+
+    ```kotlin
+    interface Expected
+    ```
+
+- EngineState Example (Concrete Implementation)
+  - In the case of `EngineState`, expected values are also grouped by categories (`Binary`, `Unary`, `Control`, `Number`) and delegate to shared base logic.
+      
+      ```kotlin
+      sealed interface ExpectedEngineState : Expected {
+          data class Binary(
+              private val delegate: ExpectedEngineStateDelegate.Base
+          ) : ExpectedEngineState,
+              ExpectedEngineStateDelegate.Base by delegate {
+              override fun toString(): String =
+                  "ExpectedEngineState.Binary(state=${delegate.context})"
+          }
+          // Unary, Control, Number ...
+      }
+      ```
+  
+#### 🟢 Context
+- Definition (Framework-level)
+  - `Context` captures the environmental snapshot of the system under test at a given moment.
+  - Unlike `Input` or `Expected`, which are focused on before and after states, `Context` models the rich details of the state itself: expression tokens, operands, operators, pressed buttons, intermediate results, or error flags.
+
+    ```kotlin
+    interface Context
+    ```
+
+- `EngineState` Example (Concrete Implementation)
+  - For `EngineState`, contexts are grouped into categories such as `Error`, `Success`, `Update`, and `Replace`.
+  - Each implementation may declare only the contracts that make sense for its role — for example, `Error` implements both `HasError` and `HasExpression`, while others may omit unused aspects like `HasResult` or `HasInteraction`.
+
+    ```kotlin
+      sealed interface ContextEngineState : Context {
+        interface Base : HasExpression, HasInteraction, HasResult, HasError
+        
+        data class Error(
+            override val expression: List<Token>,
+            override val lastOperand: String,
+            override val lastOperator: Operator?,
+            override val activeButton: Button?,
+            override val lastResult: String?,
+            override val cachedOperand: String?,
+            override val isComputed: Boolean,
+            override val hasError: Boolean,
+            override val errorMessage: String?,
+        ) : ContextEngineState, Base
+        // Update, Success, Replace ...
+      }
+    ```
+
+- Design Note
+  - Just like Input and Expected, these variants (`Error`, `Success`, `Update`, `Replace`) could be consolidated into a single generic data class.
+  - However, they were split into separate semantic types to make the framework more expressive and future-proof.
+  - This also enables finer-grained modeling — each data class can implement only the interfaces that are meaningful for its role (e.g., `Error` implements `HasError`, while `Success` may not need it).
+
+#### 🟢 Scenario
+- Definition (Framework-level)
+  - A `Scenario` defines how to construct inputs and expected results from contexts.
+  - It acts as a blueprint for test case generation, describing:
+    - how to build `Input`
+    - how to build ``Expected`
+    - how to derive context transitions (before vs. after)
+
+      ```kotlin
+      interface Scenario
+      ```
+
+- `EngineState` Example (Concrete Implementation)
+  - In the case of `EngineState`, scenarios are specialized by operation categories (`Binary`, `Unary`, `Control`, `Number`).
+  - Each category contains variants (`Error`, `Success`, `Update`, `Replace`), which delegate their behavior to concrete scenario objects such as `BinaryError`.  
+    
+    ```kotlin
+    sealed interface EngineState : Scenario {
+        val buildInput: (ContextEngineState) -> InputEngineState
+        val buildExpected: (ContextEngineState) -> ExpectedEngineState
+
+        fun buildContexts(
+            expressionInput: List<Token>,
+            lastOperand: Number,
+            button: Button
+        ): Pair<ContextEngineState, ContextEngineState>
+
+        sealed interface Binary : EngineState {
+            object Error : EngineState by BinaryError
+            object Update : EngineState by BinaryUpdate
+            object Success : EngineState by BinarySuccess
+            object Replace : EngineState by BinaryReplace
+        }
+        // Unary, Control, Number ...
+    }
+    ```
+
+- Example: `BinaryError` scenario
+  ```kotlin
+  object BinaryError : EngineState.Binary {
+      override val buildInput = { context: ContextEngineState ->
+          buildBinaryInputState<ContextEngineState.Error>(context)
+      }
+  
+      override val buildExpected = { context: ContextEngineState ->
+          buildBinaryExpectedState<ContextEngineState.Error>(context)
+      }
+  
+      override fun buildContexts(
+          expressionInput: List<Token>,
+          lastOperand: Number,
+          button: Button
+      ): Pair<ContextEngineState, ContextEngineState> {
+          val input = ContextEngineState.Error(
+              expression = expressionInput,
+              lastOperand = lastOperand.toString(),
+              lastOperator = button.toOperator(),
+              activeButton = button,
+              lastResult = null,
+              cachedOperand = null,
+              isComputed = false,
+              hasError = true,
+              errorMessage = "Error",
+          )
+          val expected = input.copy(
+              activeButton = ButtonCalculatorBinary.Multiplication
+          )
+          return input to expected
+      }
+  }
+  ```
+
+- Design Note
+  - As with `Input`, `Expected`, and `Context`, these categories (`Binary`, `Unary`, `Control`, `Number`) could be unified into a single scenario type.
+  - They are separated here to improve semantic clarity and to allow each category to evolve independently (e.g., binary operations may need richer context than unary).
+  - This separation makes the framework more adaptable to future complexity, even if the current implementation is largely repetitive.
+
+#### 🟢 TestCase
+- Definition (Framework-level)
+  - A `TestCase` is the atomic unit of testing in this framework.
+  - It simply binds together the input and the expected outcome, leaving execution logic to the test itself.
+  
+  ```kotlin
+  data class TestCase<T, R>(
+      val input: T,
+      val expected: R,
+  )
+  ```
+
+- Usage in `EngineState` (Concrete Implementation)
+  - For `EngineState`, the generic parameters are specialized to:
+    - `InputEngineState.*` (`Binary`, `Unary`, `Control`, `Number`) as input
+    - `ExpectedEngineState.*` as expected outcome
+  
+  ```kotlin
+  private fun provideArgumentsSuccess(): Stream<TestCase<Input, Expected>> =
+      provideEngineStateBinaryTestCases(Binary.Success).asStream()
+  ```
+  
+#### 🟢 ArgumentsBuilder
+- Definition (Framework-level)
+  - Instead of writing test cases manually, an `ArgumentsBuilder` generates sequences of test cases for a given `Scenario`.
+  - This allows test data to be derived systematically and reused across many parameterized tests.
+
+    ```kotlin
+    interface ArgumentsBuilder<InputT : Input, ExpectedT : Expected> {
+        fun provideTestCases(scenario: Scenario): Sequence<TestCase<InputT, ExpectedT>>
+    }
+    ```
+
+- `EngineState` Example (Concrete Implementation)
+  - For `EngineState`, the builder iterates through combinations of operands and buttons, derives `Context` pairs from the scenario, and constructs matching `Input` and `Expected` instances.
+      
+      ```kotlin
+      class ArgumentsBuilderEngineState(
+          var lastOperands: Sequence<Pair<Number, Number>> = provideOperandsTest(),
+          var buttonsBinary: Sequence<Button> = buttonsBinaryTest,
+          var buildExpression: (Number, Button) -> List<Token> = ::buildTokensFrom,
+      ) : ArgumentsBuilder<Input, Expected> {
+  
+          override fun provideTestCases(scenario: Scenario): Sequence<TestCase<Input, Expected>> =
+              sequence {
+                  val engineStateScenario = scenario.requireScenario<EngineState>()
+                  buttonsBinary.forEach { button ->
+                      lastOperands.forEach { (previousOperand, lastOperand) ->
+                          val expressionInput = buildExpression(previousOperand, button)
+                          val (contextInput, contextExpected) =
+                              engineStateScenario.buildContexts(expressionInput, lastOperand, button)
+                      
+                          yield(
+                              TestCase(
+                                  input = engineStateScenario.buildInput(contextInput),
+                                  expected = engineStateScenario.buildExpected(contextExpected)
+                              )
+                          )
+                      }
+                  }
+              }
+          }
+      ```
+
+- Example: Reusable Providers
+  - Concrete providers can expose scenario-specific sequences by plugging in a scenario and builder:
+
+    ```kotlin
+    object TestArgumentsEngineState : TestArguments {
+        fun provideEngineStateBinaryTestCases(
+            scenario: EngineState,
+            builder: ArgumentsBuilder<Input, Expected> = ArgumentsBuilderEngineState()
+        ): Sequence<TestCase<Input, Expected>> =
+            builder.provideTestCases(scenario)
+    }
+    ```
+
+- Design Note
+  - Just like other abstractions, `ArgumentsBuilder` could be implemented in a generic way and reused across many domains.
+  - The `EngineState` version specializes it only by choosing operand ranges, buttons, and expression-building logic.
+  - This pattern makes it easy to plug in new scenarios without rewriting test logic — only the builder’s configuration or data sources need to change.
+  
+#### 🟢 Parameterized Tests
+- The generated test cases can be consumed by parameterized testing frameworks.
+- In this project, Kotest is used together with JUnit parameterized tests to drive execution.
+
+  ```kotlin
+  private fun provideArgumentsSuccess(): Stream<TestCase<Input, Expected>> =
+      provideEngineStateBinaryTestCases(Binary.Success).asStream()
+  
+  @ParameterizedTest
+  @MethodSource("provideArgumentsSuccess")
+  fun `should correctly update expression when applying binary operator`(
+      testData: TestCase<InputEngineState.Binary, ExpectedEngineState.Binary>
+  ) {
+      // Arrange
+      val initialState = state.copy(
+          expression = testData.input.context.expression,
+          lastOperand = testData.input.context.lastOperand,
+          activeButton = testData.input.context.activeButton,
+          lastOperator = testData.input.context.lastOperator,
+          hasError = testData.input.context.hasError,
+          errorMessage = testData.input.context.errorMessage,
+      )
+      // Act
+      val newState = engineState.handleBinary(
+          initialState,
+          ButtonCalculatorBinary.Multiplication,
+      )
+      // Assert
+      newState shouldMatch testData.expected.context
+  }
+  ```
+  
+#### Summary
+
+- This test infrastructure provides a structured and reusable approach to scenario-based testing. By abstracting test design into distinct roles, it enables both clarity and flexibility:
+  - Declarative scenario definitions
+    - `Scenario` and `Context` allow test authors to describe situations under test in a clear, composable way.
+  - Reusable test case generators
+    - `ArgumentsBuilder` produces streams of test cases, reducing duplication and ensuring consistency across parameterized tests.
+  - Atomic test units
+    - `TestCase` pairs a concrete `Input` with its corresponding `Expected` result, making each test self-contained and easy to reason about.
+  - Clear separation of concerns
+    - `Input`, `Expected`, and `Context` enforce a clean separation between what goes in, what should come out, and the environment in which it happens.
+  - Concise parameterized tests
+    - With Kotest and JUnit integration, tests become small, expressive, and easy to extend with new scenarios.
+- Together, these elements form a lightweight yet extensible test framework. The abstractions are generic enough to be applied beyond `EngineState`, while still allowing specialized implementations for domain-specific needs.
 
 ### **Concept Annotations:**
 
