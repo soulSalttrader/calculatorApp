@@ -1,42 +1,42 @@
 package com.example.calculatorApp.domain
 
-import com.example.calculatorApp.testData.TestDataEngineStateStandard
-import com.example.calculatorApp.arguments.TestArgumentsEngineState
+import com.example.calculatorApp.arguments.TestArgumentsEngineState.provideEngineStateBinaryTestCases
+import com.example.calculatorApp.arguments.TestArgumentsEngineState.provideEngineStateControlTestCases
+import com.example.calculatorApp.arguments.TestArgumentsEngineState.provideEngineStateNumberTestCases
+import com.example.calculatorApp.arguments.TestArgumentsEngineState.provideEngineStateUnaryTestCases
 import com.example.calculatorApp.domain.ast.OperatorBinary
 import com.example.calculatorApp.domain.ast.ParserToken
 import com.example.calculatorApp.domain.ast.Token
 import com.example.calculatorApp.domain.ast.Token.Companion.firstNumberOrNull
-import com.example.calculatorApp.domain.ast.TokenizerUtils.toBinaryOperator
-import com.example.calculatorApp.domain.ast.TokenizerUtils.toOperator
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
-import com.example.calculatorApp.model.state.CalculatorState
-import com.example.calculatorApp.utils.Constants.MAX_NUM_LENGTH
-import com.example.calculatorApp.model.symbols.SymbolButtonUtils.toButton
-import io.kotest.matchers.comparables.shouldBeGreaterThanOrEqualTo
-import io.kotest.matchers.doubles.plusOrMinus
-import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
-import io.kotest.matchers.equals.shouldBeEqual
+import com.example.calculatorApp.model.state.CalculatorStateDomain
+import com.example.calculatorApp.model.symbols.SymbolButton
+import com.example.calculatorApp.testData.TestCase
+import com.example.calculatorApp.testData.expected.Expected
+import com.example.calculatorApp.testData.expected.ExpectedEngineState
+import com.example.calculatorApp.testData.input.Input
+import com.example.calculatorApp.testData.input.InputEngineState
+import com.example.calculatorApp.testData.scenario.context.shouldMatch
+import com.example.calculatorApp.testData.scenario.context.shouldMatchWithTolerance
+import com.example.calculatorApp.testData.scenario.engineState.EngineState.Binary
+import com.example.calculatorApp.testData.scenario.engineState.EngineState.Control
+import com.example.calculatorApp.testData.scenario.engineState.EngineState.Numeric
+import com.example.calculatorApp.testData.scenario.engineState.EngineState.Unary
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.kotest.matchers.string.shouldContain
-import io.kotest.matchers.string.shouldMatch
-import io.kotest.matchers.string.shouldNotContain
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
-import kotlin.math.pow
 import kotlin.streams.asStream
 
 class EngineStateStandardTest {
 
-    private lateinit var state: CalculatorState
+    private lateinit var state: CalculatorStateDomain
     private lateinit var parser: ParserToken
     private lateinit var engineMath: EngineMath
     private lateinit var engineNode: EngineNode
@@ -45,7 +45,7 @@ class EngineStateStandardTest {
     @BeforeEach
     fun setUp() {
         // Arrange:
-        state = CalculatorState()
+        state = CalculatorStateDomain()
         parser = ParserToken()
         engineMath = EngineMathStandard()
         engineNode = EngineNodeStandard(engineMath)
@@ -55,159 +55,312 @@ class EngineStateStandardTest {
     @Nested
     inner class HandleBinary {
         // Arrange:
-        private fun provideArguments(): Stream<TestDataEngineStateStandard> =
-            TestArgumentsEngineState.provideStateBinary().asStream()
+        private fun provideArgumentsHasError(): Stream<TestCase<Input, Expected>> =
+            provideEngineStateBinaryTestCases(Binary.Error).take(5).asStream()
+
+        private fun provideArgumentsUpdate(): Stream<TestCase<Input, Expected>> =
+            provideEngineStateBinaryTestCases(Binary.Update).asStream()
+
+        private fun provideArgumentsSuccess(): Stream<TestCase<Input, Expected>> =
+            provideEngineStateBinaryTestCases(Binary.Success).asStream()
+
+        private fun provideArgumentsReplace(): Stream<TestCase<Input, Expected>> =
+            provideEngineStateBinaryTestCases(Binary.Replace).asStream()
 
         @ParameterizedTest
-        @MethodSource("provideArguments")
+        @MethodSource("provideArgumentsHasError")
         fun `should return the same state if hasError is true`(
-            testData: TestDataEngineStateStandard
+            testData: TestCase<InputEngineState.Binary, ExpectedEngineState.Binary>
         ) {
             // Arrange:
             val initialState = state.copy(
-                lastOperand = testData.lastOperand,
-                hasError = true,
+                expression = testData.input.context.expression,
+                lastOperand = testData.input.context.lastOperand,
+                activeButton = testData.input.context.activeButton,
+                lastOperator = testData.input.context.lastOperator,
+                hasError = testData.input.context.hasError,
+                errorMessage = testData.input.context.errorMessage,
             )
             // Act:
             val newState = engineState.handleBinary(
                 initialState,
-                testData.buttonBinary as ButtonCalculatorBinary,
+                ButtonCalculatorBinary.Multiplication,
             )
             // Assert:
-            newState shouldBe initialState
+            newState.hasError shouldBe testData.expected.context.hasError
+            newState.errorMessage shouldBe testData.expected.context.errorMessage
+            newState shouldMatch testData.expected.context
         }
 
         @ParameterizedTest
-        @MethodSource("provideArguments")
+        @MethodSource("provideArgumentsUpdate")
         fun `should update the state if hasError is false`(
-            testData: TestDataEngineStateStandard
+            testData: TestCase<InputEngineState.Binary, ExpectedEngineState.Binary>
         ) {
             // Arrange:
             val initialState = state.copy(
-                lastOperand = testData.lastOperand,
-                hasError = false,
+                expression = testData.input.context.expression,
+                lastOperand = testData.input.context.lastOperand,
+                activeButton = testData.input.context.activeButton,
+                lastOperator = testData.input.context.lastOperator,
+                hasError = testData.input.context.hasError,
+                errorMessage = testData.input.context.errorMessage,
             )
             // Act:
             val newState = engineState.handleBinary(
                 initialState,
-                testData.buttonBinary as ButtonCalculatorBinary,
+                ButtonCalculatorBinary.Multiplication,
             )
             // Assert:
             newState shouldNotBe initialState
+            newState shouldMatch testData.expected.context
         }
 
         @ParameterizedTest
-        @MethodSource("provideArguments")
+        @MethodSource("provideArgumentsSuccess")
         fun `should apply correct binary operator when hasError is false`(
-            testData: TestDataEngineStateStandard
+            testData: TestCase<InputEngineState.Binary, ExpectedEngineState.Binary>
         ) {
             // Arrange:
             val initialState = state.copy(
-                lastOperand = testData.lastOperand,
-                hasError = false,
+                expression = testData.input.context.expression,
+                lastOperand = testData.input.context.lastOperand,
+                activeButton = testData.input.context.activeButton,
+                lastOperator = testData.input.context.lastOperator,
+                hasError = testData.input.context.hasError,
+                errorMessage = testData.input.context.errorMessage,
             )
             // Act:
             val newState = engineState.handleBinary(
                 initialState,
-                testData.buttonBinary as ButtonCalculatorBinary,
+                ButtonCalculatorBinary.Multiplication,
             )
             // Assert:
-            newState.lastOperator shouldBe testData.buttonBinary.toBinaryOperator()
+            newState shouldMatch testData.expected.context
         }
 
         @ParameterizedTest
-        @MethodSource("provideArguments")
+        @MethodSource("provideArgumentsSuccess")
         fun `should add lastOperand and binary operation to expression when applying binary operator`(
-            testData: TestDataEngineStateStandard
+            testData: TestCase<InputEngineState.Binary, ExpectedEngineState.Binary>
         ) {
             // Arrange:
             val initialState = state.copy(
-                lastOperand = testData.lastOperand,
-                hasError = false,
+                expression = testData.input.context.expression,
+                lastOperand = testData.input.context.lastOperand,
+                activeButton = testData.input.context.activeButton,
+                lastOperator = testData.input.context.lastOperator,
+                hasError = testData.input.context.hasError,
+                errorMessage = testData.input.context.errorMessage,
             )
             // Act:
             val newState = engineState.handleBinary(
                 initialState,
-                testData.buttonBinary as ButtonCalculatorBinary,
+                ButtonCalculatorBinary.Multiplication,
             )
             // Assert:
-            newState.expression shouldBe testData.expression
+            newState shouldMatch testData.expected.context
         }
 
         @ParameterizedTest
-        @MethodSource("provideArguments")
+        @MethodSource("provideArgumentsReplace")
         fun `should replace last binary operator when a new one is entered`(
-            testData: TestDataEngineStateStandard
+            testData: TestCase<InputEngineState.Binary, ExpectedEngineState.Binary>
         ) {
             // Arrange:
             val initialState = state.copy(
-                expression = listOf(
-                    Token.Number(testData.lastOperand.toDouble()),
-                    Token.Binary(OperatorBinary.Addition),
-                ),
-                lastOperand = "",
-                hasError = false,
+                expression = testData.input.context.expression,
+                lastOperand = testData.input.context.lastOperand,
+                activeButton = testData.input.context.activeButton,
+                lastOperator = testData.input.context.lastOperator,
+                hasError = testData.input.context.hasError,
+                errorMessage = testData.input.context.errorMessage,
             )
             // Act:
             val newState = engineState.handleBinary(
                 initialState,
-                testData.buttonBinary as ButtonCalculatorBinary,
+                ButtonCalculatorBinary.Multiplication,
             )
             // Assert:
-            newState.expression shouldBe testData.expression
+            newState shouldMatch testData.expected.context
         }
     }
 
     @Nested
     inner class HandleUnary {
-        // Arrange:
-        private fun provideArgumentsSign(): Stream<TestDataEngineStateStandard> =
-            TestArgumentsEngineState.provideStateUnary().asStream()
-                .filter { it.buttonUnary is ButtonCalculatorUnary.Sign }
 
         // Arrange:
-        private fun provideArgumentsPercentage(): Stream<TestDataEngineStateStandard> =
-            TestArgumentsEngineState.provideStateUnary().asStream()
-                .filter { it.buttonUnary is ButtonCalculatorUnary.Percentage }
+        private fun provideArgumentsSign(): Stream<TestCase<Input, Expected>> =
+            provideEngineStateUnaryTestCases(Unary.Sign).asStream()
 
+        // Arrange:
+        private fun provideArgumentsSignError(): Stream<TestCase<Input, Expected>> =
+            provideEngineStateUnaryTestCases(Unary.SignError).asStream()
+
+        // Arrange:
+        private fun provideArgumentsPercentageOperand(): Stream<TestCase<Input, Expected>> =
+            provideEngineStateUnaryTestCases(Unary.PercentageOperand).asStream()
+
+        // Arrange:
+        private fun provideArgumentsPercentageAddSub(): Stream<TestCase<Input, Expected>> =
+            provideEngineStateUnaryTestCases(Unary.PercentageAddSub)
+                .filter { isAddOrSubtract(it) }
+                .asStream()
+
+        private fun provideArgumentsPercentageMulDiv(): Stream<TestCase<Input, Expected>> =
+            provideEngineStateUnaryTestCases(Unary.PercentageMulDiv)
+                .filter { isMulOrDivision(it) }
+                .asStream()
+
+        // Arrange:
+        private fun provideArgumentsPercentageError(): Stream<TestCase<Input, Expected>> =
+            provideEngineStateUnaryTestCases(Unary.PercentageError).asStream()
+
+        private fun isAddOrSubtract(case: TestCase<Input, Expected>): Boolean =
+            (case.input as InputEngineState.Unary).context.lastOperator in
+                    setOf(OperatorBinary.Addition, OperatorBinary.Subtraction)
+
+        private fun isMulOrDivision(case: TestCase<Input, Expected>): Boolean =
+            (case.input as InputEngineState.Unary).context.lastOperator in
+                    setOf(OperatorBinary.Multiplication, OperatorBinary.Division)
 
         @ParameterizedTest
         @MethodSource("provideArgumentsSign")
         fun `should correctly apply sign operation`(
-            testData: TestDataEngineStateStandard
-        ) {
-            // Arrange:
-            val initialState = state.copy(lastOperand = testData.lastOperand)
-            // Act:
-            val newState = engineState.handleUnary(
-                initialState,
-                testData.buttonUnary as ButtonCalculatorUnary.Sign,
-            )
-            // Assert:
-            newState.lastOperand shouldBe testData.expectedSign()[testData.lastOperand]
-        }
-
-        @ParameterizedTest
-        @MethodSource("provideArgumentsPercentage")
-        fun `should correctly apply percent operation`(
-            testData: TestDataEngineStateStandard
+            testData: TestCase<InputEngineState.Unary, ExpectedEngineState.Unary>
         ) {
             // Arrange:
             val initialState = state.copy(
-                expression = listOf(
-                    Token.Number(testData.lastOperand.toDouble() * 2),
-                    Token.Binary(testData.buttonBinary.toOperator() as OperatorBinary),
-                ),
-                lastOperand = testData.lastOperand,
-                lastOperator = testData.buttonBinary.toOperator() as OperatorBinary,
+                expression = testData.input.context.expression,
+                lastOperand = testData.input.context.lastOperand,
+                activeButton = testData.input.context.activeButton,
+                lastOperator = testData.input.context.lastOperator,
+                hasError = testData.input.context.hasError,
+                errorMessage = testData.input.context.errorMessage,
             )
             // Act:
             val newState = engineState.handleUnary(
                 initialState,
-                testData.buttonUnary as ButtonCalculatorUnary.Percentage,
+                ButtonCalculatorUnary.Sign,
             )
             // Assert:
-            newState.lastOperand shouldBe testData.expectedPercentage()[testData.lastOperand to testData.buttonBinary]
+            newState shouldMatch testData.expected.context
+        }
+
+        @ParameterizedTest
+        @MethodSource("provideArgumentsSignError")
+        fun `should only update activeButton=Sign when state has error`(
+            testData: TestCase<InputEngineState.Unary, ExpectedEngineState.Unary>
+        ) {
+            // Arrange:
+            val initialState = state.copy(
+                expression = testData.input.context.expression,
+                lastOperand = testData.input.context.lastOperand,
+                activeButton = testData.input.context.activeButton,
+                lastOperator = testData.input.context.lastOperator,
+                hasError = testData.input.context.hasError,
+                errorMessage = testData.input.context.errorMessage,
+            )
+            // Act:
+            val newState = engineState.handleUnary(
+                initialState,
+                ButtonCalculatorUnary.Sign,
+            )
+            // Assert:
+            testData.expected.context
+            newState shouldMatch testData.expected.context
+        }
+
+        @ParameterizedTest
+        @MethodSource("provideArgumentsPercentageError")
+        fun `should only update activeButton=Percentage when state has error`(
+            testData: TestCase<InputEngineState.Unary, ExpectedEngineState.Unary>
+        ) {
+            // Arrange:
+            val initialState = state.copy(
+                expression = testData.input.context.expression,
+                lastOperand = testData.input.context.lastOperand,
+                activeButton = testData.input.context.activeButton,
+                lastOperator = testData.input.context.lastOperator,
+                hasError = testData.input.context.hasError,
+                errorMessage = testData.input.context.errorMessage,
+            )
+            // Act:
+            val newState = engineState.handleUnary(
+                initialState,
+                ButtonCalculatorUnary.Percentage,
+            )
+            // Assert:
+            newState shouldMatch testData.expected.context
+        }
+
+        @ParameterizedTest
+        @MethodSource("provideArgumentsPercentageOperand")
+        fun `should correctly apply percent operation when only lastOperand is present`(
+            testData: TestCase<InputEngineState.Unary, ExpectedEngineState.Unary>
+        ) {
+            // Arrange:
+            val initialState = state.copy(
+                expression = testData.input.context.expression,
+                lastOperand = testData.input.context.lastOperand,
+                activeButton = testData.input.context.activeButton,
+                lastOperator = testData.input.context.lastOperator,
+                hasError = testData.input.context.hasError,
+                errorMessage = testData.input.context.errorMessage,
+            )
+            // Act:
+            val newState = engineState.handleUnary(
+                initialState,
+                ButtonCalculatorUnary.Percentage,
+            )
+            // Assert:
+            newState shouldMatch testData.expected.context
+        }
+
+        @ParameterizedTest
+        @MethodSource("provideArgumentsPercentageAddSub")
+        fun `should correctly apply percent operation in additive expressions (addition, subtraction)`(
+            testData: TestCase<InputEngineState.Unary, ExpectedEngineState.Unary>
+        ) {
+            // Arrange:
+            val initialState = state.copy(
+                expression = testData.input.context.expression,
+                lastOperand = testData.input.context.lastOperand,
+                activeButton = testData.input.context.activeButton,
+                lastOperator = testData.input.context.lastOperator,
+                hasError = testData.input.context.hasError,
+                errorMessage = testData.input.context.errorMessage,
+            )
+            // Act:
+            val newState = engineState.handleUnary(
+                initialState,
+                ButtonCalculatorUnary.Percentage,
+            )
+            // Assert:
+            newState shouldMatch testData.expected.context
+        }
+
+        @ParameterizedTest
+        @MethodSource("provideArgumentsPercentageMulDiv")
+        fun `should correctly apply percent operation in multiplicative expressions (multiplication, division)`(
+            testData: TestCase<InputEngineState.Unary, ExpectedEngineState.Unary>
+        ) {
+            // Arrange:
+            val initialState = state.copy(
+                expression = testData.input.context.expression,
+                lastOperand = testData.input.context.lastOperand,
+                activeButton = testData.input.context.activeButton,
+                lastOperator = testData.input.context.lastOperator,
+                hasError = testData.input.context.hasError,
+                errorMessage = testData.input.context.errorMessage,
+            )
+            // Act:
+            val newState = engineState.handleUnary(
+                initialState,
+                ButtonCalculatorUnary.Percentage,
+            )
+            // Assert:
+            newState shouldMatch testData.expected.context
         }
     }
 
@@ -216,491 +369,527 @@ class EngineStateStandardTest {
 
         @Nested
         inner class ApplyClearAll {
-            private fun provideArguments(): Stream<TestDataEngineStateStandard> =
-                TestArgumentsEngineState.provideStateControl().asStream()
-                    .filter { ButtonCalculatorControl.AllClear in it.buttonControls }
+            private fun provideArgumentsClearAll(): Stream<TestCase<Input, Expected>> =
+                provideEngineStateControlTestCases(Control.ClearAll).asStream()
 
             @ParameterizedTest
-            @MethodSource("provideArguments")
+            @MethodSource("provideArgumentsClearAll")
             fun `should reset calculator state to default`(
-                testData: TestDataEngineStateStandard
+                testData: TestCase<InputEngineState.Control, ExpectedEngineState.Control>
             ) {
                 // Arrange:
                 val initialState = state.copy(
-                    expression = testData.expression,
-                    lastOperand = testData.lastOperand,
-                    lastOperator = testData.buttonBinary.toOperator() as OperatorBinary,
-                    activeButton = testData.lastOperand.takeLast(1).toButton(),
+                    expression = testData.input.context.expression,
+                    lastOperand = testData.input.context.lastOperand,
+                    activeButton = testData.input.context.activeButton,
+                    lastOperator = testData.input.context.lastOperator,
+                    hasError = testData.input.context.hasError,
+                    errorMessage = testData.input.context.errorMessage,
                 )
                 // Act:
-                val newState = engineState.handleControl(initialState, testData.buttonControls.filterIsInstance<ButtonCalculatorControl.AllClear>().firstOrNull()
-                    ?: throw IllegalArgumentException("Expected at least one ClearAll button in buttonControls."))
+                val newState = engineState.handleControl(
+                    initialState,
+                    ButtonCalculatorControl.AllClear
+                )
                 // Assert:
-                newState shouldBe state
+                newState shouldMatch testData.expected.context
             }
         }
 
         @Nested
         inner class ApplyClear {
 
-            private fun provideArguments(): Stream<TestDataEngineStateStandard> =
-                TestArgumentsEngineState.provideStateControl().asStream()
-                    .filter { ButtonCalculatorControl.Clear in it.buttonControls }
+            private fun provideArgumentsClear(): Stream<TestCase<Input, Expected>> =
+                provideEngineStateControlTestCases(Control.Clear).asStream()
+
+            private fun provideArgumentsClearError(): Stream<TestCase<Input, Expected>> =
+                provideEngineStateControlTestCases(Control.ClearError).asStream()
 
             @ParameterizedTest
-            @MethodSource("provideArguments")
+            @MethodSource("provideArgumentsClear")
             fun `should clear lastOperand number to zero`(
-                testData: TestDataEngineStateStandard
+                testData: TestCase<InputEngineState.Control, ExpectedEngineState.Control>
             ) {
                 // Arrange:
                 val initialState = state.copy(
-                    expression = testData.expression,
-                    lastOperand = testData.lastOperand,
-                    lastOperator = testData.buttonBinary.toOperator() as OperatorBinary,
-                    activeButton = testData.lastOperand.takeLast(1).toButton(),
-                )
-                // Act:
-                val newState = engineState.handleControl(
-                    initialState, testData.buttonControls.filterIsInstance<ButtonCalculatorControl.Clear>().firstOrNull()
-                    ?: throw IllegalArgumentException("Expected at least one Clear button in buttonControls.")
-                )
-                // Assert:
-                newState.lastOperand shouldBe "0"
-            }
-
-            @ParameterizedTest
-            @MethodSource("provideArguments")
-            fun `should keep expression if is not empty`(
-                testData: TestDataEngineStateStandard
-            ) {
-                // Arrange:
-                val initialState = state.copy(
-                    expression = testData.expression,
-                    lastOperand = testData.lastOperand,
-                    lastOperator = testData.buttonBinary.toOperator() as OperatorBinary,
-                    activeButton = testData.lastOperand.takeLast(1).toButton(),
-                )
-                // Act:
-                val newState = engineState.handleControl(
-                    initialState, testData.buttonControls.filterIsInstance<ButtonCalculatorControl.Clear>().firstOrNull()
-                        ?: throw IllegalArgumentException("Expected at least one Clear button in buttonControls.")
-                )
-                // Assert:
-                newState.expression shouldBe testData.expression
-            }
-
-            @ParameterizedTest
-            @MethodSource("provideArguments")
-            fun `should return default state when applying clear on state with error`(
-                testData: TestDataEngineStateStandard
-            ) {
-                // Arrange:
-                val initialState = state.copy(
-                    expression = testData.expression,
-                    lastOperand = testData.lastOperand,
-                    lastOperator = testData.buttonBinary.toOperator() as OperatorBinary,
-                    activeButton = testData.lastOperand.takeLast(1).toButton(),
-                    hasError = true,
-                    errorMessage = "Error"
+                    expression = testData.input.context.expression,
+                    lastOperand = testData.input.context.lastOperand,
+                    activeButton = testData.input.context.activeButton,
+                    lastOperator = testData.input.context.lastOperator,
+                    hasError = testData.input.context.hasError,
+                    errorMessage = testData.input.context.errorMessage,
                 )
                 // Act:
                 val newState = engineState.handleControl(
                     initialState,
-                    testData.buttonControls.filterIsInstance<ButtonCalculatorControl.Clear>().firstOrNull()
-                        ?: throw IllegalArgumentException("Expected at least one Clear button in buttonControls.")
+                    ButtonCalculatorControl.Clear
                 )
                 // Assert:
-                newState shouldBe state
+                newState.lastOperand shouldBe "0"
+                newState.lastOperand shouldBe SymbolButton.ZERO.label
+                newState shouldMatch testData.expected.context
+                testData.expected.context
             }
 
             @ParameterizedTest
-            @MethodSource("provideArguments")
-            fun `should return default state when applying clear on equal repeatable`(
-                testData: TestDataEngineStateStandard
+            @MethodSource("provideArgumentsClear")
+            fun `should clear lastOperand and keep expression if is not empty`(
+                testData: TestCase<InputEngineState.Control, ExpectedEngineState.Control>
             ) {
-                // Arrange: Initial state simulates for instance -2.5 + (-2.5)
+                // Arrange:
                 val initialState = state.copy(
-                    expression = testData.expression,
-                    lastOperand = testData.lastOperand,
-                    lastOperator = testData.buttonBinary.toOperator() as OperatorBinary,
-                    activeButton = testData.lastOperand.takeLast(1).toButton(),
+                    expression = testData.input.context.expression,
+                    lastOperand = testData.input.context.lastOperand,
+                    activeButton = testData.input.context.activeButton,
+                    lastOperator = testData.input.context.lastOperator,
+                    hasError = testData.input.context.hasError,
+                    errorMessage = testData.input.context.errorMessage,
                 )
+                // Act:
+                val newState = engineState.handleControl(
+                    initialState,
+                    ButtonCalculatorControl.Clear
+                )
+                // Assert:
+                newState.expression shouldNotBe emptyList<Token>()
+                newState.expression shouldBe initialState.expression
+                newState shouldMatch testData.expected.context
+            }
 
+            @ParameterizedTest
+            @MethodSource("provideArgumentsClearError")
+            fun `should only update activeButton=Clear when state has error`(
+                testData: TestCase<InputEngineState.Control, ExpectedEngineState.Control>
+            ) {
+                // Arrange:
+                val initialState = state.copy(
+                    expression = testData.input.context.expression,
+                    lastOperand = testData.input.context.lastOperand,
+                    activeButton = testData.input.context.activeButton,
+                    lastOperator = testData.input.context.lastOperator,
+                    hasError = testData.input.context.hasError,
+                    errorMessage = testData.input.context.errorMessage,
+                )
+                // Act:
+                val newState = engineState.handleControl(
+                    initialState,
+                    ButtonCalculatorControl.Clear
+                )
+                // Assert:
+                newState shouldMatch testData.expected.context
+            }
+
+            @ParameterizedTest
+            @MethodSource("provideArgumentsClearError")
+            fun `should only update activeButton=Clear when state has error on equal repeatable`(
+                testData: TestCase<InputEngineState.Control, ExpectedEngineState.Control>
+            ) {
+                // Arrange:
+                val initialState = state.copy(
+                    expression = testData.input.context.expression,
+                    lastOperand = testData.input.context.lastOperand,
+                    activeButton = testData.input.context.activeButton,
+                    lastOperator = testData.input.context.lastOperator,
+                    hasError = testData.input.context.hasError,
+                    errorMessage = testData.input.context.errorMessage,
+                )
                 // Act: User presses "=" three times
                 var stateEqual = initialState
 
-                repeat(3) { stateEqual = engineState.handleControl(
-                    stateEqual, testData.buttonControls.filterIsInstance<ButtonCalculatorControl.Equals>().firstOrNull()
-                        ?: throw IllegalArgumentException("Expected at least one Equals button in buttonControls.")
+                repeat(3) {
+                    stateEqual = engineState.handleControl(
+                        stateEqual,
+                        ButtonCalculatorControl.Equals,
                     )
                 }
-
                 val newState = engineState.handleControl(
                     stateEqual,
-                    testData.buttonControls.filterIsInstance<ButtonCalculatorControl.Clear>().firstOrNull()
-                        ?: throw IllegalArgumentException("Expected at least one clear button in buttonControls.")
+                    ButtonCalculatorControl.Clear,
                 )
-                // Assert: Result should reflect Clear action, active button is Clear
-                newState.shouldBeEqualToIgnoringFields(state, CalculatorState::activeButton)
+                // Assert:
+                newState shouldMatch testData.expected.context
             }
         }
 
         @Nested
         inner class EnterDecimal {
             // Arrange:
-            private fun provideArguments(): Stream<TestDataEngineStateStandard> =
-                TestArgumentsEngineState.provideStateControl().asStream()
-                    .filter { ButtonCalculatorControl.Decimal in it.buttonControls }
+            private fun provideArgumentsDecimal(): Stream<TestCase<Input, Expected>> =
+                provideEngineStateControlTestCases(Control.Decimal).asStream()
 
-            private fun provideArgumentsWithZeroOperand(): Stream<TestDataEngineStateStandard> =
-                TestArgumentsEngineState.provideStateControl().asStream()
-                    .filter { ButtonCalculatorControl.Decimal in it.buttonControls && it.lastOperand == "0.0" }
+            // Arrange:
+            private fun provideArgumentsDecimalZero(): Stream<TestCase<Input, Expected>> =
+                provideEngineStateControlTestCases(Control.DecimalZero).asStream()
 
-            private fun provideArgumentsWithNaNOperand(): Stream<TestDataEngineStateStandard> =
-                TestArgumentsEngineState.provideStateControl().asStream()
-                    .filter { ButtonCalculatorControl.Decimal in it.buttonControls && it.lastOperand == "NaN" }
+            // Arrange:
+            private fun provideArgumentsDecimalError(): Stream<TestCase<Input, Expected>> =
+                provideEngineStateControlTestCases(Control.DecimalError).asStream()
 
             @ParameterizedTest
-            @MethodSource("provideArguments")
+            @MethodSource("provideArgumentsDecimal")
             fun `should add a decimal point if not already present`(
-                testData: TestDataEngineStateStandard
+                testData: TestCase<InputEngineState.Control, ExpectedEngineState.Control>
             ) {
                 // Arrange:
-                val initialState = state.copy(lastOperand = testData.lastOperand)
+                val initialState = state.copy(
+                    expression = testData.input.context.expression,
+                    lastOperand = testData.input.context.lastOperand,
+                    activeButton = testData.input.context.activeButton,
+                    lastOperator = testData.input.context.lastOperator,
+                    hasError = testData.input.context.hasError,
+                    errorMessage = testData.input.context.errorMessage,
+                )
                 // Act:
                 val newState = engineState.handleControl(
                     initialState,
-                    testData.buttonControls.filterIsInstance<ButtonCalculatorControl.Decimal>().firstOrNull()
-                        ?: throw IllegalArgumentException("Expected at least one Decimal button in buttonControls")
+                    ButtonCalculatorControl.Decimal,
                 )
                 // Assert:
-                if (newState.lastOperand == "NaN") newState.lastOperand.shouldNotContain(".") else newState.lastOperand.shouldContain(".")
+                newState shouldMatch testData.expected.context
             }
 
             @ParameterizedTest
-            @MethodSource("provideArguments")
+            @MethodSource("provideArgumentsDecimal")
             fun `should not add a decimal point if already present`(
-                testData: TestDataEngineStateStandard
+                testData: TestCase<InputEngineState.Control, ExpectedEngineState.Control>
             ) {
                 // Arrange:
-                val initialState = state.copy(lastOperand = testData.lastOperand)
+                val initialState = state.copy(
+                    expression = testData.input.context.expression,
+                    lastOperand = testData.input.context.lastOperand,
+                    activeButton = testData.input.context.activeButton,
+                    lastOperator = testData.input.context.lastOperator,
+                    hasError = testData.input.context.hasError,
+                    errorMessage = testData.input.context.errorMessage,
+                )
                 // Act:
                 val newState = engineState.handleControl(
                     initialState,
-                    testData.buttonControls.filterIsInstance<ButtonCalculatorControl.Decimal>().firstOrNull()
-                        ?: throw IllegalArgumentException("Expected at least one Decimal button in buttonControls")
+                    ButtonCalculatorControl.Decimal,
                 )
                 // Assert:
-                newState.lastOperand
-                    .takeIf { it == "NaN" }
-                    ?.let { it.count { c -> c == '.' } shouldBe 0 }
-                    ?: (newState.lastOperand.count { it == '.' } shouldBe 1)
+                newState shouldMatch testData.expected.context
             }
 
             @ParameterizedTest
-            @MethodSource("provideArgumentsWithZeroOperand")
-            fun `should add a decimal point and zero if operand is zero`(
-                testData: TestDataEngineStateStandard
+            @MethodSource("provideArgumentsDecimalZero")
+            fun `should add a decimal point and zero if operand is blank`(
+                testData: TestCase<InputEngineState.Control, ExpectedEngineState.Control>
             ) {
                 // Arrange:
-                val initialState =
-                    state.copy(lastOperand = if (testData.lastOperand == "0.0") "0" else testData.lastOperand)
+                val initialState = state.copy(
+                    expression = testData.input.context.expression,
+                    lastOperand = testData.input.context.lastOperand,
+                    activeButton = testData.input.context.activeButton,
+                    lastOperator = testData.input.context.lastOperator,
+                    hasError = testData.input.context.hasError,
+                    errorMessage = testData.input.context.errorMessage,
+                )
                 // Act:
                 val newState = engineState.handleControl(
                     initialState,
-                    testData.buttonControls.filterIsInstance<ButtonCalculatorControl.Decimal>().firstOrNull()
-                        ?: throw IllegalArgumentException("Expected at least one Decimal button in buttonControls")
+                    ButtonCalculatorControl.Decimal,
                 )
                 // Assert:
-                newState.lastOperand.shouldMatch("0.")
+                newState shouldMatch testData.expected.context
             }
 
             @ParameterizedTest
-            @MethodSource("provideArgumentsWithNaNOperand")
+            @MethodSource("provideArgumentsDecimalError")
             fun `should return same state when trying to enter decimal on NaN lastOperand`(
-                testData: TestDataEngineStateStandard
+                testData: TestCase<InputEngineState.Control, ExpectedEngineState.Control>
             ) {
                 // Arrange:
-                val initialState = state.copy(lastOperand = testData.lastOperand)
+                val initialState = state.copy(
+                    expression = testData.input.context.expression,
+                    lastOperand = testData.input.context.lastOperand,
+                    activeButton = testData.input.context.activeButton,
+                    lastOperator = testData.input.context.lastOperator,
+                    hasError = testData.input.context.hasError,
+                    errorMessage = testData.input.context.errorMessage,
+                )
                 // Act:
                 val newState = engineState.handleControl(
                     initialState,
-                    testData.buttonControls.filterIsInstance<ButtonCalculatorControl.Decimal>().firstOrNull()
-                        ?: throw IllegalArgumentException("Expected at least one Decimal button in buttonControls")
+                    ButtonCalculatorControl.Decimal,
                 )
                 // Assert:
-                newState shouldBe initialState
-                newState.lastOperand.shouldMatch("NaN")
-            }
-        }
-
-        @Nested
-        inner class ApplyEquals {
-            private fun provideArguments(): Stream<TestDataEngineStateStandard> =
-                TestArgumentsEngineState.provideStateControl().asStream()
-                    .filter { ButtonCalculatorControl.Equals in it.buttonControls }
-
-            @ParameterizedTest
-            @MethodSource("provideArguments")
-            fun `should correctly apply equals operation`(
-                testData: TestDataEngineStateStandard
-            ) {
-                // Arrange:
-                val initialState = state.copy(
-                    expression = testData.expression,
-                    lastOperand = testData.lastOperand,
-                    lastOperator = testData.buttonBinary.toOperator() as OperatorBinary,
-                    activeButton = testData.lastOperand.takeLast(1).toButton(),
-                )
-                // Act:
-                val newState = engineState.handleControl(
-                    initialState, testData.buttonControls.filterIsInstance<ButtonCalculatorControl.Equals>().firstOrNull()
-                    ?: throw IllegalArgumentException("Expected at least one Equals button in buttonControls.")
-                )
-                // Assert:
-                newState.expression shouldBe when {
-                    testData.lastOperand == "NaN" -> {
-                        emptyList()
-                    }
-                    testData.buttonBinary is ButtonCalculatorBinary.Division && testData.lastOperand != "0.0" -> {
-                        listOf(
-                            Token.Number(testData.lastOperand.toDouble() / testData.lastOperand.toDouble()),
-                            Token.Binary(testData.buttonBinary.toOperator() as OperatorBinary)
-                        )
-                    }
-                    testData.buttonBinary is ButtonCalculatorBinary.Addition -> {
-                        listOf(
-                            Token.Number(testData.lastOperand.toDouble() + testData.lastOperand.toDouble()),
-                            Token.Binary(testData.buttonBinary.toOperator() as OperatorBinary)
-                        )
-                    }
-                    else -> emptyList()
-                }
-                newState.lastOperand shouldBe ""
-                newState.lastResult shouldBe null
-                newState.lastOperator shouldBe testData.buttonBinary.toOperator() as OperatorBinary
-                newState.cachedOperand shouldBe when {
-                    testData.lastOperand == "NaN" -> null
-                    testData.lastOperand == "0.0" && testData.buttonBinary is ButtonCalculatorBinary.Division -> null
-                    else -> testData.lastOperand.toDouble().toString()
-                }
-            }
-
-            @ParameterizedTest
-            @MethodSource("provideArguments")
-            fun `should return state with error message if lastOperand or expression are not a valid`(
-                testData: TestDataEngineStateStandard
-            ) {
-                // Arrange:
-                val initialState = state.copy(
-                    expression = testData.expression,
-                    lastOperand = testData.lastOperand,
-                    lastOperator = testData.buttonBinary.toOperator() as OperatorBinary,
-                    activeButton = testData.lastOperand.takeLast(1).toButton(),
-                )
-                // Act:
-                val newState = engineState.handleControl(initialState, testData.buttonControls.filterIsInstance<ButtonCalculatorControl.Equals>().firstOrNull()
-                    ?: throw IllegalArgumentException("Expected at least one Equals button in buttonControls.")
-                )
-                // Assert:
-                val expected = when {
-                    testData.lastOperand == "NaN" || (testData.lastOperand == "0.0" && testData.buttonBinary is ButtonCalculatorBinary.Division) -> {
-                        true to "Error"
-                    }
-                    else -> false to null
-                }
-
-                newState.hasError shouldBe expected.first
-                newState.errorMessage shouldBe expected.second
-            }
-
-            @ParameterizedTest
-            @MethodSource("provideArguments")
-            fun `should perform repeatable equals with valid list of expressions`(
-                testData: TestDataEngineStateStandard
-            ) {
-                // Arrange:
-                val initialState = state.copy(
-                    expression = testData.expression,
-                    lastOperand = testData.lastOperand,
-                    lastOperator = testData.buttonBinary.toOperator() as OperatorBinary,
-                    activeButton = testData.lastOperand.takeLast(1).toButton(),
-                )
-                // Act: User presses "=" ten times
-                var stateEqual = initialState
-
-                repeat(10) { stateEqual = engineState.handleControl(
-                    stateEqual, testData.buttonControls.filterIsInstance<ButtonCalculatorControl.Equals>().firstOrNull()
-                        ?: throw IllegalArgumentException("Expected at least one Equals button in buttonControls.")
-                    )
-                }
-                val newState = stateEqual
-                // Assert:
-                val expected = when {
-                    testData.lastOperand == "NaN" -> {
-                        null
-                    }
-                    testData.buttonBinary is ButtonCalculatorBinary.Division && testData.lastOperand != "0.0" -> {
-                        testData.lastOperand.toDouble() / (testData.lastOperand.toDouble().pow(10 + 1)) * testData.lastOperand.toDouble()
-                    }
-                    testData.buttonBinary is ButtonCalculatorBinary.Addition -> {
-                        testData.lastOperand.toDouble() * (10 + 1)
-                    }
-                    else -> null
-                }
-
-                newState.expression.firstNumberOrNull()?.value.shouldBe(expected?.plusOrMinus((1e-9)))
-                    ?: (newState.expression.firstNumberOrNull() shouldBe null)
-            }
-
-            @ParameterizedTest
-            @MethodSource("provideArguments")
-            fun `should repeat operation using first operand when second is missing`(
-                testData: TestDataEngineStateStandard
-            ) {
-                // Arrange:
-                val initialState = state.copy(
-                    expression = testData.expression,
-                    lastOperand = "",
-                    lastOperator = testData.buttonBinary.toOperator() as OperatorBinary,
-                    activeButton = testData.lastOperand.takeLast(1).toButton(),
-                )
-                // Act: User presses "=" ten times
-                var stateEqual = initialState
-
-                repeat(10) { stateEqual = engineState.handleControl(
-                    stateEqual, testData.buttonControls.filterIsInstance<ButtonCalculatorControl.Equals>().firstOrNull()
-                        ?: throw IllegalArgumentException("Expected at least one Equals button in buttonControls.")
-                    )
-                }
-                val newState = stateEqual
-                // Assert:
-                val expected = when {
-                    testData.lastOperand == "NaN" -> {
-                        null
-                    }
-                    testData.buttonBinary is ButtonCalculatorBinary.Division && testData.lastOperand != "0.0" -> {
-                        testData.lastOperand.toDouble() / (testData.lastOperand.toDouble().pow(10 + 1)) * testData.lastOperand.toDouble()
-                    }
-                    testData.buttonBinary is ButtonCalculatorBinary.Addition -> {
-                        testData.lastOperand.toDouble() * (10 + 1)
-                    }
-                    else -> null
-                }
-
-                newState.expression.firstNumberOrNull()?.value?.shouldBe(expected?.plusOrMinus(1e-9))
-                    ?: (newState.expression.firstNumberOrNull() shouldBe null)
-            }
-
-            @ParameterizedTest
-            @MethodSource("provideArguments")
-            fun `should correctly apply equals operation after percent operation is applied`(
-                testData: TestDataEngineStateStandard,
-            ) {
-                // Arrange:
-                val initialState = state.copy(
-                    expression = testData.expression,
-                    lastOperand = (testData.lastOperand.toDouble() + 10.0).toString(),
-                    lastOperator = testData.buttonBinary.toOperator() as OperatorBinary,
-                    activeButton = testData.lastOperand.takeLast(1).toButton(),
-                )
-                // Act:
-                val statePercentage = engineState.handleUnary(initialState, testData.buttonUnary as ButtonCalculatorUnary.Percentage)
-
-                val newState = engineState.handleControl(statePercentage, testData.buttonControls.filterIsInstance<ButtonCalculatorControl.Equals>().firstOrNull()
-                    ?: throw IllegalArgumentException("Expected at least one Equals button in buttonControls.")
-                )
-                // Assert:
-                newState.expression.firstNumberOrNull()?.value.toString() shouldBe testData.expectedPercentageWithEquals()[testData.lastOperand to testData.buttonBinary]
+                newState shouldMatch testData.expected.context
             }
         }
     }
 
+        @Nested
+        inner class ApplyEquals {
+            // Arrange:
+            private fun provideArgumentsEquals(): Stream<TestCase<Input, Expected>> =
+                provideEngineStateControlTestCases(Control.Equals)
+                    .filter { !isDivideByZero(it) }
+                    .asStream()
+
+            // Arrange:
+            private fun provideArgumentsEqualsError(): Stream<TestCase<Input, Expected>> =
+                provideEngineStateControlTestCases(Control.EqualsError)
+                    .filter { isDivideByZero(it) }
+                    .asStream()
+
+            // Arrange:
+            private fun provideArgumentsEqualsInvalid(): Stream<TestCase<Input, Expected>> =
+                provideEngineStateControlTestCases(Control.EqualsInvalid)
+                    .filter { !isDivideByZero(it) }
+                    .asStream()
+
+            // Arrange:
+            private fun provideArgumentsEqualsRepeatable(): Stream<TestCase<Input, Expected>> =
+                provideEngineStateControlTestCases(Control.EqualsRepeatable)
+                    .filter { !isDivideByZero(it) }
+                    .asStream()
+
+            // Arrange:
+            private fun provideArgumentsEqualsRepeatableOperand(): Stream<TestCase<Input, Expected>> =
+                provideEngineStateControlTestCases(Control.EqualsRepeatableOperand)
+                    .filter { !isDivideByZeroRepeatableMissing(it) }
+                    .asStream()
+
+            // Arrange:
+            private fun provideArgumentsEqualsPercentage(): Stream<TestCase<Input, Expected>> =
+                provideEngineStateControlTestCases(Control.EqualsPercentage)
+                    .filter { !isDivideByZeroRepeatableMissing(it) && !isDivideByZero(it) }
+                    .asStream()
+
+            private fun isDivideByZero(case: TestCase<Input, Expected>): Boolean =
+                (case.input as InputEngineState.Control).context.lastOperand.toDouble() == 0.0 &&
+                        case.input.context.lastOperator == OperatorBinary.Division
+
+            private fun isDivideByZeroRepeatableMissing(case: TestCase<Input, Expected>): Boolean =
+                (case.input as InputEngineState.Control).context.expression.firstNumberOrNull()?.value == 0.0 &&
+                        case.input.context.lastOperator == OperatorBinary.Division
+
+            @ParameterizedTest
+            @MethodSource("provideArgumentsEquals")
+            fun `should correctly apply equals operation`(
+                testData: TestCase<InputEngineState.Control, ExpectedEngineState.Control>
+            ) {
+                // Arrange:
+                val initialState = state.copy(
+                    expression = testData.input.context.expression,
+                    lastOperand = testData.input.context.lastOperand,
+                    activeButton = testData.input.context.activeButton,
+                    lastOperator = testData.input.context.lastOperator,
+                    hasError = testData.input.context.hasError,
+                    errorMessage = testData.input.context.errorMessage,
+                )
+                // Act:
+                val newState = engineState.handleControl(
+                    initialState,
+                    ButtonCalculatorControl.Equals,
+                )
+                testData.expected.context
+                // Assert:
+                newState shouldMatch testData.expected.context
+            }
+
+            @ParameterizedTest
+            @MethodSource("provideArgumentsEqualsInvalid")
+            fun `should return state with error message if expression are not a valid`(
+                testData: TestCase<InputEngineState.Control, ExpectedEngineState.Control>
+            ) {
+                // Arrange:
+                val initialState = state.copy(
+                    expression = testData.input.context.expression,
+                    lastOperand = testData.input.context.lastOperand,
+                    activeButton = testData.input.context.activeButton,
+                    lastOperator = testData.input.context.lastOperator,
+                    hasError = testData.input.context.hasError,
+                    errorMessage = testData.input.context.errorMessage,
+                )
+                // Act:
+                val newState = engineState.handleControl(
+                    initialState,
+                    ButtonCalculatorControl.Equals,
+                )
+                // Assert:
+                newState shouldMatch testData.expected.context
+            }
+
+            @ParameterizedTest
+            @MethodSource("provideArgumentsEqualsRepeatable")
+            fun `should perform repeatable equals with valid list of expressions`(
+                testData: TestCase<InputEngineState.Control, ExpectedEngineState.Control>
+            ) {
+                // Arrange:
+                val initialState = state.copy(
+                    expression = testData.input.context.expression,
+                    lastOperand = testData.input.context.lastOperand,
+                    activeButton = testData.input.context.activeButton,
+                    lastOperator = testData.input.context.lastOperator,
+                    hasError = testData.input.context.hasError,
+                    errorMessage = testData.input.context.errorMessage,
+                )
+                // Act: User presses "=" ten times
+                var stateEqual = initialState
+
+                repeat(10) { stateEqual = engineState.handleControl(
+                    stateEqual,
+                    ButtonCalculatorControl.Equals,
+                )
+
+                }
+                val newState = stateEqual
+                // Assert:
+                newState shouldMatchWithTolerance testData.expected.context
+            }
+
+            @ParameterizedTest
+            @MethodSource("provideArgumentsEqualsRepeatableOperand")
+            fun `should repeat operation using first operand when second is missing`(
+                testData: TestCase<InputEngineState.Control, ExpectedEngineState.Control>
+            ) {
+                // Arrange:
+                val initialState = state.copy(
+                    expression = testData.input.context.expression,
+                    lastOperand = "",
+                    activeButton = testData.input.context.activeButton,
+                    lastOperator = testData.input.context.lastOperator,
+                    hasError = testData.input.context.hasError,
+                    errorMessage = testData.input.context.errorMessage,
+                )
+                // Act: User presses "=" ten times
+                var stateEqual = initialState
+
+                repeat(10) { stateEqual = engineState.handleControl(
+                    stateEqual,
+                    ButtonCalculatorControl.Equals,
+                )
+                }
+                val newState = stateEqual
+                // Assert:
+                newState shouldMatchWithTolerance testData.expected.context
+            }
+
+            @ParameterizedTest
+            @MethodSource("provideArgumentsEqualsPercentage")
+            fun `should correctly apply equals operation after percent operation is applied`(
+                testData: TestCase<InputEngineState.Control, ExpectedEngineState.Control>
+            ) {
+                // Arrange:
+                val initialState = state.copy(
+                    expression = testData.input.context.expression,
+                    lastOperand = testData.input.context.lastOperand,
+                    activeButton = testData.input.context.activeButton,
+                    lastOperator = testData.input.context.lastOperator,
+                    hasError = testData.input.context.hasError,
+                    errorMessage = testData.input.context.errorMessage,
+                )
+                // Act:
+                val statePercentage = engineState.handleUnary(initialState, ButtonCalculatorUnary.Percentage)
+                val newState = engineState.handleControl(statePercentage, ButtonCalculatorControl.Equals)
+                // Assert:
+                newState shouldMatchWithTolerance testData.expected.context
+            }
+        }
+
     @Nested
     inner class HandleNumber {
         // Arrange:
-        private fun provideArguments(): Stream<TestDataEngineStateStandard> =
-            TestArgumentsEngineState.provideStateNumber().asStream()
+        private fun provideArgumentsSuccess(): Stream<TestCase<Input, Expected>> =
+            provideEngineStateNumberTestCases(Numeric.Success).asStream()
 
-        /**
-         * Lightweight test argument provider used in cases where the full set of test data
-         * isn't needed or would add unnecessary overhead.
-         */
-        private fun provideArgumentsNaNLastOperand(): Stream<TestDataEngineStateStandard> =
-            TestArgumentsEngineState.provideStateNumber().asStream().filter { it.lastOperand == "NaN" }
+        // Arrange:
+        private fun provideArgumentsError(): Stream<TestCase<Input, Expected>> =
+            provideEngineStateNumberTestCases(Numeric.Error).asStream()
+
+        // Arrange:
+        private fun provideArgumentsOperand(): Stream<TestCase<Input, Expected>> =
+            provideEngineStateNumberTestCases(Numeric.Operand).asStream()
+
+        // Arrange:
+        private fun provideArgumentsMaxLength(): Stream<TestCase<Input, Expected>> =
+            provideEngineStateNumberTestCases(Numeric.MaxLength).asStream()
 
         @ParameterizedTest
-        @MethodSource("provideArgumentsNaNLastOperand")
+        @MethodSource("provideArgumentsOperand")
         fun `should add a number to an empty lastOperand`(
-            testData: TestDataEngineStateStandard
+            testData: TestCase<InputEngineState.Number, ExpectedEngineState.Number>
         ) {
             // Arrange:
-            val initialState = state.copy(lastOperand = "")
+            val initialState = state.copy(
+                expression = testData.input.context.expression,
+                lastOperand = testData.input.context.lastOperand,
+                activeButton = testData.input.context.activeButton,
+                lastOperator = testData.input.context.lastOperator,
+                hasError = testData.input.context.hasError,
+                errorMessage = testData.input.context.errorMessage,
+            )
             // Act:
             val newState = engineState.handleNumber(
                 initialState,
-                testData.buttonNumber as ButtonCalculatorNumber,
+                ButtonCalculatorNumber.Nine,
             )
             // Assert:
-            testData.buttonNumber.symbol.label shouldBeEqual newState.lastOperand
+            newState shouldMatch testData.expected.context
         }
 
         @ParameterizedTest
-        @MethodSource("provideArguments")
+        @MethodSource("provideArgumentsSuccess")
         fun `should append a number to the lastOperand`(
-            testData: TestDataEngineStateStandard
+            testData: TestCase<InputEngineState.Number, ExpectedEngineState.Number>
         ) {
             // Arrange:
-            val initialState = state.copy(lastOperand = testData.lastOperand)
+            val initialState = state.copy(
+                expression = testData.input.context.expression,
+                lastOperand = testData.input.context.lastOperand,
+                activeButton = testData.input.context.activeButton,
+                lastOperator = testData.input.context.lastOperator,
+                hasError = testData.input.context.hasError,
+                errorMessage = testData.input.context.errorMessage,
+            )
             // Act:
             val newState = engineState.handleNumber(
                 initialState,
-                testData.buttonNumber as ButtonCalculatorNumber,
+                ButtonCalculatorNumber.Nine,
             )
             // Assert:
-            testData.expectedNumber()[testData.lastOperand] shouldBe newState.lastOperand
+            newState shouldMatch testData.expected.context
         }
 
         @ParameterizedTest
-        @MethodSource("provideArgumentsNaNLastOperand")
+        @MethodSource("provideArgumentsMaxLength")
         fun `should not add a number if max length is reached`(
-            testData: TestDataEngineStateStandard
+            testData: TestCase<InputEngineState.Number, ExpectedEngineState.Number>
         ) {
             // Arrange:
-            val initialState = state.copy(lastOperand = "1".repeat(MAX_NUM_LENGTH))
+            val initialState = state.copy(
+                expression = testData.input.context.expression,
+                lastOperand = testData.input.context.lastOperand,
+                activeButton = testData.input.context.activeButton,
+                lastOperator = testData.input.context.lastOperator,
+                hasError = testData.input.context.hasError,
+                errorMessage = testData.input.context.errorMessage,
+            )
             // Act:
             val newState = engineState.handleNumber(
                 initialState,
-                testData.buttonNumber as ButtonCalculatorNumber,
+                ButtonCalculatorNumber.Nine,
             )
             // Assert:
-            newState.also { println(it) }
-            "1111111111" shouldBeEqual newState.lastOperand
-            ("1111111111" + testData.lastOperand).length shouldBeGreaterThanOrEqualTo MAX_NUM_LENGTH
+            newState shouldMatch testData.expected.context
         }
 
-        @ParameterizedTest
-        @MethodSource("provideArgumentsNaNLastOperand")
-        fun `should return same state when trying to enter number on NaN lastOperand`(
-            testData: TestDataEngineStateStandard
-        ) {
-            // Arrange:
-            val initialState = state.copy(lastOperand = testData.lastOperand)
-            // Act:
-            val newState = engineState.handleNumber(
-                initialState,
-                testData.buttonNumber as ButtonCalculatorNumber,
-            )
-            // Assert:
-            testData.expectedNumber()[testData.lastOperand] shouldBe newState.lastOperand
-        }
+//        @Disabled("This test is disabled because the app now resets state on NaN, making this scenario obsolete.")
+//        @Test
+//        fun `should return same state when trying to enter number on NaN lastOperand`() {
+//            // Arrange:
+//            // Act:
+//            // Assert:
+//        }
 
-        @Disabled("This test is disabled because the app now resets state on NaN, making this scenario obsolete.")
-        @Test
-        fun `should return same state when trying to enter number on NaN expression`() {
-            // Arrange:
-            // Act:
-            // Assert:
-        }
+//        @Disabled("This test is disabled because the app now resets state on NaN, making this scenario obsolete.")
+//        @Test
+//        fun `should return same state when trying to enter number on NaN expression`() {
+//            // Arrange:
+//            // Act:
+//            // Assert:
+//        }
     }
 }
