@@ -370,51 +370,6 @@ class EngineNodeStandard(private val engineMath: EngineMath) : EngineNode {
             is OperatorBinary.Multiplication -> engineMath.evalBinary(left, right) { l, r -> l * r }
             is OperatorBinary.Division -> engineMath.evalBinary(left, right) { l, r -> l / r }
         }
-    }
-}
-```
-
-#### 🔵 5.3.1 **Token**
-- Tokens represent parsed user inputs, categorized into numerical values, operators (binary or unary), or parentheses. These tokens serve as input to the parser.
-```kotlin
-sealed class Token {
-   data class Number(val value: Double) : Token()
-   data class Binary(val operator: OperatorBinary) : Token()
-   data class Unary(val operator: OperatorUnary) : Token()
-   data class Parenthesis(val type: OperatorParenthesis) : Token()
-}
-```
-
-#### 🔵 5.3.2 **Node**
-- ASTNodes represent the syntactic structure of an expression. Nodes are recursively evaluated to compute a result.
-```kotlin
-sealed class ASTNode {
-   data class Number(val value: Double) : ASTNode()
-   data class Binary(val operator: OperatorBinary, val left: ASTNode, val right: ASTNode) : ASTNode()
-}
-```
-
-#### 🔵 5.3.3 **Parser**
-- The Parser component converts a list of tokens into a tree of ASTNode objects. It handles operator precedence and builds nested nodes for binary operations.
-```kotlin
-class ParserToken : Parser {
-
- override fun parse(tokens: List<Token>): ASTNode {
-     val output = mutableListOf<ASTNode>()
-     val operators = mutableListOf<Token>()
-
-     tokens.forEach { token ->
-         when (token) {
-             is Token.Number -> output.add(ASTNode.Number(token.value))
-             is Token.Binary -> handleBinaryOperator(token, output, operators)
-             else -> throw IllegalArgumentException("Invalid token for: $token")
-         }
-     }
-
-     while (operators.isNotEmpty()) { buildOperatorNode(output, operators.removeLast()) }
-     require(output.size == 1) { "Invalid expression" }
-
-     return output.single()
  }
 
 //...
@@ -556,6 +511,7 @@ data class CalculatorState(
   }
 }
 ```
+
 ##### Why `modifyWith`?
 - Improves readability – Avoids deeply nested if statements.
 - Encapsulates state logic – Centralized modification logic improves maintainability.
@@ -623,6 +579,131 @@ class CommandFactoryStandard(
 ```
 
 The CommandFactoryStandard simplifies the process of translating user interactions into executable commands while ensuring modularity and readability. It dynamically generates CommandHandler instances based on the button type, allowing the calculator to process different operations efficiently.
+
+___
+<br>
+
+### 🧶 7. **ASTNode**
+
+#### 7.1 **Token**
+Tokens represent parsed user inputs, categorized into numerical values, operators (binary or unary), or parentheses. These tokens serve as input to the parser.
+
+  ```kotlin
+  sealed interface Token {
+     data class Number(val value: Double) : Token()
+     data class Binary(val operator: OperatorBinary) : Token()
+     data class Unary(val operator: OperatorUnary) : Token()
+     data class Parenthesis(val type: OperatorParenthesis) : Token()
+  }
+  ```
+
+#### 7.2 **Node**
+ASTNodes represent the syntactic structure of an expression. Nodes are recursively evaluated to compute a result.
+
+  ```kotlin
+  sealed class ASTNode {
+     data class Number(val value: Double) : ASTNode()
+     data class Binary(val operator: OperatorBinary, val left: ASTNode, val right: ASTNode) : ASTNode()
+  }
+  ```
+
+#### 7.3 Precedence
+Precedence defines operator priority for parsing expressions. 
+Each operator type is associated with a numeric level to resolve parsing order correctly.
+
+  ```kotlin
+  sealed class Precedence(val level: Int) {
+      data object Lowest : Precedence(0)  // Default for unknown tokens
+      data object Sum : Precedence(1)     // +, -
+      data object Product : Precedence(2) // *, /
+      data object Prefix : Precedence(3)  // -x, +x
+      data object Suffix : Precedence(4)  // x!, x², %
+      data object Power : Precedence(5)   // x^y
+      data object Group : Precedence(6)   // (, )
+  
+      companion object {
+          fun fromToken(token: Token): Precedence {
+              return when (token) {
+                  is Token.Binary -> when (token.operator) {
+                      OperatorBinary.Addition,
+                      OperatorBinary.Subtraction -> Sum
+                      OperatorBinary.Multiplication,
+                      OperatorBinary.Division -> Product
+                  }
+                  is Token.Unary -> when (token.operator) {
+                      OperatorUnary.Prefix.Sign -> Prefix
+                      OperatorUnary.Suffix.Percentage -> Suffix
+                  }
+                  is Token.Parenthesis -> Group
+                  else -> Lowest
+              }
+          }
+      }
+  }
+  ```
+
+#### 7.4 Tokenizer
+The TokenizerStandard converts a list of raw string tokens into structured Token objects. 
+It detects numbers, binary operators, unary operators, and parentheses.
+
+  ```kotlin
+  class TokenizerStandard : Tokenizer {
+  
+      override fun tokenize(expression: List<String>): List<Token> {
+          val tokens = mutableListOf<Token>()
+  
+          for (token in expression) {
+              tokens.add(
+                  when {
+                      token.isNumber() -> Token.Number(token.toDouble())
+                      token.isBinary() -> Token.Binary(token.toBinaryOperator())
+                      token.isParenthesis() -> Token.Parenthesis(token.toParenthesisOperator())
+                      token.isUnaryPrefix() || token.isUnarySuffix() -> Token.Unary(token.toUnaryOperator())
+                      else -> throw IllegalArgumentException("Invalid token: $token")
+                  }
+              )
+          }
+  
+          return tokens
+      }
+  }
+  ```
+- Design Note
+  - Precedence levels ensure operators are evaluated in the correct order when building the AST.
+  - TokenizerStandard separates lexical analysis from parsing, enabling modularity and easier testing.
+
+#### 7.6 **Parser**
+The Parser component converts a list of tokens into a tree of ASTNode objects. It handles operator precedence and builds nested nodes for binary operations.
+
+  ```kotlin
+  class ParserToken : Parser {
+  
+   override fun parse(tokens: List<Token>): ASTNode {
+       val output = mutableListOf<ASTNode>()
+       val operators = mutableListOf<Token>()
+  
+       tokens.forEach { token ->
+           when (token) {
+               is Token.Number -> output.add(ASTNode.Number(token.value))
+               is Token.Binary -> handleBinaryOperator(token, output, operators)
+               else -> throw IllegalArgumentException("Invalid token for: $token")
+           }
+       }
+  
+       while (operators.isNotEmpty()) { buildOperatorNode(output, operators.removeLast()) }
+       require(output.size == 1) { "Invalid expression" }
+  
+       return output.single()
+   }
+  
+  //...
+  
+  }
+  ```
+___
+<br>
+
+### 🪟 8. **ViewModel**
 
 ___
 <br>
