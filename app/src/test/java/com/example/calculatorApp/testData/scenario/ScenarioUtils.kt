@@ -88,6 +88,9 @@ inline fun <reified T : ContextEngineState> buildNumberExpectedState(
 
 fun Number.lastDigit(): Int = this.toString().last { it.isDigit() }.digitToInt()
 
+fun Number.repeatedOperand(maxLength: Int): String =
+    this.toString() + this.lastDigit().toString().repeat(maxLength - 1)
+
 fun Operator.toFunction(): (Double, Double) -> Double = when (this) {
     OperatorBinary.Addition       -> Double::plus
     OperatorBinary.Division       -> Double::div
