@@ -704,6 +704,190 @@ ___
 <br>
 
 ### 🪟 8. **ViewModel**
+This calculator app is organized around a modular, testable, and state-driven architecture. It separates UI, business logic, and state management, leveraging Hilt for dependency injection and StateFlow for reactive state updates.
+
+#### 8.1 Actions
+CalculatorAction represents events triggered by user interactions.
+Currently, the primary action is ButtonPressed, capturing the pressed button.
+
+```kotlin
+sealed class CalculatorAction {
+    abstract val button: Button
+    data class ButtonPressed(override val button: Button) : CalculatorAction()
+}
+```
+
+#### 8.2 Action Handling
+- CalculatorActionHandler is responsible for processing actions and updating state.
+- Returns CalculatorActionHandlerData, which contains:
+  - newState: the updated calculator state
+  - shouldResetTextSize: optional UI behavior
+- Standard implementation uses a CommandFactoryProvider to map buttons to commands:
+
+```kotlin
+class CalculatorActionHandlerStandard(
+    private val factoryProvider: CommandFactoryProvider,
+) : CalculatorActionHandler {
+    override fun handleAction(action: CalculatorAction, state: CalculatorStateDomain): CalculatorActionHandlerData {
+        require(action is CalculatorAction.ButtonPressed)
+        val commandFactory = factoryProvider.getFactory(action.button.getCategory().toButtonCategoryHiltKey())
+        val command = commandFactory.createCommand(action)
+        val newState = command.execute(state).copy(activeButton = action.button)
+        return CalculatorActionHandlerDataStandard(newState, action.shouldResetTextSize())
+    }
+}
+```
+
+#### 8.3 Modules and Dependency Injection
+Hilt modules provide centralized, singleton instances of key components, like the action handler:
+
+```kotlin
+@Module
+@InstallIn(SingletonComponent::class)
+object ModuleCalculatorActionHandler {
+    @Provides
+    @Singleton
+    fun provideCalculatorActionHandler(factoryProvider: CommandFactoryProvider): CalculatorActionHandler =
+        CalculatorActionHandlerStandard(factoryProvider)
+}
+```
+
+- Other modules organize the app into features, e.g., ModuleEngineMath, ModuleParser, ModuleState, and Node processing.
+- Hilt annotations (@MapKey, @Singleton, etc.) are used to map button categories to command factories dynamically.
+
+#### 8.4 Button Categories and Command Factories
+
+##### 🟡 8.4.1 ButtonCategoryHiltKey
+ButtonCategoryHiltKey enumerates high-level button types, used to map buttons to command factories via Hilt.
+
+```kotlin
+enum class ButtonCategoryHiltKey {
+    BINARY,
+    UNARY,
+    CONTROL,
+    NUMBER,
+    PARENTHESIS
+}
+```
+Mapping from element category:
+
+```kotlin
+fun ElementCategory<*>.toButtonCategoryHiltKey(): ButtonCategoryHiltKey = when (this) {
+    ButtonCategory.Binary -> ButtonCategoryHiltKey.BINARY
+    ButtonCategory.Unary -> ButtonCategoryHiltKey.UNARY
+    ButtonCategory.Control -> ButtonCategoryHiltKey.CONTROL
+    ButtonCategory.Number -> ButtonCategoryHiltKey.NUMBER
+    ButtonCategory.Parenthesis -> ButtonCategoryHiltKey.PARENTHESIS
+    else -> throw IllegalArgumentException("Invalid button category.")
+}
+```
+- This mapping allows the action handler to select the appropriate command factory for each button press.
+
+##### 🟡 8.4.2 Hilt MapKey for Command Factories
+ButtonCategoryHiltMapKey is used as a map key annotation for multi-binding in Hilt:
+
+```kotlin
+@MapKey
+@Retention(AnnotationRetention.RUNTIME)
+annotation class ButtonCategoryHiltMapKey(val value: ButtonCategoryHiltKey)
+```
+- Multi-binding lets Hilt inject a map of factories, keyed by button category.
+
+##### 🟡 8.4.3 Module for Command Factories
+ModuleCalculatorCommandFactory provides category-specific CommandFactory instances using Hilt:
+
+```kotlin
+@Module
+@InstallIn(SingletonComponent::class)
+object ModuleCalculatorCommandFactory {
+
+    @Provides
+    @IntoMap
+    @ButtonCategoryHiltMapKey(ButtonCategoryHiltKey.BINARY)
+    fun provideBinaryCommandFactory(engineState: EngineState): CommandFactory = CommandFactoryStandard(engineState)
+
+    @Provides
+    @IntoMap
+    @ButtonCategoryHiltMapKey(ButtonCategoryHiltKey.UNARY)
+    fun provideUnaryCommandFactory(engineState: EngineState): CommandFactory = CommandFactoryStandard(engineState)
+
+    @Provides
+    @IntoMap
+    @ButtonCategoryHiltMapKey(ButtonCategoryHiltKey.CONTROL)
+    fun provideControlCommandFactory(engineState: EngineState): CommandFactory = CommandFactoryStandard(engineState)
+
+    @Provides
+    @IntoMap
+    @ButtonCategoryHiltMapKey(ButtonCategoryHiltKey.NUMBER)
+    fun provideNumberCommandFactory(engineState: EngineState): CommandFactory = CommandFactoryStandard(engineState)
+}
+```
+
+- Each provider creates a CommandFactoryStandard tied to the EngineState domain, ensuring commands operate on the correct calculator logic.
+- Multi-binding allows the CalculatorActionHandler to dynamically select the appropriate factory for a button press based on its category.
+
+##### 🟡 8.4.4 Design Notes
+
+- Extensible: New button categories can be added simply by:
+- Extending ButtonCategoryHiltKey
+- Adding a Hilt provider in the module
+- Decoupled: The mapping decouples UI button categories from command execution, enabling clean modularity and easier testing.
+- Type-safe: The use of enums and Hilt map keys prevents runtime errors due to missing or invalid command factories.
+
+#### 8.5 ViewModel 
+CalculatorViewModel exposes reactive StateFlow objects for UI consumption and persists state across configuration changes using SavedStateHandle.
+
+```kotlin
+@HiltViewModel
+class CalculatorViewModel @Inject constructor(
+    private val actionHandler: CalculatorActionHandler,
+    private val savedStateHandle: SavedStateHandle,
+) : ViewModel() {
+
+    companion object {
+        private const val STATE_CAL = "calculator_state"
+        private const val STATE_UI = "ui_state"
+        private const val ORIENTATION = "calculator_orientation"
+    }
+
+    val stateCal: StateFlow<CalculatorStateDomain> = savedStateHandle.getStateFlow(STATE_CAL, CalculatorStateDomain())
+    val stateUi: StateFlow<CalculatorStateUI> = savedStateHandle.getStateFlow(STATE_UI, CalculatorStateUI.DEFAULT)
+    val isLandscape: StateFlow<Boolean> = savedStateHandle.getStateFlow(ORIENTATION, false)
+
+    private fun setState(newState: CalculatorStateDomain) {
+        savedStateHandle[STATE_CAL] = newState
+    }
+
+    fun setOrientation() {
+        val currentOrientation = isLandscape()
+        savedStateHandle[ORIENTATION] = currentOrientation
+    }
+
+    private fun setStateUi(transform: (CalculatorStateUI) -> CalculatorStateUI) {
+        savedStateHandle[STATE_UI] = transform(stateUi.value)
+    }
+
+    fun onAction(action: CalculatorAction) {
+        val result = actionHandler.handleAction(action, stateCal.value)
+        setState(result.newState)
+    }
+}
+```
+- Notes on SavedStateHandle:
+  - Persists stateCal, stateUi, and orientation across process death and configuration changes.
+  - Enables reactive updates via StateFlow, so UI components automatically reflect the latest state.
+  - Can be extended to store additional UI or domain state, supporting future features like undo/redo or session persistence.
+
+#### 8.6 Key Design Principles
+
+- Separation of concerns: Actions, state, and commands are decoupled.
+- Modularity: Features are organized into self-contained modules, supporting dependency injection.
+- Reactive state: StateFlow ensures the UI reacts automatically to state changes.
+- Extensibility: Adding new buttons or commands requires minimal changes, thanks to the factory-based action handler.
+- Enhancement opportunities:
+  - Extend SavedStateHandle usage to support richer UI state persistence (themes, memory functions).
+  - Introduce undo/redo stacks or more granular state snapshots.
+  - Add testing hooks for observing state transitions in unit and integration tests.
 
 ___
 <br>
