@@ -1,56 +1,57 @@
 package com.example.calculatorApp.model.elements.display
 
-import TestArgumentsDisplay
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import com.example.calculatorApp.model.elements.ElementCategory
-import com.example.calculatorApp.model.elements.ElementCategoryStyleCollection
+import com.example.calculatorApp.annotations.ConceptClass
+import com.example.calculatorApp.arguments.TestArgumentsCalculatorElement.provideDisplayTestCases
 import com.example.calculatorApp.model.elements.ElementCategoryStyleCollectionImpl
 import com.example.calculatorApp.model.elements.ElementColorStyle
 import com.example.calculatorApp.model.styles.StylesDisplay
-import com.example.calculatorApp.utils.ColorToLongConverter
-import com.example.calculatorApp.utils.DisplayCalculatorList
+import com.example.calculatorApp.testData.TestCase
+import com.example.calculatorApp.testData.TestDataElement.displaysInputsTest
+import com.example.calculatorApp.testData.expected.Expected
+import com.example.calculatorApp.testData.expected.ExpectedElement
+import com.example.calculatorApp.testData.input.Input
+import com.example.calculatorApp.testData.input.InputElement
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
-import io.mockk.every
-import io.mockk.mockk
 import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.converter.ConvertWith
-import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
+import kotlin.streams.asStream
 
 class DisplayCalculatorInputTest {
 
     @Nested
     inner class GetCategory {
 
-        // Arrange: Setup test data (display instance)
-        private fun provideArguments(): Array<DisplayCalculatorInput> {
-            return DisplayCalculatorList.inputs
-        }
+        // Arrange:
+        @OptIn(ConceptClass::class)
+        private fun provideArguments(): Stream<TestCase<Input, Expected>> =
+            provideDisplayTestCases(displaysInputsTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
-        fun `should get the right category for each input display`(display: DisplayCalculatorInput) {
+        fun `should get the right category for each input display`(
+            testData: TestCase<InputElement.Display, ExpectedElement.Display>
+        ) {
             // Act & Assert: Check if the display's category matches the expected category
-            DisplayCategory.Input shouldBe display.getCategory()
+            testData.input.element.getCategory() shouldBe testData.expected.category
         }
 
         @ParameterizedTest
         @MethodSource("provideArguments")
-        fun `should throw exception when category is not found`(display: DisplayCalculatorInput) {
+        fun `should throw exception when category is not found`(
+            testData: TestCase<InputElement.Display, ExpectedElement.Display>
+        ) {
             // Arrange: Create an empty style collection (default is empty)
             val emptyStyleCollection = ElementCategoryStyleCollectionImpl<ElementColorStyle>()
-
             // Act & Assert: Call getBackgroundColor, which internally calls getStyle and should throw an exception
+            val display = testData.input.element
+
             display.let {
                 val exception = shouldThrow<IllegalArgumentException> {
                     display.getBackgroundColor(emptyStyleCollection)
                 }
-
                 // Assert: Validate the exception message
                 exception.message shouldBe "Category '${display.getCategory()}' not found."
             }
@@ -60,68 +61,43 @@ class DisplayCalculatorInputTest {
     @Nested
     inner class GetBackgroundColor {
 
-        // Arrange: Setup test data (display instance)
-        private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsDisplay.provideInputsColors()
-        }
+        // Arrange:
+        @OptIn(ConceptClass::class)
+        private fun provideArguments(): Stream<TestCase<Input, Expected>> =
+            provideDisplayTestCases(displaysInputsTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
-        fun `should get the right backgroundColor for each input display`(
-            display: DisplayCalculatorInput,
-            @ConvertWith(ColorToLongConverter::class) expectedColor: Long,
+        fun `should get the right backgroundColor for each input display in iDisplayStyle`(
+            testData: TestCase<InputElement.Display, ExpectedElement.Display>
         ) {
             // Arrange:
             val style = StylesDisplay.iDisplayStyleInput
-
             // Act:
-            val actualColor = display.getBackgroundColor(style).toArgb()
-
+            val actualColor = testData.input.element.getBackgroundColor(style)
             // Assert:
-            actualColor shouldBe expectedColor
-        }
-
-        @Test
-        fun `should get the right backgroundColor for each input display - Mocked`() {
-            // Arrange:
-            val style = mockk<ElementCategoryStyleCollection<ElementColorStyle>>(relaxed = true)
-            val elementStyle = mockk<ElementColorStyle> {
-                every { backgroundColor } returns Color.Yellow
-            }
-
-            every { style.categories[any<ElementCategory<ElementColorStyle>>()] } returns DisplayCategoryStyleInput(elementStyle)
-
-            val display = DisplayCalculatorInput.Standard
-
-            // Act:
-            val actualColor = display.getBackgroundColor(style).toArgb()
-
-            // Assert:
-            actualColor shouldBe Color.Yellow.toArgb()
+            actualColor shouldBe (testData.expected).background
         }
     }
 
     @Nested
-    inner class GetTextColor {
+    inner class GetForegroundColor {
 
-        private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsDisplay.provideInputsColors()
-        }
+        @OptIn(ConceptClass::class)
+        private fun provideArguments(): Stream<TestCase<Input, Expected>> =
+            provideDisplayTestCases(displaysInputsTest).asStream()
 
         @ParameterizedTest
         @MethodSource("provideArguments")
-        fun `should get the right textColor for each input display`(
-            display: DisplayCalculatorInput,
-            @ConvertWith(ColorToLongConverter::class) expectedColor: Long,
+        fun `should get the right foreground color for each input display in iDisplayStyle`(
+            testData: TestCase<InputElement.Display, ExpectedElement.Display>
         ) {
             // Arrange:
             val style = StylesDisplay.iDisplayStyleInput
-
             // Act:
-            val actualColor = display.getBackgroundColor(style).toArgb()
-
+            val actualColor = testData.input.element.getForegroundColor(style)
             // Assert:
-            actualColor shouldBe expectedColor
+            actualColor shouldBe (testData.expected).foreground
         }
     }
 }

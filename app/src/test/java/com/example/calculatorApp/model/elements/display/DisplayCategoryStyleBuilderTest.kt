@@ -10,6 +10,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
+import kotlin.streams.asStream
 
 class DisplayCategoryStyleBuilderTest {
 
@@ -17,7 +18,7 @@ class DisplayCategoryStyleBuilderTest {
     inner class InputStyle {
         // Arrange:
         private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsDisplayStyleBuilder.provideDisplayStyle().filter { it.get()[0] is DisplayCalculatorInput }
+            return TestArgumentsDisplayStyleBuilder.provideDisplayStyle().filter { it.get()[0] is DisplayCalculatorInput }.asStream()
         }
 
         @ParameterizedTest
@@ -29,15 +30,15 @@ class DisplayCategoryStyleBuilderTest {
         ) {
             // Act:
             val actualBackgroundColor = display.getBackgroundColor(styles)
-            val actualTextColor = display.getTextColor(styles)
+            val actualForegroundColor = display.getForegroundColor(styles)
 
             // Assert:
             withClue("Background color mismatch for ${display::class.simpleName}.") {
                 expectedStyle.backgroundColor shouldBe actualBackgroundColor
             }
 
-            withClue("Text color mismatch for ${display::class.simpleName}.") {
-                expectedStyle.textColor shouldBe actualTextColor
+            withClue("Foreground color mismatch for ${display::class.simpleName}.") {
+                expectedStyle.foregroundColor shouldBe actualForegroundColor
             }
         }
     }
@@ -46,7 +47,7 @@ class DisplayCategoryStyleBuilderTest {
     inner class Build {
         // Arrange:
         private fun provideArguments(): Stream<Arguments> {
-            return TestArgumentsDisplayStyleBuilder.provideDisplayStyle()
+            return TestArgumentsDisplayStyleBuilder.provideDisplayStyle().asStream()
         }
 
         @ParameterizedTest
@@ -58,14 +59,14 @@ class DisplayCategoryStyleBuilderTest {
         ) {
             // Act:
             val actualBackgroundColor = display.getBackgroundColor(style)
-            val actualTextColor = display.getTextColor(style)
+            val actualForegroundColor = display.getForegroundColor(style)
             // Assert:
             withClue("Background color mismatch for ${display::class.simpleName}") {
                 expectedStyle.backgroundColor shouldBe actualBackgroundColor
             }
 
-            withClue("Text color mismatch for ${display::class.simpleName}") {
-                expectedStyle.textColor shouldBe actualTextColor
+            withClue("Foreground color mismatch for ${display::class.simpleName}") {
+                expectedStyle.foregroundColor shouldBe actualForegroundColor
             }
         }
     }

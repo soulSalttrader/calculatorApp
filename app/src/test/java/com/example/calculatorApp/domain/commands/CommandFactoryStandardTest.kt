@@ -1,22 +1,19 @@
 package com.example.calculatorApp.domain.commands
 
 import com.example.calculatorApp.domain.EngineState
-import com.example.calculatorApp.domain.actions.CalculatorAction
+import com.example.calculatorApp.domain.action.CalculatorAction
 import com.example.calculatorApp.model.elements.button.Button
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
-import com.example.calculatorApp.utils.ButtonCalculatorList
-import io.kotest.assertions.throwables.shouldThrow
+import com.example.calculatorApp.testData.TestDataElement
 import io.kotest.matchers.shouldBe
 import io.mockk.clearMocks
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
@@ -40,22 +37,22 @@ class CommandFactoryStandardTest {
 
         // Arrange:
         private fun provideArithmetics(): Stream<Button> {
-            return ButtonCalculatorList.binary.asStream()
+            return TestDataElement.buttonsBinaryTest.asStream()
         }
 
         // Arrange:
         private fun provideUnary(): Stream<Button> {
-            return ButtonCalculatorList.unary.asStream()
+            return TestDataElement.buttonsUnaryTest.asStream()
         }
 
         // Arrange:
         private fun provideControls(): Stream<Button> {
-            return ButtonCalculatorList.controls.asStream()
+            return TestDataElement.buttonsControlsTest.asStream()
         }
 
         // Arrange:
         private fun provideNumbers(): Stream<Button> {
-            return ButtonCalculatorList.numbers.asStream()
+            return TestDataElement.buttonsNumbersTest.asStream()
         }
 
         @ParameterizedTest

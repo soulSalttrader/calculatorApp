@@ -4,10 +4,13 @@ import com.example.calculatorApp.model.elements.Element
 import com.example.calculatorApp.model.elements.ElementCategory
 import com.example.calculatorApp.model.elements.ElementCategoryStyleCollection
 import com.example.calculatorApp.model.elements.ElementColorStyle
+import com.example.calculatorApp.model.symbols.HasSymbol
 import com.example.calculatorApp.model.symbols.Symbol
 
 interface Button :
-    Element<ElementCategory<ElementColorStyle>, ElementCategoryStyleCollection<ElementColorStyle>, ElementColorStyle> {
+    Element<ElementCategory<ElementColorStyle>, ElementCategoryStyleCollection<ElementColorStyle>, ElementColorStyle>,
+    HasSymbol
+{
 
-    val symbol: Symbol
+    override val symbol: Symbol
 }

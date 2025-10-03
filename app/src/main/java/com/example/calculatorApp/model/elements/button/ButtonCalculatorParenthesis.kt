@@ -16,7 +16,7 @@ sealed class ButtonCalculatorParenthesis (
 
     override fun getCategory(): ElementCategory<ElementColorStyle> = ButtonCategory.Parenthesis
     override fun getBackgroundColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).backgroundColor
-    override fun getTextColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).textColor
+    override fun getForegroundColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).foregroundColor
 
     private fun getStyle(style: ElementCategoryStyleCollection<ElementColorStyle>): ElementColorStyle {
         val categoryStyle = style.categories[getCategory()]

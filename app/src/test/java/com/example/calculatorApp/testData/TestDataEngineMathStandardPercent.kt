@@ -1,57 +1,46 @@
 package com.example.calculatorApp.testData
 
-import com.example.calculatorApp.domain.ast.EvaluationResult
 import com.example.calculatorApp.domain.ast.Operator
 import com.example.calculatorApp.domain.ast.OperatorBinary
+import com.example.calculatorApp.testData.TestDataElement.operatorsAllTest
+import com.example.calculatorApp.testData.expected.ExpectedEngineMath
+import com.example.calculatorApp.testData.expected.ExpectedEngineMathResult
+import com.example.calculatorApp.testData.input.InputEngineMath
+import com.example.calculatorApp.testData.input.InputEval
 
-data class TestDataEngineMathStandardPercent(
-    val operand: Double,
-    val previousNumber: Double?,
-    val lastOperator: Operator?,
+object TestDataEngineMathStandardPercent {
 
-) {
-
-    fun expectedZero() = EvaluationResult.IntegerResult(value = 0)
-
-    fun expectedWhole(): Map<TestDataEngineMathStandardPercent, EvaluationResult> = mapOf(
-        TestDataEngineMathStandardPercent(-1.0, -1.0, OperatorBinary.Addition) to EvaluationResult.DoubleResult(0.01),
-        TestDataEngineMathStandardPercent(-3.0, -3.5, OperatorBinary.Addition) to EvaluationResult.DoubleResult(0.105),
-        TestDataEngineMathStandardPercent(-5.0, 5.0, OperatorBinary.Addition) to EvaluationResult.DoubleResult(-0.25),
-        TestDataEngineMathStandardPercent(-7.0, 7.5, OperatorBinary.Addition) to EvaluationResult.DoubleResult(-0.525),
-        TestDataEngineMathStandardPercent(1.0, -1.0, OperatorBinary.Addition) to EvaluationResult.DoubleResult(-0.01),
-        TestDataEngineMathStandardPercent(3.0, -3.5, OperatorBinary.Addition) to EvaluationResult.DoubleResult(-0.105),
-        TestDataEngineMathStandardPercent(4.0, 4.0, OperatorBinary.Addition) to EvaluationResult.DoubleResult(0.16),
-        TestDataEngineMathStandardPercent(5.0, 5.5, OperatorBinary.Addition) to EvaluationResult.DoubleResult(0.275),
-        TestDataEngineMathStandardPercent(7.0, 0.0, OperatorBinary.Addition) to EvaluationResult.IntegerResult(0),
-        TestDataEngineMathStandardPercent(-8.0, 0.0, OperatorBinary.Addition) to EvaluationResult.IntegerResult(0),
-
-        TestDataEngineMathStandardPercent(-1.0, -1.0, OperatorBinary.Multiplication) to EvaluationResult.DoubleResult(-0.01),
-        TestDataEngineMathStandardPercent(-3.0, -3.5, OperatorBinary.Multiplication) to EvaluationResult.DoubleResult(-0.03),
-        TestDataEngineMathStandardPercent(-5.0, 5.0, OperatorBinary.Multiplication) to EvaluationResult.DoubleResult(-0.05),
-        TestDataEngineMathStandardPercent(-7.0, 7.5, OperatorBinary.Multiplication) to EvaluationResult.DoubleResult(-0.07),
-        TestDataEngineMathStandardPercent(1.0, -1.0, OperatorBinary.Multiplication) to EvaluationResult.DoubleResult(0.01),
-        TestDataEngineMathStandardPercent(3.0, -3.5, OperatorBinary.Multiplication) to EvaluationResult.DoubleResult(0.03),
-        TestDataEngineMathStandardPercent(4.0, 4.0, OperatorBinary.Multiplication) to EvaluationResult.DoubleResult(0.04),
-        TestDataEngineMathStandardPercent(5.0, 5.5, OperatorBinary.Multiplication) to EvaluationResult.DoubleResult(0.05),
-        TestDataEngineMathStandardPercent(7.0, 0.0, OperatorBinary.Multiplication) to EvaluationResult.DoubleResult(0.07),
-        TestDataEngineMathStandardPercent(-8.0, 0.0, OperatorBinary.Multiplication) to EvaluationResult.DoubleResult(-0.08),
+    fun engineMathPercentageInput(
+        operand: Number,
+        previousNumber: Number?,
+        lastOperator: Operator?,
+    ): InputEngineMath.Percentage = InputEngineMath.Percentage(
+        object : InputEval.Percentage {
+            override val operand: Double = operand.toDouble()
+            override val lastOperator: Operator? = lastOperator
+            override val previousNumber: Double? = previousNumber?.toDouble()
+        }
     )
 
-    fun expectedDecimal(): Map<TestDataEngineMathStandardPercent, EvaluationResult> = mapOf(
-        TestDataEngineMathStandardPercent(-2.5,-2.0, OperatorBinary.Addition) to EvaluationResult.DoubleResult(0.05),
-        TestDataEngineMathStandardPercent(-4.5,-4.5, OperatorBinary.Addition) to EvaluationResult.DoubleResult(0.20249999999999999),
-        TestDataEngineMathStandardPercent(-6.5,6.0, OperatorBinary.Addition) to EvaluationResult.DoubleResult(-0.39),
-        TestDataEngineMathStandardPercent(-9.5,0.0, OperatorBinary.Addition) to EvaluationResult.IntegerResult(0),
-        TestDataEngineMathStandardPercent(2.5,-2.0, OperatorBinary.Addition) to EvaluationResult.DoubleResult(-0.05),
-        TestDataEngineMathStandardPercent(6.5,6.0, OperatorBinary.Addition) to EvaluationResult.DoubleResult(0.39),
-        TestDataEngineMathStandardPercent(8.5,0.0, OperatorBinary.Addition) to EvaluationResult.IntegerResult(0),
-
-        TestDataEngineMathStandardPercent(-2.5,-2.0, OperatorBinary.Multiplication) to EvaluationResult.DoubleResult(value=-0.025),
-        TestDataEngineMathStandardPercent(-4.5,-4.5, OperatorBinary.Multiplication) to EvaluationResult.DoubleResult(value=-0.045),
-        TestDataEngineMathStandardPercent(-6.5,6.0, OperatorBinary.Multiplication) to EvaluationResult.DoubleResult(value=-0.065),
-        TestDataEngineMathStandardPercent(-9.5,0.0, OperatorBinary.Multiplication) to EvaluationResult.DoubleResult(value=-0.095),
-        TestDataEngineMathStandardPercent(2.5,-2.0, OperatorBinary.Multiplication) to EvaluationResult.DoubleResult(value=0.025),
-        TestDataEngineMathStandardPercent(6.5,6.0, OperatorBinary.Multiplication) to EvaluationResult.DoubleResult(value=0.065),
-        TestDataEngineMathStandardPercent(8.5,0.0, OperatorBinary.Multiplication) to EvaluationResult.DoubleResult(value=0.085),
+    fun engineMathPercentageExpected(
+        operand: Number,
+        previousNumber: Number?,
+        lastOperator: Operator?,
+    ): ExpectedEngineMath.Percentage = ExpectedEngineMath.Percentage(
+        ExpectedEngineMathResult.evalPercentTest(operand, previousNumber, lastOperator)
     )
+
+    // Skipping Subtraction and Division to avoid redundant test cases.
+    // Addition and Multiplication cover the same result patterns,
+    // making Subtraction and Division unnecessary for efficiency.
+    val testOperators = operatorsAllTest
+        .filter { it != OperatorBinary.Subtraction && it != OperatorBinary.Division }
+
+    fun Number.isWholeNonZero() = toDouble().let { it % 1.0 == 0.0 && it != 0.0 }
+    fun Number.isDecimalNonZero() = toDouble().let { it % 1.0 != 0.0 && it != 0.0 }
+    fun Number.isZero() = toDouble() == 0.0
+
+    fun InputEngineMath.Percentage.hasWholeNonZeroOperands() = operand.isWholeNonZero()
+    fun InputEngineMath.Percentage.hasDecimalNonZeroOperands() = operand.isDecimalNonZero()
+    fun InputEngineMath.Percentage.hasZerosOperands() = operand.isZero() || previousNumber?.isZero() ?: false
 }

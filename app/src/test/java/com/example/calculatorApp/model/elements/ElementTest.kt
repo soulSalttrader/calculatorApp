@@ -13,7 +13,7 @@ class ElementTest {
     inner class GetColor {
 
         @Test
-        fun `should return correct background and text color`() {
+        fun `should return correct background and foreground color`() {
             // Arrange:
             val mockCategory = mockk<ElementCategory<ElementColorStyle>>(relaxed = true)
             val mockStyle = mockk<ElementCategoryStyleCollection<ElementColorStyle>>(relaxed = true)
@@ -25,12 +25,12 @@ class ElementTest {
                     >(relaxed = true)
 
             every { mockElement.getBackgroundColor(mockStyle) } returns Color.Red
-            every { mockElement.getTextColor(mockStyle) } returns Color.White
+            every { mockElement.getForegroundColor(mockStyle) } returns Color.White
             every { mockElement.getCategory() } returns mockCategory
 
             // Act:
             val backgroundColor = mockElement.getBackgroundColor(mockStyle)
-            val textColor = mockElement.getTextColor(mockStyle)
+            val textColor = mockElement.getForegroundColor(mockStyle)
 
             // Assert:
             Color.Red shouldBe backgroundColor

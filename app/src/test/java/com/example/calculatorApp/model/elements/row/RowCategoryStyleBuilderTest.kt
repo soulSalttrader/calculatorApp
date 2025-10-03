@@ -29,15 +29,15 @@ class RowCategoryStyleBuilderTest {
         ) {
             // Act:
             val actualBackgroundColor = row.getBackgroundColor(styles)
-            val actualTextColor = row.getTextColor(styles)
+            val actualForegroundColor = row.getForegroundColor(styles)
 
             // Assert:
             withClue("Background color mismatch for ${row::class.simpleName}.") {
                 expectedStyle.backgroundColor shouldBe actualBackgroundColor
             }
 
-            withClue("Text color mismatch for ${row::class.simpleName}.") {
-                expectedStyle.textColor shouldBe actualTextColor
+            withClue("Foreground color mismatch for ${row::class.simpleName}.") {
+                expectedStyle.foregroundColor shouldBe actualForegroundColor
             }
         }
     }
@@ -58,14 +58,14 @@ class RowCategoryStyleBuilderTest {
         ) {
             // Act:
             val actualBackgroundColor = row.getBackgroundColor(style)
-            val actualTextColor = row.getTextColor(style)
+            val actualForegroundColor = row.getForegroundColor(style)
             // Assert:
             withClue("Background color mismatch for ${row::class.simpleName}") {
                 expectedStyle.backgroundColor shouldBe actualBackgroundColor
             }
 
-            withClue("Text color mismatch for ${row::class.simpleName}") {
-                expectedStyle.textColor shouldBe actualTextColor
+            withClue("Foreground color mismatch for ${row::class.simpleName}") {
+                expectedStyle.foregroundColor shouldBe actualForegroundColor
             }
         }
     }

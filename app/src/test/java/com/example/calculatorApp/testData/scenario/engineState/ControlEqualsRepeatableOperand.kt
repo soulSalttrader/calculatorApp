@@ -1,0 +1,67 @@
+package com.example.calculatorApp.testData.scenario.engineState
+
+import com.example.calculatorApp.domain.ast.OperatorBinary
+import com.example.calculatorApp.domain.ast.Token
+import com.example.calculatorApp.domain.ast.Token.Companion.firstNumberOrNull
+import com.example.calculatorApp.domain.ast.TokenizerUtils.toOperator
+import com.example.calculatorApp.model.elements.button.Button
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
+import com.example.calculatorApp.model.symbols.SymbolButtonUtils.toButton
+import com.example.calculatorApp.testData.scenario.buildControlExpectedState
+import com.example.calculatorApp.testData.scenario.buildControlInputState
+import com.example.calculatorApp.testData.scenario.context.ContextEngineState
+import com.example.calculatorApp.testData.scenario.expectedRepeatEqualsResult
+import com.example.calculatorApp.testData.scenario.lastDigit
+import java.lang.IllegalArgumentException
+
+object ControlEqualsRepeatableOperand : EngineState.Control {
+
+    override val buildInput =
+        { context: ContextEngineState -> buildControlInputState<ContextEngineState.Success>(context) }
+    override val buildExpected =
+        { context: ContextEngineState -> buildControlExpectedState<ContextEngineState.Success>(context) }
+
+    override fun buildContexts(
+        expressionInput: List<Token>,
+        lastOperand: Number,
+        button: Button,
+    ): Pair<ContextEngineState, ContextEngineState> {
+
+        val input = ContextEngineState.Success(
+            expression = expressionInput,
+            lastOperand = "",
+            lastOperator = button.toOperator(),
+
+            activeButton = lastOperand.lastDigit().toString().toButton(),
+
+            lastResult = null,
+            cachedOperand = null,
+            isComputed = false,
+
+            hasError = false,
+            errorMessage = null,
+        )
+
+        val operator = button.toOperator() as OperatorBinary
+        val operatorButton = button as ButtonCalculatorBinary
+        val initialValue = expressionInput.firstNumberOrNull()?.value
+        val newValue = initialValue?.expectedRepeatEqualsResult(initialValue, 10, operatorButton)
+            ?: throw IllegalArgumentException("Repeatable equals requires a non-null initial value")
+
+        val expected = input.copy(
+            expression = listOf(
+                Token.Number(newValue),
+                Token.Binary(operator)
+            ),
+            lastOperand = "",
+            lastOperator = operator,
+
+            activeButton = ButtonCalculatorControl.Equals,
+
+            cachedOperand = initialValue.toString(),
+            isComputed = true,
+        )
+        return input to expected
+    }
+}
