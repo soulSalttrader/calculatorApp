@@ -1,114 +1,35 @@
 package com.example.calculatorApp.arguments
 
-import com.example.calculatorApp.testData.TestDataEngineStateStandard
-import com.example.calculatorApp.domain.ast.OperatorBinary
-import com.example.calculatorApp.domain.ast.Token
-import com.example.calculatorApp.domain.ast.TokenizerUtils.toOperator
-import com.example.calculatorApp.model.elements.button.Button
-import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
-import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
-import com.example.calculatorApp.utils.ButtonCalculatorList
+import com.example.calculatorApp.arguments.builder.ArgumentsBuilder
+import com.example.calculatorApp.arguments.builder.ArgumentsBuilderEngineState
+import com.example.calculatorApp.testData.TestCase
+import com.example.calculatorApp.testData.expected.Expected
+import com.example.calculatorApp.testData.input.Input
+import com.example.calculatorApp.testData.scenario.engineState.EngineState
 
-object TestArgumentsEngineState {
+object TestArgumentsEngineState : TestArguments {
 
-    fun provideStateBinary(
-        lastOperands: Sequence<String> = testOperands,
-        buttonsBinary: Sequence<Button> = ButtonCalculatorList.binary,
-    ): Sequence<TestDataEngineStateStandard> =
-        sequence {
-            buttonsBinary.forEach { button ->
-                lastOperands.forEach { lastOperand ->
-                    yield(
-                        TestDataEngineStateStandard(
-                            expression = listOf(
-                                Token.Number(lastOperand.toDouble()),
-                                Token.Binary(button.toOperator() as OperatorBinary)
-                            ),
-                            lastOperand = lastOperand,
-                            buttonBinary = button,
-                        )
-                    )
-                }
-            }
-        }
+    fun provideEngineStateBinaryTestCases(
+        scenario: EngineState,
+        builder: ArgumentsBuilder<Input, Expected> = ArgumentsBuilderEngineState()
+    ): Sequence<TestCase<Input, Expected>> =
+        builder.provideTestCases(scenario)
 
-    // Skipping Subtraction and Division to avoid redundant test cases.
-    // Addition and Multiplication cover the same result patterns,
-    // making Subtraction and Division unnecessary for efficiency.
-    fun provideStateUnary(
-        lastOperands: Sequence<String> = testOperands,
-        buttonsBinary: Sequence<Button> = ButtonCalculatorList.binary
-            .filter { it == ButtonCalculatorBinary.Addition || it == ButtonCalculatorBinary.Multiplication },
-        buttonsUnary: Sequence<Button> = ButtonCalculatorList.unary,
-    ): Sequence<TestDataEngineStateStandard> =
-        sequence {
-            buttonsUnary.forEach { buttonUnary ->
-                lastOperands.forEach { lastOperand ->
-                    buttonsBinary.forEach { buttonBinary ->
-                        yield(
-                            TestDataEngineStateStandard(
-                                lastOperand = lastOperand,
-                                buttonUnary = buttonUnary,
-                                buttonBinary = buttonBinary,
-                            )
-                        )
-                    }
-                }
-            }
-        }
+    fun provideEngineStateUnaryTestCases(
+        scenario: EngineState,
+        builder: ArgumentsBuilder<Input, Expected> = ArgumentsBuilderEngineState()
+    ): Sequence<TestCase<Input, Expected>> =
+        builder.provideTestCases(scenario)
 
-    fun provideStateControl(
-        lastOperands: Sequence<String> = testOperands,
-        buttonsBinary: Sequence<Button> = ButtonCalculatorList.binary
-            .filter { it == ButtonCalculatorBinary.Addition || it == ButtonCalculatorBinary.Division },
-    ): Sequence<TestDataEngineStateStandard> =
-        sequence {
-            buttonsBinary.forEach { button ->
-                lastOperands.forEach { lastOperand ->
-                    yield(
-                        TestDataEngineStateStandard(
-                            expression = listOf(
-                                Token.Number(lastOperand.toDouble()),
-                                Token.Binary(button.toOperator() as OperatorBinary),
-                            ),
-                            lastOperand = lastOperand,
-                            buttonBinary = button,
-                            buttonUnary = ButtonCalculatorUnary.Percentage,
-                        )
-                    )
-                }
-            }
-        }
+    fun provideEngineStateControlTestCases(
+        scenario: EngineState,
+        builder: ArgumentsBuilder<Input, Expected> = ArgumentsBuilderEngineState()
+    ): Sequence<TestCase<Input, Expected>> =
+        builder.provideTestCases(scenario)
 
-    fun provideStateNumber(
-        lastOperands: Sequence<String> = testOperands,
-        buttonsBinary: Sequence<Button> = ButtonCalculatorList.binary,
-    ): Sequence<TestDataEngineStateStandard> =
-        sequence {
-            buttonsBinary.forEach { button ->
-                lastOperands.forEach { lastOperand ->
-                    yield(
-                        TestDataEngineStateStandard(
-                            expression = listOf(
-                                Token.Number(lastOperand.toDouble()),
-                                Token.Binary(button.toOperator() as OperatorBinary)
-                            ),
-                            lastOperand = lastOperand,
-                            buttonBinary = button,
-                        )
-                    )
-                }
-            }
-        }
-
-    private val testOperands = sequenceOf(
-        "-2.5",
-        "-1",
-        "-1.0",
-        "0.0",
-        "1.0",
-        "1",
-        "2.5",
-        "NaN",
-    )
+    fun provideEngineStateNumberTestCases(
+        scenario: EngineState,
+        builder: ArgumentsBuilder<Input, Expected> = ArgumentsBuilderEngineState()
+    ): Sequence<TestCase<Input, Expected>> =
+        builder.provideTestCases(scenario)
 }

@@ -1,13 +1,20 @@
 package com.example.calculatorApp.domain.ast
 
-import com.example.calculatorApp.testData.TestDataTokenizerStandard
-import com.example.calculatorApp.arguments.TestArgumentsTokenizerStandard
-import com.example.calculatorApp.arguments.TestArgumentsTokenizerStandard.provideSymbolLabels
-import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
-import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
-import com.example.calculatorApp.model.elements.button.ButtonCalculatorParenthesis
-import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
+import com.example.calculatorApp.arguments.TestArgumentsTokenizer.provideTokenizerTestCases
+import com.example.calculatorApp.testData.TestCase
+import com.example.calculatorApp.testData.TestDataElement.buttonsNumbersTest
+import com.example.calculatorApp.testData.TestDataElement.operatorsBinaryTest
+import com.example.calculatorApp.testData.TestDataElement.operatorsParenthesisTest
+import com.example.calculatorApp.testData.TestDataElement.operatorsUnaryPrefixTest
+import com.example.calculatorApp.testData.TestDataElement.operatorsUnarySuffixTest
+import com.example.calculatorApp.testData.TestDataTokenizer.expectedMixed
+import com.example.calculatorApp.testData.TestDataTokenizer.inputMixed
+import com.example.calculatorApp.testData.expected.Expected
+import com.example.calculatorApp.testData.expected.ExpectedToken
+import com.example.calculatorApp.testData.input.Input
+import com.example.calculatorApp.testData.input.InputToken
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -26,28 +33,20 @@ class TokenizerStandardTest {
         private lateinit var tokenizer: Tokenizer
 
         // Arrange:
-        private fun provideArgumentsNumbers(): Stream<TestDataTokenizerStandard> {
-            return TestArgumentsTokenizerStandard
-                .provide(ButtonCalculatorNumber::class).asStream()
-        }
+        fun provideArgumentsNumbers(): Stream<TestCase<Input, Expected>> =
+            provideTokenizerTestCases(buttonsNumbersTest).asStream()
 
-        // Arrange:
-        private fun provideArgumentsBinary(): Stream<TestDataTokenizerStandard> {
-            return TestArgumentsTokenizerStandard
-                .provide(ButtonCalculatorBinary::class).asStream()
-        }
+        fun provideArgumentsBinary(): Stream<TestCase<Input, Expected>> =
+            provideTokenizerTestCases(operatorsBinaryTest).asStream()
 
-        // Arrange:
-        private fun provideArgumentsParenthesis(): Stream<TestDataTokenizerStandard> {
-            return TestArgumentsTokenizerStandard
-                .provide(ButtonCalculatorParenthesis::class).asStream()
-        }
+        fun provideArgumentsUnaryPrefix(): Stream<TestCase<Input, Expected>> =
+            provideTokenizerTestCases(operatorsUnaryPrefixTest).asStream()
 
-        // Arrange:
-        private fun provideArgumentsUnary(): Stream<TestDataTokenizerStandard> {
-            return TestArgumentsTokenizerStandard
-                .provide(ButtonCalculatorUnary::class).asStream()
-        }
+        fun provideArgumentsUnarySuffix(): Stream<TestCase<Input, Expected>> =
+            provideTokenizerTestCases(operatorsUnarySuffixTest).asStream()
+
+        fun provideArgumentsParenthesis(): Stream<TestCase<Input, Expected>> =
+            provideTokenizerTestCases(operatorsParenthesisTest).asStream()
 
         @BeforeEach
         fun setUp() {
@@ -57,62 +56,76 @@ class TokenizerStandardTest {
         @ParameterizedTest
         @MethodSource("provideArgumentsNumbers")
         fun `tokenize single number`(
-            dataTest: TestDataTokenizerStandard
+            dataTest: TestCase<InputToken, ExpectedToken>
         ) {
             // Arrange:
-            val number = dataTest.expression
+            val number = dataTest.input.source.map { it.symbol.label }
             // Act:
             val tokenized = tokenizer.tokenize(number)
             // Assert:
-            dataTest.expectedNumber() shouldBe tokenized
+            tokenized shouldBe (dataTest.expected).tokens
         }
 
         @ParameterizedTest
         @MethodSource("provideArgumentsBinary")
         fun `tokenize simple binary operator`(
-            dataTest: TestDataTokenizerStandard
+            dataTest: TestCase<InputToken, ExpectedToken>
         ) {
             // Arrange:
-            val binary = dataTest.expression
+            val binary = dataTest.input.source.map { it.symbol.label }
             // Act:
             val tokenized = tokenizer.tokenize(binary)
             // Assert:
-            dataTest.expectedBinary() shouldBe tokenized
+            tokenized shouldBe (dataTest.expected).tokens
         }
 
         @ParameterizedTest
-        @MethodSource("provideArgumentsUnary")
-        fun `tokenize unary operators`(
-            dataTest: TestDataTokenizerStandard
+        @MethodSource("provideArgumentsUnaryPrefix")
+        fun `tokenize prefix unary operators`(
+            dataTest: TestCase<InputToken, ExpectedToken>
         ) {
             // Arrange:
-            val unary = dataTest.expression
+            val unary = dataTest.input.source.map { it.symbol.label }
             // Act:
             val tokenized = tokenizer.tokenize(unary)
             // Assert:
-            dataTest.expectedUnary() shouldBe tokenized
+            tokenized shouldBe (dataTest.expected).tokens
+        }
+
+        @ParameterizedTest
+        @MethodSource("provideArgumentsUnarySuffix")
+        fun `tokenize suffix unary operators`(
+            dataTest: TestCase<InputToken, ExpectedToken>
+        ) {
+            // Arrange:
+            val unary = dataTest.input.source.map { it.symbol.label }
+            // Act:
+            val tokenized = tokenizer.tokenize(unary)
+            // Assert:
+            tokenized shouldBe (dataTest.expected).tokens
         }
 
         @ParameterizedTest
         @MethodSource("provideArgumentsParenthesis")
         fun `tokenize parentheses`(
-            dataTest: TestDataTokenizerStandard
+            dataTest: TestCase<InputToken, ExpectedToken>
         ) {
             // Arrange:
-            val parenthesis = dataTest.expression
+            val parenthesis = dataTest.input.source.map { it.symbol.label }
             // Act:
             val tokenized = tokenizer.tokenize(parenthesis)
             // Assert:
-            dataTest.expectedParenthesis() shouldBe tokenized
+            tokenized shouldBe (dataTest.expected).tokens
         }
 
         @Test
         fun `tokenize multiple mixed tokens`() {
-            val mixed = provideSymbolLabels().toList()
-            // Act:
+            // Arrange:
+            val mixed = inputMixed
+            // & Act:
             val tokenized = tokenizer.tokenize(mixed)
             // Assert:
-            TestDataTokenizerStandard.expectedMixed() shouldBe tokenized
+            tokenized shouldContainExactlyInAnyOrder expectedMixed
         }
 
         @ParameterizedTest

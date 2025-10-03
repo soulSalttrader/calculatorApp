@@ -9,12 +9,12 @@ import com.example.calculatorApp.ui.theme.Onyx
 import com.example.calculatorApp.ui.theme.SilverGrey
 import com.example.calculatorApp.ui.theme.VividGamboge
 import com.example.calculatorApp.ui.theme.White
-import com.example.calculatorApp.utils.ButtonCalculatorList.allButtons
-import com.example.calculatorApp.utils.ButtonCalculatorList.binary
-import com.example.calculatorApp.utils.ButtonCalculatorList.controls
-import com.example.calculatorApp.utils.ButtonCalculatorList.numbers
-import com.example.calculatorApp.utils.ButtonCalculatorList.parenthesis
-import com.example.calculatorApp.utils.ButtonCalculatorList.unary
+import com.example.calculatorApp.testData.TestDataElement.buttonsAllTest
+import com.example.calculatorApp.testData.TestDataElement.buttonsBinaryTest
+import com.example.calculatorApp.testData.TestDataElement.buttonsControlsTest
+import com.example.calculatorApp.testData.TestDataElement.buttonsNumbersTest
+import com.example.calculatorApp.testData.TestDataElement.buttonsParenthesisTest
+import com.example.calculatorApp.testData.TestDataElement.buttonsUnaryTest
 import org.junit.jupiter.params.provider.Arguments
 import java.util.stream.Stream
 import kotlin.streams.asStream
@@ -34,11 +34,11 @@ object TestArgumentsButtonStyleBuilder : TestArguments {
         val testedStyle = style ?: StylesButton.iButtonStyle
 
         val expectedStyles = sequenceOf(
-            binary.map { it to binaryBaseStyle },
-            unary.map { it to unaryBaseStyle },
-            controls.map { it to controlsBaseStyle },
-            numbers.map { it to numbersBaseStyle },
-            parenthesis.map { it to parenthesisBaseStyle },
+            buttonsBinaryTest.map { it to binaryBaseStyle },
+            buttonsUnaryTest.map { it to unaryBaseStyle },
+            buttonsControlsTest.map { it to controlsBaseStyle },
+            buttonsNumbersTest.map { it to numbersBaseStyle },
+            buttonsParenthesisTest.map { it to parenthesisBaseStyle },
         ).flatMap { it }
             .plus(
                 sequenceOf(
@@ -49,7 +49,7 @@ object TestArgumentsButtonStyleBuilder : TestArguments {
             )
             .toMap()
 
-        return allButtons.map { button ->
+        return buttonsAllTest.map { button ->
             val expectedStyle = expectedStyles[button]
             Arguments.of(button, testedStyle, expectedStyle)
         }.asStream()
