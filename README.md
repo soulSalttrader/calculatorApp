@@ -116,7 +116,7 @@ sealed class ButtonCalculatorBinary(override val symbol: Symbol) : Button {
     
     override fun getCategory(): ElementCategory<ElementColorStyle> = ButtonCategory.Binary
     override fun getBackgroundColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).backgroundColor
-    override fun getTextColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).textColor
+    override fun getForegroundColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).textColor
     
     private fun getStyle(style: ElementCategoryStyleCollection<ElementColorStyle>): ElementColorStyle {
         val categoryStyle = style.categories[getCategory()]
@@ -207,7 +207,7 @@ sealed class DisplayCalculatorInput : Display {
 
   override fun getCategory(): ElementCategory<ElementColorStyle> = DisplayCategory.Input
   override fun getBackgroundColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).backgroundColor
-  override fun getTextColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).textColor
+  override fun getForegroundColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).textColor
 
   private fun getStyle(style: ElementCategoryStyleCollection<ElementColorStyle>): ElementColorStyle {
       val categoryStyle = style.categories[getCategory()]
@@ -261,7 +261,7 @@ sealed class RowCalculatorStandard(override val buttons: List<ButtonData>) : Row
     
     override fun getCategory(): ElementCategory<ElementColorStyle> = RowCategory.Standard
     override fun getBackgroundColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).backgroundColor
-    override fun getTextColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).textColor
+    override fun getForegroundColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).textColor
     
     private fun getStyle(style: ElementCategoryStyleCollection<ElementColorStyle>): ElementColorStyle {
         val categoryStyle = style.categories[getCategory()]
@@ -305,7 +305,7 @@ class EngineMathStandard : EngineMath {
       val normalizedRight = EvaluationResult.DoubleResult(rightOperand)
       val result = operation(normalizedLeft, normalizedRight)
 
-      return EvaluationResult.normalizeResult(result.value.toDouble())
+      return EvaluationResult.normalizeResult(result.value)
   }
 
   override fun evalPercent(
@@ -328,8 +328,15 @@ class EngineMathStandard : EngineMath {
       }
   }
 
-  override fun evalSign(operand: Double): EvaluationResult {
-      return EvaluationResult.normalizeResult(-operand)
+  override fun evalSign(operand: Number): EvaluationResult {
+      val negated = when (operand) {
+          is Int    -> -operand
+          is Long   -> -operand
+          is Float  -> -operand
+          is Double -> -operand
+          else -> throw IllegalArgumentException("Unsupported type: ${operand::class}")
+      }
+      return EvaluationResult.normalizeResult(negated)
   }
 }
 ```
@@ -359,66 +366,20 @@ class EngineNodeStandard(private val engineMath: EngineMath) : EngineNode {
             is ASTNode.Binary -> evalBinaryExpression(astNode)
         }
     }
-  
+
     private fun evalBinaryExpression(astNode: ASTNode.Binary): EvaluationResult {
         val left = evaluate(astNode.left).value.toDouble()
         val right = evaluate(astNode.right).value.toDouble()
 
-        return when (astNode.operator) {
-            is OperatorBinary.Addition -> engineMath.evalBinary(left, right) { l, r -> l + r }
-            is OperatorBinary.Subtraction -> engineMath.evalBinary(left, right) { l, r -> l - r }
-            is OperatorBinary.Multiplication -> engineMath.evalBinary(left, right) { l, r -> l * r }
-            is OperatorBinary.Division -> engineMath.evalBinary(left, right) { l, r -> l / r }
+        val operation = when (astNode.operator) {
+            is OperatorBinary.Addition       -> BinaryOperations.Add
+            is OperatorBinary.Subtraction    -> BinaryOperations.Sub
+            is OperatorBinary.Multiplication -> BinaryOperations.Mul
+            is OperatorBinary.Division       -> BinaryOperations.Div
         }
+
+        return engineMath.evalBinary(left, right, operation)
     }
-}
-```
-
-#### 🔵 5.3.1 **Token**
-- Tokens represent parsed user inputs, categorized into numerical values, operators (binary or unary), or parentheses. These tokens serve as input to the parser.
-```kotlin
-sealed class Token {
-   data class Number(val value: Double) : Token()
-   data class Binary(val operator: OperatorBinary) : Token()
-   data class Unary(val operator: OperatorUnary) : Token()
-   data class Parenthesis(val type: OperatorParenthesis) : Token()
-}
-```
-
-#### 🔵 5.3.2 **Node**
-- ASTNodes represent the syntactic structure of an expression. Nodes are recursively evaluated to compute a result.
-```kotlin
-sealed class ASTNode {
-   data class Number(val value: Double) : ASTNode()
-   data class Binary(val operator: OperatorBinary, val left: ASTNode, val right: ASTNode) : ASTNode()
-}
-```
-
-#### 🔵 5.3.3 **Parser**
-- The Parser component converts a list of tokens into a tree of ASTNode objects. It handles operator precedence and builds nested nodes for binary operations.
-```kotlin
-class ParserToken : Parser {
-
- override fun parse(tokens: List<Token>): ASTNode {
-     val output = mutableListOf<ASTNode>()
-     val operators = mutableListOf<Token>()
-
-     tokens.forEach { token ->
-         when (token) {
-             is Token.Number -> output.add(ASTNode.Number(token.value))
-             is Token.Binary -> handleBinaryOperator(token, output, operators)
-             else -> throw IllegalArgumentException("Invalid token for: $token")
-         }
-     }
-
-     while (operators.isNotEmpty()) { buildOperatorNode(output, operators.removeLast()) }
-     require(output.size == 1) { "Invalid expression" }
-
-     return output.single()
- }
-
-//...
-
 }
 ```
 
@@ -446,56 +407,70 @@ interface EngineState : Engine {
 
 ##### **Implementation**:
 ```kotlin
-class EngineStateStandard(private val engineMath: EngineMath) : EngineState {
+class EngineStateStandard(
+    private val engineMath: EngineMath,
+    private val engineNode: EngineNode,
+    private val parser: Parser,
+) : EngineState {
 
-    override fun handleBinary(state: CalculatorState, binary: ButtonCalculatorBinary): CalculatorState {
-        return state.modifyWith(
-            { state.lastOperand == "NaN" || state.expression.contains("NaN") } to { this },
-            { state.activeButton == ButtonCalculatorControl.Equals } to { state.copy(lastOperator = binary, lastOperand = "", lastResult = null) },
-            { state.lastOperator != null && state.lastOperand.isNotBlank() } to {
-            val newState = applyBinary(state)
-            enterBinary(newState, binary)
-            },
-            { true } to { enterBinary(state, binary) }
-        )
-    }
+    override fun handleBinary(
+        state: CalculatorStateDomain,
+        binary: ButtonCalculatorBinary
+    ): CalculatorStateDomain = state.modifyWith( { true } to { enterBinary(state, binary.toBinaryOperator()) } )
 
-    override fun handleUnary(state: CalculatorState, unary: ButtonCalculatorUnary): CalculatorState {
-        return state.modifyWith(
+    override fun handleUnary(
+        state: CalculatorStateDomain,
+        unary: ButtonCalculatorUnary
+    ): CalculatorStateDomain =
+        state.modifyWith(
+            { state.hasError } to { this.copy(activeButton = unary) },
             { true } to {
-                when (unary) {
-                    is ButtonCalculatorUnary.Sign -> applySign(state)
-                    is ButtonCalculatorUnary.Percentage -> applyPercent(state)
+                val lastInput = state.lastOperand
+                val previousNumber = state.expression.lastNumberOrNull()?.value
+                val operator = state.lastOperator
+
+                val newValue = when (unary) {
+                    ButtonCalculatorUnary.Sign -> lastInput.formatNegated()
+                    ButtonCalculatorUnary.Percentage -> engineMath.evalPercent(lastInput.toDouble(), previousNumber, operator).value.toString()
                 }
+
+                state.copy(lastOperand = newValue, activeButton = unary)
             }
         )
-    }
 
-    override fun handleControl(state: CalculatorState, control: ButtonCalculatorControl): CalculatorState {
-        return state.modifyWith(
+    override fun handleControl(
+        state: CalculatorStateDomain,
+        control: ButtonCalculatorControl
+    ): CalculatorStateDomain = 
+        state.modifyWith(
             { true } to {
                 when (control) {
                     is ButtonCalculatorControl.AllClear -> applyClearAll()
-                    is ButtonCalculatorControl.Clear -> applyClear(state)
-                    is ButtonCalculatorControl.Decimal -> enterDecimal(state)
-                    is ButtonCalculatorControl.Equals -> applyEquals(state)
+                    is ButtonCalculatorControl.Clear    -> applyClear(state)
+                    is ButtonCalculatorControl.Decimal  -> enterDecimal(state)
+                    is ButtonCalculatorControl.Equals   -> applyEquals(state)
                 }
             }
         )
-    }
 
-    override fun handleNumber(state: CalculatorState, number: ButtonCalculatorNumber): CalculatorState {
-        return state.modifyWith(
-            { true } to {
-                applyNumber(state, number)
-            }
+    override fun handleNumber(
+        state: CalculatorStateDomain,
+        number: ButtonCalculatorNumber
+    ): CalculatorStateDomain =
+        state.modifyWith(
+            { state.hasError } to { this.copy(activeButton = number) },
+            { state.lastOperand == "NaN" } to { this },
+            { state.lastOperand == "0" } to { state.copy(lastOperand = number.symbol.label, activeButton = number) },
+            { state.lastOperand.length >= MAX_NUM_LENGTH } to { this.copy(activeButton = number) },
+            { true } to { state.copy(lastOperand = state.lastOperand + number.symbol.label, activeButton = number, lastResult = null) }
         )
-    }
+    // ...
 }
 ```
 
-#### 🔵 5.4.1 **CalculatorState**
-CalculatorState represents the current state of the calculator, maintaining essential data for computations, user interactions, and error handling.
+#### 🔵 5.4.1 **CalculatorStateDomain**
+CalculatorStateDomain represents the current state of the calculator, maintaining essential data for computations, user interactions, and error handling.
+It implements the HasState interface, providing a unified way to access and manipulate the calculator’s state across different components and operations.
 
 ##### **State properties**:
 - `expression` – Stores the sequence of inputs for an ongoing operation.
@@ -509,12 +484,12 @@ CalculatorState represents the current state of the calculator, maintaining esse
 - `errorMessage` – Describes the error when hasError is true.
 
 ##### **State Modification with `modifyWith`**:
-The `modifyWith` function conditionally applies transformations to CalculatorState based on a set of conditions.
+The `modifyWith` function conditionally applies transformations to CalculatorStateDomain based on a set of conditions.
 
 ##### - **Functionality**:
 - Accepts a list of transformation pairs, where each:
   - Condition: A function returning Boolean that determines if the transformation should apply.
-  - Action: A function that modifies CalculatorState when the condition is met.
+  - Action: A function that modifies CalculatorStateDomain when the condition is met.
 - The first matching transformation is applied.
 - If no conditions match, the state remains unchanged.
 - If an exception occurs, the state is updated with an error message.
@@ -524,38 +499,41 @@ The `modifyWith` function conditionally applies transformations to CalculatorSta
 - errorMessage (optional) – A message set if an exception occurs during modification.
 
 ##### - **Returns**:
-- A new CalculatorState reflecting the applied transformation.
+- A new CalculatorStateDomain reflecting the applied transformation.
 - The original state if no condition matches.
 - An error state if an exception occurs.
 
 ##### **Implementation**:
+
 ```kotlin
-data class CalculatorState(
-  val expression: List<Token> = emptyList(),
-  val lastOperand: String = SymbolButton.ZERO.label,
-  val lastResult: String? = null,
-  val lastOperator: Operator? = null,
-  val cachedOperand: String? = null,
-  val activeButton: Button? = null,
-  val isComputed: Boolean = false,
-  val hasError: Boolean = false,
-  val errorMessage: String? = null,
-) {
-  fun modifyWith(
-      vararg transformations: Pair<() -> Boolean, CalculatorState.() -> CalculatorState>,
-      errorMessage: String? = null,
-  ): CalculatorState {
-      return try {
-          transformations
-              .firstOrNull { it.first() }
-              ?.second?.invoke(this)
-              ?: this
-      } catch (e: Exception) {
-          this.copy(hasError = true, errorMessage = errorMessage ?: e.message)
-      }
-  }
+@Parcelize
+data class CalculatorStateDomain(
+    @IgnoredOnParcel override val expression: List<Token> = emptyList(),
+    override val lastOperand: String = SymbolButton.ZERO.label,
+    @IgnoredOnParcel override val lastOperator: Operator? = null,
+
+    @IgnoredOnParcel override val activeButton: Button? = null,
+
+    override val lastResult: String? = null,
+    override val cachedOperand: String? = null,
+    override val isComputed: Boolean = false,
+
+    override val hasError: Boolean = false,
+    override val errorMessage: String? = null,
+) : Parcelable, HasState {
+
+    fun modifyWith(
+        vararg transformations: Pair<() -> Boolean, CalculatorStateDomain.() -> CalculatorStateDomain>,
+        errorMessage: String? = null,
+    ): CalculatorStateDomain =
+        runCatching {
+            transformations.firstOrNull { it.first() }
+                ?.second(this)
+                ?: this
+        }.getOrElse { e -> this.copy(hasError = true, errorMessage = errorMessage ?: e.message) }
 }
 ```
+
 ##### Why `modifyWith`?
 - Improves readability – Avoids deeply nested if statements.
 - Encapsulates state logic – Centralized modification logic improves maintainability.
@@ -627,6 +605,315 @@ The CommandFactoryStandard simplifies the process of translating user interactio
 ___
 <br>
 
+### 🧶 7. **ASTNode**
+
+#### 7.1 **Token**
+Tokens represent parsed user inputs, categorized into numerical values, operators (binary or unary), or parentheses. These tokens serve as input to the parser.
+
+  ```kotlin
+  sealed interface Token {
+     data class Number(val value: Double) : Token()
+     data class Binary(val operator: OperatorBinary) : Token()
+     data class Unary(val operator: OperatorUnary) : Token()
+     data class Parenthesis(val type: OperatorParenthesis) : Token()
+  }
+  ```
+
+#### 7.2 **Node**
+ASTNodes represent the syntactic structure of an expression. Nodes are recursively evaluated to compute a result.
+
+  ```kotlin
+  sealed class ASTNode {
+     data class Number(val value: Double) : ASTNode()
+     data class Binary(val operator: OperatorBinary, val left: ASTNode, val right: ASTNode) : ASTNode()
+  }
+  ```
+
+#### 7.3 Precedence
+Precedence defines operator priority for parsing expressions.
+Each operator type is associated with a numeric level to resolve parsing order correctly.
+
+  ```kotlin
+  sealed class Precedence(val level: Int) {
+      data object Lowest : Precedence(0)  // Default for unknown tokens
+      data object Sum : Precedence(1)     // +, -
+      data object Product : Precedence(2) // *, /
+      data object Prefix : Precedence(3)  // -x, +x
+      data object Suffix : Precedence(4)  // x!, x², %
+      data object Power : Precedence(5)   // x^y
+      data object Group : Precedence(6)   // (, )
+  
+      companion object {
+          fun fromToken(token: Token): Precedence {
+              return when (token) {
+                  is Token.Binary -> when (token.operator) {
+                      OperatorBinary.Addition,
+                      OperatorBinary.Subtraction -> Sum
+                      OperatorBinary.Multiplication,
+                      OperatorBinary.Division -> Product
+                  }
+                  is Token.Unary -> when (token.operator) {
+                      OperatorUnary.Prefix.Sign -> Prefix
+                      OperatorUnary.Suffix.Percentage -> Suffix
+                  }
+                  is Token.Parenthesis -> Group
+                  else -> Lowest
+              }
+          }
+      }
+  }
+  ```
+
+#### 7.4 Tokenizer
+The TokenizerStandard converts a list of raw string tokens into structured Token objects.
+It detects numbers, binary operators, unary operators, and parentheses.
+
+  ```kotlin
+  class TokenizerStandard : Tokenizer {
+  
+      override fun tokenize(expression: List<String>): List<Token> {
+          val tokens = mutableListOf<Token>()
+  
+          for (token in expression) {
+              tokens.add(
+                  when {
+                      token.isNumber() -> Token.Number(token.toDouble())
+                      token.isBinary() -> Token.Binary(token.toBinaryOperator())
+                      token.isParenthesis() -> Token.Parenthesis(token.toParenthesisOperator())
+                      token.isUnaryPrefix() || token.isUnarySuffix() -> Token.Unary(token.toUnaryOperator())
+                      else -> throw IllegalArgumentException("Invalid token: $token")
+                  }
+              )
+          }
+  
+          return tokens
+      }
+  }
+  ```
+- Design Note
+  - Precedence levels ensure operators are evaluated in the correct order when building the AST.
+  - TokenizerStandard separates lexical analysis from parsing, enabling modularity and easier testing.
+
+#### 7.6 **Parser**
+The Parser component converts a list of tokens into a tree of ASTNode objects. It handles operator precedence and builds nested nodes for binary operations.
+
+  ```kotlin
+  class ParserToken : Parser {
+  
+   override fun parse(tokens: List<Token>): ASTNode {
+       val output = mutableListOf<ASTNode>()
+       val operators = mutableListOf<Token>()
+  
+       tokens.forEach { token ->
+           when (token) {
+               is Token.Number -> output.add(ASTNode.Number(token.value))
+               is Token.Binary -> handleBinaryOperator(token, output, operators)
+               else -> throw IllegalArgumentException("Invalid token for: $token")
+           }
+       }
+  
+       while (operators.isNotEmpty()) { buildOperatorNode(output, operators.removeLast()) }
+       require(output.size == 1) { "Invalid expression" }
+  
+       return output.single()
+   }
+  
+  //...
+  
+  }
+  ```
+___
+<br>
+
+### 🪟 8. **ViewModel**
+This calculator app is organized around a modular, testable, and state-driven architecture. It separates UI, business logic, and state management, leveraging Hilt for dependency injection and StateFlow for reactive state updates.
+
+#### 8.1 Actions
+CalculatorAction represents events triggered by user interactions.
+Currently, the primary action is ButtonPressed, capturing the pressed button.
+
+```kotlin
+sealed class CalculatorAction {
+    abstract val button: Button
+    data class ButtonPressed(override val button: Button) : CalculatorAction()
+}
+```
+
+#### 8.2 Action Handling
+- CalculatorActionHandler is responsible for processing actions and updating state.
+- Returns CalculatorActionHandlerData, which contains:
+  - newState: the updated calculator state
+  - shouldResetTextSize: optional UI behavior
+- Standard implementation uses a CommandFactoryProvider to map buttons to commands:
+
+```kotlin
+class CalculatorActionHandlerStandard(
+    private val factoryProvider: CommandFactoryProvider,
+) : CalculatorActionHandler {
+    override fun handleAction(action: CalculatorAction, state: CalculatorStateDomain): CalculatorActionHandlerData {
+        require(action is CalculatorAction.ButtonPressed)
+        val commandFactory = factoryProvider.getFactory(action.button.getCategory().toButtonCategoryHiltKey())
+        val command = commandFactory.createCommand(action)
+        val newState = command.execute(state).copy(activeButton = action.button)
+        return CalculatorActionHandlerDataStandard(newState, action.shouldResetTextSize())
+    }
+}
+```
+
+#### 8.3 Modules and Dependency Injection
+Hilt modules provide centralized, singleton instances of key components, like the action handler:
+
+```kotlin
+@Module
+@InstallIn(SingletonComponent::class)
+object ModuleCalculatorActionHandler {
+    @Provides
+    @Singleton
+    fun provideCalculatorActionHandler(factoryProvider: CommandFactoryProvider): CalculatorActionHandler =
+        CalculatorActionHandlerStandard(factoryProvider)
+}
+```
+
+- Other modules organize the app into features, e.g., ModuleEngineMath, ModuleParser, ModuleState, and Node processing.
+- Hilt annotations (@MapKey, @Singleton, etc.) are used to map button categories to command factories dynamically.
+
+#### 8.4 Button Categories and Command Factories
+
+##### 🟡 8.4.1 ButtonCategoryHiltKey
+ButtonCategoryHiltKey enumerates high-level button types, used to map buttons to command factories via Hilt.
+
+```kotlin
+enum class ButtonCategoryHiltKey {
+    BINARY,
+    UNARY,
+    CONTROL,
+    NUMBER,
+    PARENTHESIS
+}
+```
+Mapping from element category:
+
+```kotlin
+fun ElementCategory<*>.toButtonCategoryHiltKey(): ButtonCategoryHiltKey = when (this) {
+    ButtonCategory.Binary -> ButtonCategoryHiltKey.BINARY
+    ButtonCategory.Unary -> ButtonCategoryHiltKey.UNARY
+    ButtonCategory.Control -> ButtonCategoryHiltKey.CONTROL
+    ButtonCategory.Number -> ButtonCategoryHiltKey.NUMBER
+    ButtonCategory.Parenthesis -> ButtonCategoryHiltKey.PARENTHESIS
+    else -> throw IllegalArgumentException("Invalid button category.")
+}
+```
+- This mapping allows the action handler to select the appropriate command factory for each button press.
+
+##### 🟡 8.4.2 Hilt MapKey for Command Factories
+ButtonCategoryHiltMapKey is used as a map key annotation for multi-binding in Hilt:
+
+```kotlin
+@MapKey
+@Retention(AnnotationRetention.RUNTIME)
+annotation class ButtonCategoryHiltMapKey(val value: ButtonCategoryHiltKey)
+```
+- Multi-binding lets Hilt inject a map of factories, keyed by button category.
+
+##### 🟡 8.4.3 Module for Command Factories
+ModuleCalculatorCommandFactory provides category-specific CommandFactory instances using Hilt:
+
+```kotlin
+@Module
+@InstallIn(SingletonComponent::class)
+object ModuleCalculatorCommandFactory {
+
+    @Provides
+    @IntoMap
+    @ButtonCategoryHiltMapKey(ButtonCategoryHiltKey.BINARY)
+    fun provideBinaryCommandFactory(engineState: EngineState): CommandFactory = CommandFactoryStandard(engineState)
+
+    @Provides
+    @IntoMap
+    @ButtonCategoryHiltMapKey(ButtonCategoryHiltKey.UNARY)
+    fun provideUnaryCommandFactory(engineState: EngineState): CommandFactory = CommandFactoryStandard(engineState)
+
+    @Provides
+    @IntoMap
+    @ButtonCategoryHiltMapKey(ButtonCategoryHiltKey.CONTROL)
+    fun provideControlCommandFactory(engineState: EngineState): CommandFactory = CommandFactoryStandard(engineState)
+
+    @Provides
+    @IntoMap
+    @ButtonCategoryHiltMapKey(ButtonCategoryHiltKey.NUMBER)
+    fun provideNumberCommandFactory(engineState: EngineState): CommandFactory = CommandFactoryStandard(engineState)
+}
+```
+
+- Each provider creates a CommandFactoryStandard tied to the EngineState domain, ensuring commands operate on the correct calculator logic.
+- Multi-binding allows the CalculatorActionHandler to dynamically select the appropriate factory for a button press based on its category.
+
+##### 🟡 8.4.4 Design Notes
+
+- Extensible: New button categories can be added simply by:
+- Extending ButtonCategoryHiltKey
+- Adding a Hilt provider in the module
+- Decoupled: The mapping decouples UI button categories from command execution, enabling clean modularity and easier testing.
+- Type-safe: The use of enums and Hilt map keys prevents runtime errors due to missing or invalid command factories.
+
+#### 8.5 ViewModel
+CalculatorViewModel exposes reactive StateFlow objects for UI consumption and persists state across configuration changes using SavedStateHandle.
+
+```kotlin
+@HiltViewModel
+class CalculatorViewModel @Inject constructor(
+    private val actionHandler: CalculatorActionHandler,
+    private val savedStateHandle: SavedStateHandle,
+) : ViewModel() {
+
+    companion object {
+        private const val STATE_CAL = "calculator_state"
+        private const val STATE_UI = "ui_state"
+        private const val ORIENTATION = "calculator_orientation"
+    }
+
+    val stateCal: StateFlow<CalculatorStateDomain> = savedStateHandle.getStateFlow(STATE_CAL, CalculatorStateDomain())
+    val stateUi: StateFlow<CalculatorStateUI> = savedStateHandle.getStateFlow(STATE_UI, CalculatorStateUI.DEFAULT)
+    val isLandscape: StateFlow<Boolean> = savedStateHandle.getStateFlow(ORIENTATION, false)
+
+    private fun setState(newState: CalculatorStateDomain) {
+        savedStateHandle[STATE_CAL] = newState
+    }
+
+    fun setOrientation() {
+        val currentOrientation = isLandscape()
+        savedStateHandle[ORIENTATION] = currentOrientation
+    }
+
+    private fun setStateUi(transform: (CalculatorStateUI) -> CalculatorStateUI) {
+        savedStateHandle[STATE_UI] = transform(stateUi.value)
+    }
+
+    fun onAction(action: CalculatorAction) {
+        val result = actionHandler.handleAction(action, stateCal.value)
+        setState(result.newState)
+    }
+}
+```
+- Notes on SavedStateHandle:
+  - Persists stateCal, stateUi, and orientation across process death and configuration changes.
+  - Enables reactive updates via StateFlow, so UI components automatically reflect the latest state.
+  - Can be extended to store additional UI or domain state, supporting future features like undo/redo or session persistence.
+
+#### 8.6 Key Design Principles
+
+- Separation of concerns: Actions, state, and commands are decoupled.
+- Modularity: Features are organized into self-contained modules, supporting dependency injection.
+- Reactive state: StateFlow ensures the UI reacts automatically to state changes.
+- Extensibility: Adding new buttons or commands requires minimal changes, thanks to the factory-based action handler.
+- Enhancement opportunities:
+  - Extend SavedStateHandle usage to support richer UI state persistence (themes, memory functions).
+  - Introduce undo/redo stacks or more granular state snapshots.
+  - Add testing hooks for observing state transitions in unit and integration tests.
+
+___
+<br>
+
 ## 💻 Development Practices:
 
 ### 🧪 **Scenario-Based Testing:**
@@ -653,20 +940,20 @@ The framework is built around five key abstractions:
     ```
 
 - `EngineState` Example (Concrete Implementation)
-    - In the case of `EngineState`, inputs are grouped by categories (`Binary`, `Unary`, `Control`, `Number`) and delegate to shared base logic.
-      
-      ```kotlin
-      sealed interface InputEngineState : Input {
-          data class Binary(
-              private val delegate: InputEngineStateDelegate.Base
-          ) : InputEngineState,
-              InputEngineStateDelegate.Base by delegate {
-              override fun toString(): String =
-                  "InputEngineState.Binary(state=${delegate.context})"
-          }
-          // Unary, Control, Number ...
-      }
-      ```
+  - In the case of `EngineState`, inputs are grouped by categories (`Binary`, `Unary`, `Control`, `Number`) and delegate to shared base logic.
+
+    ```kotlin
+    sealed interface InputEngineState : Input {
+        data class Binary(
+            private val delegate: InputEngineStateDelegate.Base
+        ) : InputEngineState,
+            InputEngineStateDelegate.Base by delegate {
+            override fun toString(): String =
+                "InputEngineState.Binary(state=${delegate.context})"
+        }
+        // Unary, Control, Number ...
+    }
+    ```
 
 - Design Note
   - In this (and most) cases, `Binary`, `Unary`, `Control`, and `Number` are essentially semantic wrappers — they could be consolidated into a single implementation and even share a single delegate.
@@ -683,7 +970,7 @@ The framework is built around five key abstractions:
 
 - EngineState Example (Concrete Implementation)
   - In the case of `EngineState`, expected values are also grouped by categories (`Binary`, `Unary`, `Control`, `Number`) and delegate to shared base logic.
-      
+
       ```kotlin
       sealed interface ExpectedEngineState : Expected {
           data class Binary(
@@ -696,7 +983,7 @@ The framework is built around five key abstractions:
           // Unary, Control, Number ...
       }
       ```
-  
+
 #### 🟢 Context
 - Definition (Framework-level)
   - `Context` captures the environmental snapshot of the system under test at a given moment.
@@ -748,8 +1035,8 @@ The framework is built around five key abstractions:
 
 - `EngineState` Example (Concrete Implementation)
   - In the case of `EngineState`, scenarios are specialized by operation categories (`Binary`, `Unary`, `Control`, `Number`).
-  - Each category contains variants (`Error`, `Success`, `Update`, `Replace`), which delegate their behavior to concrete scenario objects such as `BinaryError`.  
-    
+  - Each category contains variants (`Error`, `Success`, `Update`, `Replace`), which delegate their behavior to concrete scenario objects such as `BinaryError`.
+
     ```kotlin
     sealed interface EngineState : Scenario {
         val buildInput: (ContextEngineState) -> InputEngineState
@@ -815,7 +1102,7 @@ The framework is built around five key abstractions:
 - Definition (Framework-level)
   - A `TestCase` is the atomic unit of testing in this framework.
   - It simply binds together the input and the expected outcome, leaving execution logic to the test itself.
-  
+
   ```kotlin
   data class TestCase<T, R>(
       val input: T,
@@ -827,12 +1114,12 @@ The framework is built around five key abstractions:
   - For `EngineState`, the generic parameters are specialized to:
     - `InputEngineState.*` (`Binary`, `Unary`, `Control`, `Number`) as input
     - `ExpectedEngineState.*` as expected outcome
-  
+
   ```kotlin
   private fun provideArgumentsSuccess(): Stream<TestCase<Input, Expected>> =
       provideEngineStateBinaryTestCases(Binary.Success).asStream()
   ```
-  
+
 #### 🟢 ArgumentsBuilder
 - Definition (Framework-level)
   - Instead of writing test cases manually, an `ArgumentsBuilder` generates sequences of test cases for a given `Scenario`.
@@ -846,7 +1133,7 @@ The framework is built around five key abstractions:
 
 - `EngineState` Example (Concrete Implementation)
   - For `EngineState`, the builder iterates through combinations of operands and buttons, derives `Context` pairs from the scenario, and constructs matching `Input` and `Expected` instances.
-      
+
       ```kotlin
       class ArgumentsBuilderEngineState(
           var lastOperands: Sequence<Pair<Number, Number>> = provideOperandsTest(),
@@ -892,7 +1179,7 @@ The framework is built around five key abstractions:
   - Just like other abstractions, `ArgumentsBuilder` could be implemented in a generic way and reused across many domains.
   - The `EngineState` version specializes it only by choosing operand ranges, buttons, and expression-building logic.
   - This pattern makes it easy to plug in new scenarios without rewriting test logic — only the builder’s configuration or data sources need to change.
-  
+
 #### 🟢 Parameterized Tests
 - The generated test cases can be consumed by parameterized testing frameworks.
 - In this project, Kotest is used together with JUnit parameterized tests to drive execution.
@@ -924,8 +1211,8 @@ The framework is built around five key abstractions:
       newState shouldMatch testData.expected.context
   }
   ```
-  
-#### Summary
+
+#### 🟢 Summary
 
 - This test infrastructure provides a structured and reusable approach to scenario-based testing. By abstracting test design into distinct roles, it enables both clarity and flexibility:
   - Declarative scenario definitions
@@ -940,7 +1227,7 @@ The framework is built around five key abstractions:
     - With Kotest and JUnit integration, tests become small, expressive, and easy to extend with new scenarios.
 - Together, these elements form a lightweight yet extensible test framework. The abstractions are generic enough to be applied beyond `EngineState`, while still allowing specialized implementations for domain-specific needs.
 
-### **Concept Annotations:**
+### 📘 **Concept Annotations:**
 
 The **Concept Annotations** feature is designed to help manage experimental or under development ideas within the project code. These annotations mark classes, methods, or other elements that are part of concepts still being explored, with the intention to separate them from the production code. This mechanism helps track potential future work and experimental features that may evolve, change, or even be removed in future versions of the project.
 

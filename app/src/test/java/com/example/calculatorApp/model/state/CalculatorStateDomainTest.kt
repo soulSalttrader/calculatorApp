@@ -10,14 +10,14 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-class CalculatorStateTest {
+class CalculatorStateDomainTest {
 
-    private lateinit var state: CalculatorState
+    private lateinit var state: CalculatorStateDomain
 
     @BeforeEach
     fun setUp() {
         // Arrange: Default Calculator state
-        state = CalculatorState()
+        state = CalculatorStateDomain()
     }
 
     @Nested
@@ -90,9 +90,9 @@ class CalculatorStateTest {
     }
 
     @Nested
-    inner class CalculatorStatePropertiesTest {
+    inner class CalculatorStateDomainPropertiesTest {
         @Test
-        fun `should have default empty calculator state`() {
+        fun `should have default empty domain calculator state`() {
             // Arrange & Act & Assert:
             withClue("Expected expression to be empty by default.") {
                 state.expression shouldBe emptyList()

@@ -1,7 +1,7 @@
 package com.example.calculatorApp.domain.commands
 
 import com.example.calculatorApp.domain.EngineState
-import com.example.calculatorApp.domain.actions.CalculatorAction
+import com.example.calculatorApp.domain.action.CalculatorAction
 
 class CommandFactoryStandard(
     private val engineState: EngineState

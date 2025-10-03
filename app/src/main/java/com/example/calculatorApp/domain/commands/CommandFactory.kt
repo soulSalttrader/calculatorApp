@@ -1,6 +1,6 @@
 package com.example.calculatorApp.domain.commands
 
-import com.example.calculatorApp.domain.actions.CalculatorAction
+import com.example.calculatorApp.domain.action.CalculatorAction
 
 interface CommandFactory {
 

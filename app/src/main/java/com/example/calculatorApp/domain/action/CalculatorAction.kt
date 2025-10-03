@@ -1,4 +1,4 @@
-package com.example.calculatorApp.domain.actions
+package com.example.calculatorApp.domain.action
 
 import com.example.calculatorApp.model.elements.button.Button
 

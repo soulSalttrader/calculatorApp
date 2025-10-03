@@ -5,7 +5,7 @@ import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
-import com.example.calculatorApp.model.state.CalculatorState
+import com.example.calculatorApp.model.state.CalculatorStateDomain
 import io.mockk.clearMocks
 import io.mockk.confirmVerified
 import io.mockk.mockk
@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test
 class CommandHandlerTest {
 
     private val engineState: EngineState = mockk(relaxed = true)
-    private lateinit var state: CalculatorState
+    private lateinit var state: CalculatorStateDomain
 
     @Nested
     inner class HandleBinary {
@@ -29,7 +29,7 @@ class CommandHandlerTest {
         fun setUp() {
             // Arrange:
             clearMocks(engineState)
-            state = CalculatorState()
+            state = CalculatorStateDomain()
             button = ButtonCalculatorBinary.Addition
             command = CommandHandler(engineState, button)
         }
@@ -55,7 +55,7 @@ class CommandHandlerTest {
         fun setUp() {
             // Arrange:
             clearMocks(engineState)
-            state = CalculatorState()
+            state = CalculatorStateDomain()
             button = ButtonCalculatorUnary.Sign
             command = CommandHandler(engineState, button)
         }
@@ -81,7 +81,7 @@ class CommandHandlerTest {
         fun setUp() {
             // Arrange:
             clearMocks(engineState)
-            state = CalculatorState()
+            state = CalculatorStateDomain()
             button = ButtonCalculatorControl.Clear
             command = CommandHandler(engineState, button)
         }
@@ -107,7 +107,7 @@ class CommandHandlerTest {
         fun setUp() {
             // Arrange:
             clearMocks(engineState)
-            state = CalculatorState()
+            state = CalculatorStateDomain()
             button = ButtonCalculatorNumber.Three
             command = CommandHandler(engineState, button)
         }

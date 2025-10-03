@@ -1,8 +1,8 @@
 package com.example.calculatorApp.domain.commands
 
-import com.example.calculatorApp.model.state.CalculatorState
+import com.example.calculatorApp.model.state.CalculatorStateDomain
 
 interface Command {
 
-    fun execute(state: CalculatorState): CalculatorState
+    fun execute(state: CalculatorStateDomain): CalculatorStateDomain
 }

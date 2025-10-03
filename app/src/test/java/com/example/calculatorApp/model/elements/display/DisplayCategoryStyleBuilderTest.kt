@@ -30,15 +30,15 @@ class DisplayCategoryStyleBuilderTest {
         ) {
             // Act:
             val actualBackgroundColor = display.getBackgroundColor(styles)
-            val actualTextColor = display.getTextColor(styles)
+            val actualForegroundColor = display.getForegroundColor(styles)
 
             // Assert:
             withClue("Background color mismatch for ${display::class.simpleName}.") {
                 expectedStyle.backgroundColor shouldBe actualBackgroundColor
             }
 
-            withClue("Text color mismatch for ${display::class.simpleName}.") {
-                expectedStyle.textColor shouldBe actualTextColor
+            withClue("Foreground color mismatch for ${display::class.simpleName}.") {
+                expectedStyle.foregroundColor shouldBe actualForegroundColor
             }
         }
     }
@@ -59,14 +59,14 @@ class DisplayCategoryStyleBuilderTest {
         ) {
             // Act:
             val actualBackgroundColor = display.getBackgroundColor(style)
-            val actualTextColor = display.getTextColor(style)
+            val actualForegroundColor = display.getForegroundColor(style)
             // Assert:
             withClue("Background color mismatch for ${display::class.simpleName}") {
                 expectedStyle.backgroundColor shouldBe actualBackgroundColor
             }
 
-            withClue("Text color mismatch for ${display::class.simpleName}") {
-                expectedStyle.textColor shouldBe actualTextColor
+            withClue("Foreground color mismatch for ${display::class.simpleName}") {
+                expectedStyle.foregroundColor shouldBe actualForegroundColor
             }
         }
     }
