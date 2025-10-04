@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 import com.example.calculatorApp.model.elements.ElementCategory
 import com.example.calculatorApp.model.elements.ElementCategoryStyleCollection
 import com.example.calculatorApp.model.elements.ElementColorStyle
+import com.example.calculatorApp.model.state.CalculatorStateDomain
 import com.example.calculatorApp.model.symbols.Symbol
 import com.example.calculatorApp.model.symbols.SymbolButton.*
 
@@ -16,6 +17,8 @@ sealed class ButtonCalculatorUnary (
 
     fun isPrefix(): Boolean = this in listOf(Sign)
     fun isSuffix(): Boolean = this in listOf(Percentage)
+
+    override fun shouldHighlight(state: CalculatorStateDomain): Boolean = false
 
     override fun getCategory(): ElementCategory<ElementColorStyle> = ButtonCategory.Unary
     override fun getBackgroundColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).backgroundColor
