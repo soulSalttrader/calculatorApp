@@ -27,7 +27,7 @@ sealed class ButtonCalculatorNumber(override val symbol: Symbol) : Button {
     override fun getBackgroundColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).backgroundColor
     override fun getForegroundColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).foregroundColor
 
-    private fun getStyle(style: ElementCategoryStyleCollection<ElementColorStyle>): ElementColorStyle {
+    override fun getStyle(style: ElementCategoryStyleCollection<ElementColorStyle>): ElementColorStyle {
         val categoryStyle = style.categories[getCategory()]
             ?: throw IllegalArgumentException("Category '${getCategory()}' not found.")
 

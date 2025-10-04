@@ -18,7 +18,7 @@ sealed class RowCalculatorStandard(override val buttons: Sequence<ButtonData>) :
     override fun getBackgroundColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).backgroundColor
     override fun getForegroundColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).foregroundColor
 
-    private fun getStyle(style: ElementCategoryStyleCollection<ElementColorStyle>): ElementColorStyle {
+    override fun getStyle(style: ElementCategoryStyleCollection<ElementColorStyle>): ElementColorStyle {
         val categoryStyle = style.categories[getCategory()]
             ?: throw IllegalArgumentException("Category '${getCategory()}' not found.")
 

@@ -8,6 +8,7 @@ interface Element<
         BaseStyle : ElementColorStyle,
         > {
 
+    fun getStyle(style: ElementCategoryStyleCollection<ElementColorStyle>): ElementColorStyle
     fun getBackgroundColor(style: Style): Color
     fun getForegroundColor(style: Style): Color
     fun getCategory(): Category
