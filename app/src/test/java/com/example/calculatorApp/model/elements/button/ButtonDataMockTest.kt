@@ -1,6 +1,6 @@
 package com.example.calculatorApp.model.elements.button
 
-import com.example.calculatorApp.model.layout.ElementLayout
+import com.example.calculatorApp.model.layout.button.ButtonLayout
 import com.example.calculatorApp.model.layout.button.ButtonLayoutRegular
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -16,7 +16,7 @@ class ButtonDataMockTest {
         @Test
         fun `should return the correct Button instance`() {
             val button = mockk<Button>()
-            val layout = mockk<ElementLayout>()
+            val layout = mockk<ButtonLayout>()
             val displayData = ButtonData(element = button, layout = layout)
 
             button shouldBe displayData.element
@@ -29,7 +29,7 @@ class ButtonDataMockTest {
         @Test
         fun `getLayout should return the correct layout instance`() {
             val button = mockk<Button>()
-            val layout = mockk<ElementLayout>()
+            val layout = mockk<ButtonLayout>()
             val displayData = ButtonData(element = button, layout = layout)
 
             layout shouldBe displayData.layout
