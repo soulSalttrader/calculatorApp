@@ -7,4 +7,14 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="button_binary_background">#FFEAA935</color> <!-- VividGamboge -->
+    <color name="button_binary_foreground">#FFFFFFFF</color> <!-- White -->
+    <color name="button_control_background">#FFA5A5A5</color> <!-- SilverGrey -->
+    <color name="button_control_foreground">#FF000000</color> <!-- Black -->
+    <color name="button_number_background">#FF333333</color> <!-- Onyx -->
+    <color name="button_number_foreground">#FFFFFFFF</color> <!-- White -->
+
+    <color name="button_binary_background_highlight">#FFFFFFFF</color> <!-- White -->
+    <color name="button_binary_foreground_highlight">#FFEAA935</color> <!-- VividGamboge -->
 </resources>
