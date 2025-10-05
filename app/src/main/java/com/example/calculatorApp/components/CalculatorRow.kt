@@ -68,3 +68,28 @@ fun CalculatorRow(
         }
     }
 }
+
+@Preview(showBackground = true, widthDp = 320, heightDp = 480)
+@Composable
+fun CalculatorRowPreview() {
+    val mockRows = sequenceOf( RowData(
+            RowCalculatorStandard.Standard1(
+                buttonSequence(
+                    ButtonCalculatorControl.AllClear,
+                    ButtonCalculatorUnary.Sign,
+                    ButtonCalculatorUnary.Percentage,
+                    ButtonCalculatorBinary.Division
+                )
+            )
+        )
+    )
+
+    CalculatorRow(
+        rows = mockRows,
+        style = StyleCalculator.Standard,
+        state = CalculatorStateDomain(),
+        isLandscape = false, // Preview in portrait
+        onAction = { action -> /* Log or ignore for preview */ },
+        onButtonWidthCalculated = { dp -> /* Log or ignore for preview */ },
+    )
+}
