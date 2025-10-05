@@ -9,6 +9,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.calculatorApp.R
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
 import com.example.calculatorApp.model.elements.button.ButtonData
 import com.example.calculatorApp.model.layout.button.ButtonLayoutRegular
 import com.example.calculatorApp.model.state.CalculatorStateDomain
@@ -51,13 +52,31 @@ fun CalculatorButton(
 
 @Preview
 @Composable
-fun PreviewCalculatorButton() {
+fun PreviewCalculatorButtonHighlight() {
     val buttonData = ButtonData(
         element = ButtonCalculatorBinary.Multiplication,
         layout = ButtonLayoutRegular()
     )
     val state = CalculatorStateDomain(
         activeButton = ButtonCalculatorBinary.Multiplication
+    )
+
+    CalculatorButton(
+        data = buttonData,
+        style = StyleCalculator.Standard,
+        state = state,
+    )
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF000000)
+@Composable
+fun PreviewCalculatorButtonDefault() {
+    val buttonData = ButtonData(
+        element = ButtonCalculatorBinary.Multiplication,
+        layout = ButtonLayoutRegular()
+    )
+    val state = CalculatorStateDomain(
+        activeButton = ButtonCalculatorNumber.Three
     )
 
     CalculatorButton(
