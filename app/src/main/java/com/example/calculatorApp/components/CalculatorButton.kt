@@ -1,12 +1,15 @@
 package com.example.calculatorApp.components
 
 
+import androidx.compose.foundation.clickable
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.calculatorApp.R
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorNumber
@@ -15,6 +18,24 @@ import com.example.calculatorApp.model.layout.button.ButtonLayoutRegular
 import com.example.calculatorApp.model.state.CalculatorStateDomain
 import com.example.calculatorApp.model.styles.Style
 import com.example.calculatorApp.model.styles.StyleCalculator
+import com.example.calculatorApp.presentation.CalculatorViewModel
+
+@Composable
+fun CalculatorButtonStateful(
+    modifier: Modifier = Modifier,
+    data: ButtonData,
+    style: Style = StyleCalculator.Standard,
+    viewModel: CalculatorViewModel,
+    onClick: () -> Unit
+) {
+    val state by viewModel.stateCal.collectAsStateWithLifecycle()
+    CalculatorButton(
+        modifier = modifier.clickable { onClick() },
+        data = data,
+        style = style,
+        state = state,
+    )
+}
 
 @Composable
 fun CalculatorButton(
