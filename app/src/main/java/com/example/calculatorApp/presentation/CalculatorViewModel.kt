@@ -1,5 +1,6 @@
 package com.example.calculatorApp.presentation
 
+import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.example.calculatorApp.domain.action.CalculatorAction
@@ -43,5 +44,9 @@ class CalculatorViewModel @Inject constructor(
     fun onAction(action: CalculatorAction) {
         val result = actionHandler.handleAction(action, stateCal.value)
         setState(result.newState)
+    }
+
+    fun setButtonWidth(width: Dp) {
+        setStateUi { it.copy(buttonWidth = width.value) }
     }
 }

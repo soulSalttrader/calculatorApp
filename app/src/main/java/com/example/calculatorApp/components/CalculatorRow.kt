@@ -5,13 +5,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.calculatorApp.components.ComponentsUtils.aspectRationOriented
 import com.example.calculatorApp.components.ComponentsUtils.calculateButtonCenter
 import com.example.calculatorApp.domain.action.CalculatorAction
+import com.example.calculatorApp.model.ProviderRow
 import com.example.calculatorApp.model.ProviderRowConfigs.buttonSequence
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
@@ -22,6 +25,22 @@ import com.example.calculatorApp.model.layout.row.RowLayoutStandard
 import com.example.calculatorApp.model.state.CalculatorStateDomain
 import com.example.calculatorApp.model.styles.Style
 import com.example.calculatorApp.model.styles.StyleCalculator
+import com.example.calculatorApp.presentation.CalculatorViewModel
+
+@Composable
+fun CalculatorRowStateful(viewModel: CalculatorViewModel) {
+    val state by viewModel.stateCal.collectAsStateWithLifecycle()
+    val isLandscape by viewModel.isLandscape.collectAsStateWithLifecycle()
+
+    CalculatorRow(
+        rows = ProviderRow.StandardRows.create(state, StyleCalculator.Standard),
+        style = StyleCalculator.Standard,
+        state = state,
+        isLandscape = isLandscape,
+        onAction = { action -> viewModel.onAction(action) },
+        onButtonWidthCalculated = { dp -> { viewModel.setButtonWidth(dp) } },
+    )
+}
 
 @Composable
 fun CalculatorRow(

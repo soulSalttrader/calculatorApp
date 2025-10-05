@@ -9,7 +9,7 @@ import com.example.calculatorApp.model.elements.button.ButtonData
 import com.example.calculatorApp.model.elements.row.RowCalculatorStandard
 
 object ProviderRowConfigs {
-    private fun buttonSequence(vararg buttons: Button): Sequence<ButtonData> {
+    fun buttonSequence(vararg buttons: Button): Sequence<ButtonData> {
         return buttons.asSequence().map { ButtonData(element = it) }
     }
 
