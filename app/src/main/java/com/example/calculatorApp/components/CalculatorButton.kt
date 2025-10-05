@@ -1,7 +1,6 @@
 package com.example.calculatorApp.components
 
 
-import androidx.compose.foundation.clickable
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,7 +21,6 @@ fun CalculatorButton(
     data: ButtonData,
     style: Style = StyleCalculator.Standard,
     state: CalculatorStateDomain = CalculatorStateDomain(),
-    onClick: () -> Unit,
 ) {
 
     val shouldHighlight = data.element.shouldHighlight(state)
@@ -32,10 +30,11 @@ fun CalculatorButton(
     val textColor = if (shouldHighlight) colorResource(R.color.button_binary_foreground_highlight) else elementStyle.foregroundColor
 
     CalculatorStyledBox(
-        modifier = modifier.clickable { onClick() },
+        modifier = modifier,
+        role = Role.Button,
         layout = data.layout,
         backgroundColor = buttonColor,
-        role = Role.Button,
+        shape = data.layout.shape,
         contentDescription = data.element.symbol.label
     ) {
 
@@ -65,6 +64,5 @@ fun PreviewCalculatorButton() {
         data = buttonData,
         style = StyleCalculator.Standard,
         state = state,
-        onClick = {}
     )
 }
