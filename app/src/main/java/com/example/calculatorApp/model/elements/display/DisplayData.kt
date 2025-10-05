@@ -6,11 +6,12 @@ import com.example.calculatorApp.model.elements.ElementCategoryStyleCollection
 import com.example.calculatorApp.model.elements.ElementColorStyle
 import com.example.calculatorApp.model.elements.ElementData
 import com.example.calculatorApp.model.layout.ElementLayout
+import com.example.calculatorApp.model.layout.display.DisplayLayout
 import com.example.calculatorApp.model.layout.display.DisplayLayoutInput
 
 data class DisplayData(
     override val element: Display,
-    override val layout: ElementLayout = DisplayLayoutInput(),
+    override val layout: DisplayLayout = DisplayLayoutInput(),
 ) : ElementData<ElementCategory<ElementColorStyle>, ElementCategoryStyleCollection<ElementColorStyle>, ElementLayout, ElementColorStyle> {
 
     fun getPlaceholderText(): String {
