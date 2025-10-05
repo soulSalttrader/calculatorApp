@@ -57,7 +57,7 @@ object ProviderRowConfigs {
         )
     ).also { it.validateButtonCount(it.buttons, 3) }
 
-    val standardRows: List<RowCalculatorStandard> = listOf(
+    val standardRows: Sequence<RowCalculatorStandard> = sequenceOf(
         standardRow1,
         standardRow2,
         standardRow3,
