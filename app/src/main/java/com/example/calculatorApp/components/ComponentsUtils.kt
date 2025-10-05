@@ -1,5 +1,7 @@
 package com.example.calculatorApp.components
 
+import android.icu.text.DecimalFormat
+import android.icu.text.DecimalFormatSymbols
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -11,6 +13,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.isUnspecified
+import java.util.Locale
 
 object ComponentsUtils {
 
@@ -50,5 +53,15 @@ object ComponentsUtils {
 
     private fun calculateAdjustedFontSize(currentFontSize: TextUnit, fallbackFontSize: TextUnit): TextUnit {
         return currentFontSize.takeIf { !it.isUnspecified }?.let { it * 0.89f } ?: fallbackFontSize
+    }
+
+    fun String.formatCustom(decimalPlaces: Int = 9, decimalSymbol: Char = ',', groupingSymbol: Char = ' '): String {
+        val number = this.toDoubleOrNull() ?: return this
+        val symbols = DecimalFormatSymbols(Locale.getDefault()).apply {
+            decimalSeparator = decimalSymbol
+            groupingSeparator = groupingSymbol
+        }
+        val format = DecimalFormat("#,##0.${"#".repeat(decimalPlaces)}", symbols)
+        return format.format(number)
     }
 }
