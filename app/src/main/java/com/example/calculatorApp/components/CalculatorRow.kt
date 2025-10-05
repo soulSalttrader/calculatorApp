@@ -1,0 +1,70 @@
+package com.example.calculatorApp.components
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import com.example.calculatorApp.components.ComponentsUtils.aspectRationOriented
+import com.example.calculatorApp.components.ComponentsUtils.calculateButtonCenter
+import com.example.calculatorApp.domain.action.CalculatorAction
+import com.example.calculatorApp.model.ProviderRowConfigs.buttonSequence
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
+import com.example.calculatorApp.model.elements.button.ButtonCalculatorUnary
+import com.example.calculatorApp.model.elements.row.RowCalculatorStandard
+import com.example.calculatorApp.model.elements.row.RowData
+import com.example.calculatorApp.model.layout.row.RowLayoutStandard
+import com.example.calculatorApp.model.state.CalculatorStateDomain
+import com.example.calculatorApp.model.styles.Style
+import com.example.calculatorApp.model.styles.StyleCalculator
+
+@Composable
+fun CalculatorRow(
+    rows: Sequence<RowData>,
+    style: Style,
+    state: CalculatorStateDomain,
+    isLandscape: Boolean,
+    onAction: (CalculatorAction) -> Unit,
+    onButtonWidthCalculated: (Dp) -> Unit,
+) {
+    val density = LocalDensity.current
+
+    rows.forEach { rowData ->
+        val rowLayout = (rowData.layout as? RowLayoutStandard) ?: RowLayoutStandard()
+
+        Column(
+            verticalArrangement = rowLayout.arrangementVertical
+        ) {
+            Row(
+                modifier = rowLayout.modifier,
+                horizontalArrangement = rowLayout.arrangementHorizontal,
+                verticalAlignment = rowLayout.alignmentVertical
+            ) {
+                rowData.element.buttons.forEach { button ->
+                    val shouldCalculateCenter = button.element == ButtonCalculatorBinary.Division
+
+                    CalculatorButton(
+                        data = button,
+                        style = style,
+                        state = state,
+                        modifier = Modifier
+                            .weight(button.layout.weight)
+                            .aspectRatio(button.layout.weight)
+                            .aspectRationOriented(isLandscape, button.layout.weight)
+                            .calculateButtonCenter(
+                                shouldCalculateCenter = shouldCalculateCenter,
+                                density = density,
+                                onCenterCalculated = onButtonWidthCalculated
+                            )
+                            .clickable { onAction(CalculatorAction.ButtonPressed(button.element)) }
+                    )
+                }
+            }
+        }
+    }
+}
