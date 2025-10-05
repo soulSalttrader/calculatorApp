@@ -8,11 +8,53 @@ import com.example.calculatorApp.model.elements.button.ButtonData
 
 sealed class RowCalculatorStandard(override val buttons: Sequence<ButtonData>) : Row {
 
-    class Standard1(override val buttons: Sequence<ButtonData>) : RowCalculatorStandard(buttons)
-    class Standard2(override val buttons: Sequence<ButtonData>) : RowCalculatorStandard(buttons)
-    class Standard3(override val buttons: Sequence<ButtonData>) : RowCalculatorStandard(buttons)
-    class Standard4(override val buttons: Sequence<ButtonData>) : RowCalculatorStandard(buttons)
-    class Standard5(override val buttons: Sequence<ButtonData>) : RowCalculatorStandard(buttons)
+    abstract fun withButtons(newButtons: Sequence<ButtonData>): RowCalculatorStandard
+
+    fun validateButtonCount(buttons: Sequence<ButtonData>, expectedCount: Int = 4) {
+        require(buttons.count() == expectedCount) {
+            "Expected $expectedCount buttons, but got ${buttons.count()}"
+        }
+    }
+
+    data class Standard1(private val buttonsSeq: Sequence<ButtonData>) : RowCalculatorStandard(buttonsSeq) {
+        override fun withButtons(newButtons: Sequence<ButtonData>): RowCalculatorStandard {
+            validateButtonCount(newButtons)
+            return Standard1(newButtons)
+        }
+        override val buttons: Sequence<ButtonData> = buttonsSeq
+    }
+
+    data class Standard2(private val buttonsSeq: Sequence<ButtonData>) : RowCalculatorStandard(buttonsSeq) {
+        override fun withButtons(newButtons: Sequence<ButtonData>): RowCalculatorStandard {
+            validateButtonCount(newButtons)
+            return Standard2(newButtons)
+        }
+        override val buttons: Sequence<ButtonData> = buttonsSeq
+    }
+
+    data class Standard3(private val buttonsSeq: Sequence<ButtonData>) : RowCalculatorStandard(buttonsSeq) {
+        override fun withButtons(newButtons: Sequence<ButtonData>): RowCalculatorStandard {
+            validateButtonCount(newButtons)
+            return Standard3(newButtons)
+        }
+        override val buttons: Sequence<ButtonData> = buttonsSeq
+    }
+
+    data class Standard4(private val buttonsSeq: Sequence<ButtonData>) : RowCalculatorStandard(buttonsSeq) {
+        override fun withButtons(newButtons: Sequence<ButtonData>): RowCalculatorStandard {
+            validateButtonCount(newButtons)
+            return Standard4(newButtons)
+        }
+        override val buttons: Sequence<ButtonData> = buttonsSeq
+    }
+
+    data class Standard5(private val buttonsSeq: Sequence<ButtonData>) : RowCalculatorStandard(buttonsSeq) {
+        override fun withButtons(newButtons: Sequence<ButtonData>): RowCalculatorStandard {
+            validateButtonCount(newButtons, 3)
+            return Standard5(newButtons)
+        }
+        override val buttons: Sequence<ButtonData> = buttonsSeq
+    }
 
     override fun getCategory(): ElementCategory<ElementColorStyle> = RowCategory.Standard
     override fun getBackgroundColor(style: ElementCategoryStyleCollection<ElementColorStyle>): Color = getStyle(style).backgroundColor
