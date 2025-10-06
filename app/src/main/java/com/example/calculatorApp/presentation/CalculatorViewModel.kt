@@ -14,6 +14,7 @@ import com.example.calculatorApp.domain.action.CalculatorAction
 import com.example.calculatorApp.domain.action.CalculatorActionHandler
 import com.example.calculatorApp.model.state.CalculatorStateDomain
 import com.example.calculatorApp.model.state.CalculatorStateUI
+import com.example.calculatorApp.model.state.CalculatorStateUIDefault.defaultStyle
 import com.example.calculatorApp.presentation.PresentationUtils.isLandscape
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
@@ -36,7 +37,7 @@ class CalculatorViewModel @Inject constructor(
     val isLandscape: StateFlow<Boolean> = savedStateHandle.getStateFlow(ORIENTATION, false)
 
     private fun setState(newState: CalculatorStateDomain) {
-        savedStateHandle[STATE_CAL] = newState
+        savedStateHandle[STATE_CAL] = newState.also { Log.d("CalculatorViewModel", "STATE_CAL: $it") }
     }
 
     fun setOrientation() {
@@ -50,6 +51,7 @@ class CalculatorViewModel @Inject constructor(
 
     fun onAction(action: CalculatorAction) {
         val result = actionHandler.handleAction(action, stateCal.value)
+        if (result.shouldResetTextSize) resetResizedTextStyle()
         setState(result.newState)
     }
 
@@ -85,6 +87,16 @@ class CalculatorViewModel @Inject constructor(
                 textSize = textStyle.fontSize.value,
                 textWeight = textStyle.fontWeight?.weight ?: FontWeight.Light.weight,
                 textColor = textStyle.color.value.toLong()
+            )
+        }
+    }
+
+    private fun resetResizedTextStyle() {
+        setStateUi {
+            it.copy(
+                textSize = defaultStyle.fontSize.value,
+                textWeight = defaultStyle.fontWeight?.weight ?: FontWeight.Normal.weight,
+                textColor = defaultStyle.color.value.toLong()
             )
         }
     }
