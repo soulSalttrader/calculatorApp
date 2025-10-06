@@ -75,7 +75,7 @@ class CalculatorViewModel @Inject constructor(
         setResizedTextStyle(adjustedStyle)
     }
 
-    private fun setShouldDraw(shouldDraw: Boolean) {
+    fun setShouldDraw(shouldDraw: Boolean) {
         setStateUi { it.copy(shouldDraw = shouldDraw) }
     }
 

@@ -60,7 +60,7 @@ fun CalculatorStyledText(
     Text(
         text = text,
         textAlign = data.layout.alignText,
-        color = data.element.getBackgroundColor(style.displayStyle),
+        color = data.element.getForegroundColor(style.displayStyle),
         modifier = modifier.drawWithContent {
             if (shouldDraw) drawContent()
         },
