@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.calculatorApp.components.ComponentsUtils.formatCustom
 import com.example.calculatorApp.domain.ast.Token.Companion.lastNumberOrNull
+import com.example.calculatorApp.model.ProviderRow
 import com.example.calculatorApp.model.elements.display.DisplayCalculatorInput
 import com.example.calculatorApp.model.elements.display.DisplayData
 import com.example.calculatorApp.model.styles.StyleCalculator
@@ -51,7 +52,11 @@ fun CalculatorPortrait(
                 viewModel = viewModel
             )
 
-            CalculatorRowStateful(viewModel)
+            CalculatorRowStateful(
+                viewModel = viewModel,
+                data = ProviderRow.StandardRows.create(state, StyleCalculator.Standard),
+                style = StyleCalculator.Standard,
+            )
         }
     }
 }

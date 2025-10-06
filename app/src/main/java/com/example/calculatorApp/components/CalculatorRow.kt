@@ -14,7 +14,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.calculatorApp.components.ComponentsUtils.aspectRationOriented
 import com.example.calculatorApp.components.ComponentsUtils.calculateButtonCenter
 import com.example.calculatorApp.domain.action.CalculatorAction
-import com.example.calculatorApp.model.ProviderRow
 import com.example.calculatorApp.model.ProviderRowConfigs.buttonSequence
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorControl
@@ -28,17 +27,22 @@ import com.example.calculatorApp.model.styles.StyleCalculator
 import com.example.calculatorApp.presentation.CalculatorViewModel
 
 @Composable
-fun CalculatorRowStateful(viewModel: CalculatorViewModel) {
+fun CalculatorRowStateful(
+    viewModel: CalculatorViewModel,
+    data: Sequence<RowData>,
+    style: Style,
+) {
+
     val state by viewModel.stateCal.collectAsStateWithLifecycle()
     val isLandscape by viewModel.isLandscape.collectAsStateWithLifecycle()
 
     CalculatorRow(
-        rows = ProviderRow.StandardRows.create(state, StyleCalculator.Standard),
-        style = StyleCalculator.Standard,
+        rows = data,
+        style = style,
         state = state,
         isLandscape = isLandscape,
         onAction = { action -> viewModel.onAction(action) },
-        onButtonWidthCalculated = { dp -> { viewModel.setButtonWidth(dp) } },
+        onButtonWidthCalculated = { dp -> viewModel.setButtonWidth(dp) },
     )
 }
 
@@ -60,7 +64,7 @@ fun CalculatorRow(
             verticalArrangement = rowLayout.arrangementVertical
         ) {
             Row(
-                modifier = rowLayout.modifier,
+                modifier = rowLayout.rowStandardModifier,
                 horizontalArrangement = rowLayout.arrangementHorizontal,
                 verticalAlignment = rowLayout.alignmentVertical
             ) {
