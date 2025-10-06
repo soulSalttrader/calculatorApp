@@ -32,7 +32,7 @@ class EngineStateStandard(
         return state.modifyWith(
             { state.hasError } to { this.copy(activeButton = unary) },
             { true } to {
-                val lastInput = state.lastOperand
+                val lastInput = state.lastOperand.ifBlank { state.expression.firstNumberOrNull()?.value.toString() }
                 val previousNumber = state.expression.lastNumberOrNull()?.value
                 val operator = state.lastOperator
 
