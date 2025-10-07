@@ -16,6 +16,7 @@ open class ButtonLayoutRegular(
     override val weight: Float = 1f,
 
     override val alignText: TextAlign = TextAlign.Center,
+    override val textModifier: Modifier = Modifier,
     override val sizeFont: TextUnit = 42.sp,
     override val weightFont: FontWeight = FontWeight.Normal,
 ) : ButtonLayout

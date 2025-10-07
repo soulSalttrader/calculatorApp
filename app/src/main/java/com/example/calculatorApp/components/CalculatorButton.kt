@@ -57,7 +57,7 @@ fun CalculatorButton(
         layout = data.layout,
         backgroundColor = buttonColor,
         shape = data.layout.shape,
-        contentDescription = data.element.symbol.label
+        contentDescription = data.element.symbol.label,
     ) {
 
         Text(
@@ -66,7 +66,7 @@ fun CalculatorButton(
             fontWeight = data.layout.weightFont,
             textAlign = data.layout.alignText,
             color = textColor,
-            modifier = data.layout.modifier
+            modifier = data.layout.textModifier,
         )
     }
 }
