@@ -36,7 +36,7 @@ fun CalculatorPortrait(
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = rowSpacing * 5),
+                .padding(bottom = rowSpacing * 8),
             verticalArrangement = Arrangement.spacedBy(rowSpacing),
         ) {
 

@@ -2,6 +2,7 @@ package com.example.calculatorApp.components
 
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -9,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.calculatorApp.R
 import com.example.calculatorApp.model.elements.button.ButtonCalculatorBinary
@@ -52,7 +54,7 @@ fun CalculatorButton(
     val textColor = if (shouldHighlight) colorResource(R.color.button_binary_foreground_highlight) else elementStyle.foregroundColor
 
     CalculatorStyledBox(
-        modifier = modifier,
+        modifier = modifier.padding(2.dp),
         role = Role.Button,
         layout = data.layout,
         backgroundColor = buttonColor,
