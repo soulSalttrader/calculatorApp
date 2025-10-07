@@ -23,9 +23,8 @@ sealed class ProviderButton : Provider<ButtonData> {
     }
 
     object ZeroButton : ProviderButton() {
-        override fun create(state: CalculatorStateDomain, style: Style): ButtonData {
-            return ButtonData(ButtonCalculatorNumber.Zero, ButtonLayoutWide())
-        }
+        override fun create(state: CalculatorStateDomain, style: Style): ButtonData =
+            ButtonData(ButtonCalculatorNumber.Zero, ButtonLayoutWide())
     }
 
     data class StandardButton(val button: Button) : ProviderButton() {
