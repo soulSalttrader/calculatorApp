@@ -28,9 +28,9 @@ import com.example.calculatorApp.presentation.CalculatorViewModel
 
 @Composable
 fun CalculatorRowStateful(
-    viewModel: CalculatorViewModel,
     data: Sequence<RowData>,
     style: Style,
+    viewModel: CalculatorViewModel,
 ) {
 
     val state by viewModel.stateCal.collectAsStateWithLifecycle()

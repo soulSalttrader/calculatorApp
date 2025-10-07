@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.calculatorApp.components.Calculator
+import com.example.calculatorApp.model.styles.StyleCalculator
 import com.example.calculatorApp.presentation.CalculatorViewModel
 import com.example.calculatorApp.ui.theme.CalculatorAppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,7 +21,10 @@ class MainActivity : ComponentActivity() {
                 val viewModel: CalculatorViewModel = hiltViewModel()
                 viewModel.setOrientation()
 
-                Calculator(viewModel = viewModel)
+                Calculator(
+                    style = StyleCalculator.Standard,
+                    viewModel = viewModel,
+                )
             }
         }
     }
