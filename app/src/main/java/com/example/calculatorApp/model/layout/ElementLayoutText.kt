@@ -1,3 +1,3 @@
 package com.example.calculatorApp.model.layout
 
-interface ElementLayoutText : HasAlignmentText, HasTextStyle
+interface ElementLayoutText : HasAlignmentText, HasTextStyle, HasTextModifier
