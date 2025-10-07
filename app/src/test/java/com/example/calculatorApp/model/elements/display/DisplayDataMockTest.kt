@@ -1,6 +1,5 @@
 package com.example.calculatorApp.model.elements.display
 
-import com.example.calculatorApp.model.layout.ElementLayout
 import com.example.calculatorApp.model.layout.display.DisplayLayoutInput
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -16,7 +15,7 @@ class DisplayDataMockTest {
         @Test
         fun `should return the correct Display instance`() {
             val display = mockk<Display>()
-            val layout = mockk<ElementLayout>()
+            val layout = mockk<DisplayLayoutInput>()
             val displayData = DisplayData(element = display, layout = layout)
 
             display shouldBe  displayData.element
@@ -29,7 +28,7 @@ class DisplayDataMockTest {
         @Test
         fun `should return the correct layout instance`() {
             val display = mockk<Display>()
-            val layout = mockk<ElementLayout>()
+            val layout = mockk<DisplayLayoutInput>()
             val displayData = DisplayData(element = display, layout = layout)
 
             layout shouldBe displayData.layout
@@ -50,7 +49,7 @@ class DisplayDataMockTest {
         @Test
         fun `should return expected text - Mocked`() {
             val display = mockk<Display>()
-            val layout = mockk<ElementLayout>()
+            val layout = mockk<DisplayLayoutInput>()
             val data = DisplayData(element = display, layout = layout)
 
             data.getPlaceholderText() shouldBe "329 329.329"

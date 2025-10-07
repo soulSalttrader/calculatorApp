@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -17,6 +16,7 @@ import com.example.calculatorApp.model.layout.ElementLayoutPositioning
 import com.example.calculatorApp.model.layout.ElementLayoutText
 import com.example.calculatorApp.model.layout.HasColor
 import com.example.calculatorApp.testData.expected.ExpectedLayout
+import com.example.calculatorApp.ui.theme.Black
 
 object TestDataElementLayout {
 
@@ -29,6 +29,7 @@ object TestDataElementLayout {
         },
         delegateText = object : ElementLayoutText {
             override val alignText = TextAlign.Center
+            override val textModifier: Modifier = Modifier
             override val sizeFont = 42.sp
             override val weightFont = FontWeight.Normal
         }
@@ -36,13 +37,14 @@ object TestDataElementLayout {
 
     val buttonLayoutWideExpected = ExpectedLayout.Button(
         delegateLayout = object : ElementLayout {
-            override val alignment = Alignment.Center
+            override val alignment = Alignment.CenterStart
             override val modifier = Modifier
             override val shape = CircleShape
             override val weight = 2f
         },
         delegateText = object : ElementLayoutText {
             override val alignText = TextAlign.Center
+            override val textModifier: Modifier =Modifier.fillMaxWidth(0.50f)
             override val sizeFont = 42.sp
             override val weightFont = FontWeight.Normal
         }
@@ -57,7 +59,8 @@ object TestDataElementLayout {
         },
         delegateText = object : ElementLayoutText {
             override val alignText = TextAlign.End
-            override val sizeFont = 85.sp
+            override val textModifier: Modifier = Modifier
+            override val sizeFont = 105.sp
             override val weightFont = FontWeight.Light
         }
     )
@@ -75,7 +78,7 @@ object TestDataElementLayout {
             override val arrangementVertical = Arrangement.spacedBy(8.dp)
         },
         delegateColor = object : HasColor {
-            override val color = Color.Green
+            override val color = Black
         }
     )
 }
