@@ -11,6 +11,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.calculatorApp.utils.Constants.SIZE_FONT_DEFAULT
 
 class DisplayLayoutInput(
     override val alignment: Alignment = Alignment.BottomEnd,
@@ -19,6 +20,6 @@ class DisplayLayoutInput(
     override val weight: Float = 2f,
 
     override val alignText: TextAlign = TextAlign.End,
-    override val sizeFont: TextUnit = 85.sp,
+    override val sizeFont: TextUnit = SIZE_FONT_DEFAULT.sp,
     override val weightFont: FontWeight = FontWeight.Light,
 ) : DisplayLayout
