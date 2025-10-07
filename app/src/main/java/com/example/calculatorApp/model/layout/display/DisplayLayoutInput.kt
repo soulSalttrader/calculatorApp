@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.calculatorApp.utils.Constants.SIZE_FONT_DEFAULT
+import com.example.calculatorApp.utils.PrettyPrinter.prettyString
 
 class DisplayLayoutInput(
     override val alignment: Alignment = Alignment.BottomEnd,
@@ -20,6 +21,9 @@ class DisplayLayoutInput(
     override val weight: Float = 2f,
 
     override val alignText: TextAlign = TextAlign.End,
+    override val textModifier: Modifier = Modifier,
     override val sizeFont: TextUnit = SIZE_FONT_DEFAULT.sp,
     override val weightFont: FontWeight = FontWeight.Light,
-) : DisplayLayout
+) : DisplayLayout {
+    override fun toString(): String = prettyString()
+}

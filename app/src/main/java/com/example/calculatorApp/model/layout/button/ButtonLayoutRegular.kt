@@ -8,6 +8,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
+import com.example.calculatorApp.utils.PrettyPrinter.prettyString
 
 open class ButtonLayoutRegular(
     override val alignment: Alignment = Alignment.Center,
@@ -19,4 +20,6 @@ open class ButtonLayoutRegular(
     override val textModifier: Modifier = Modifier,
     override val sizeFont: TextUnit = 42.sp,
     override val weightFont: FontWeight = FontWeight.Normal,
-) : ButtonLayout
+) : ButtonLayout {
+    override fun toString(): String = prettyString()
+}
