@@ -37,7 +37,7 @@ fun CalculatorRowStateful(
     val isLandscape by viewModel.isLandscape.collectAsStateWithLifecycle()
 
     CalculatorRow(
-        rows = data,
+        data = data,
         style = style,
         state = state,
         isLandscape = isLandscape,
@@ -48,7 +48,7 @@ fun CalculatorRowStateful(
 
 @Composable
 fun CalculatorRow(
-    rows: Sequence<RowData>,
+    data: Sequence<RowData>,
     style: Style,
     state: CalculatorStateDomain,
     isLandscape: Boolean,
@@ -57,7 +57,7 @@ fun CalculatorRow(
 ) {
     val density = LocalDensity.current
 
-    rows.forEach { rowData ->
+    data.forEach { rowData ->
         val rowLayout = (rowData.layout as? RowLayoutStandard) ?: RowLayoutStandard()
 
         Column(
@@ -108,7 +108,7 @@ fun CalculatorRowPreview() {
     )
 
     CalculatorRow(
-        rows = mockRows,
+        data = mockRows,
         style = StyleCalculator.Standard,
         state = CalculatorStateDomain(),
         isLandscape = false, // Preview in portrait

@@ -22,6 +22,7 @@ import com.example.calculatorApp.model.styles.Style
 import com.example.calculatorApp.model.styles.StyleCalculator
 import com.example.calculatorApp.presentation.CalculatorViewModel
 import com.example.calculatorApp.ui.theme.VividGamboge
+import com.example.calculatorApp.utils.Constants.SIZE_FONT_DEFAULT
 
 @Composable
 fun CalculatorDisplayStateful(
@@ -79,6 +80,7 @@ fun CalculatorDisplay(
     data: DisplayData,
     style: Style,
     buttonWidth: Dp = 0.dp,
+    textStyle: TextStyle,
     shouldDraw: Boolean = true,
     resizedTextStyle: TextStyle = TextStyle.Default,
     onSetInitialTextStyle: (TextStyle) -> Unit,
@@ -104,7 +106,7 @@ fun CalculatorDisplay(
             text = text,
             data = data,
             style = style,
-            textStyle = TextStyle.Default,
+            textStyle = textStyle,
             modifier = data.layout.modifier.padding(horizontal = horizontalOffset),
             shouldDraw = shouldDraw,
             resizedTextStyle = resizedTextStyle,
@@ -123,6 +125,10 @@ fun PreviewCalculatorDisplay() {
         text = "123.45",
         data = DisplayData(DisplayCalculatorInput.Standard),
         style = StyleCalculator.Standard,
+        textStyle = TextStyle(
+            fontSize = SIZE_FONT_DEFAULT.sp,
+            fontWeight = FontWeight.Light
+        ),
         buttonWidth = 8.dp,
         shouldDraw = true,
         resizedTextStyle = TextStyle(
