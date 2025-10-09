@@ -1,5 +1,6 @@
 package com.example.calculatorApp.components
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -7,6 +8,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.calculatorApp.components.ComponentsUtils.formatCustom
+import com.example.calculatorApp.domain.ast.Token.Companion.lastNumberOrNull
 import com.example.calculatorApp.model.ProviderRow
 import com.example.calculatorApp.model.elements.display.DisplayCalculatorInput
 import com.example.calculatorApp.model.elements.display.DisplayData
@@ -25,28 +28,30 @@ fun Calculator(
     val isLandscape by viewModel.isLandscape.collectAsStateWithLifecycle()
     val stateUi by viewModel.stateUi.collectAsStateWithLifecycle()
 
-    val horizontalOffset = stateUi.buttonWidth.dp
-
-
+    val buttonWidthDp = stateUi.buttonWidth.dp
     val displayData = DisplayData(DisplayCalculatorInput.Standard)
-    val rowData = ProviderRow.StandardRows.create(state, StyleCalculator.Standard)
 
-        CalculatorPortrait(
-            style = style,
-            rowSpacing = rowSpacing,
-            state = state,
+    val text = state.errorMessage.takeIf { it != null }
+        ?: state.lastOperand.formatCustom().takeIf { it.isNotBlank() }
+        ?: state.lastResult.takeIf { it != null }
+        ?: state.expression.lastNumberOrNull()?.value.toString().formatCustom()
 
-            displayData = displayData,
-            isLandscape = isLandscape,
-            onAction = { action -> viewModel.onAction(action) },
-            onButtonWidthCalculated = { dp -> viewModel.setButtonWidth(dp) },
-            buttonWidth = horizontalOffset,
+    val paramsDisplayText = ParamsDisplayText(
+        modifier = Modifier.padding(horizontal = buttonWidthDp / 1.5f),
+        data = displayData,
+        style = style,
+        text = text,
+        textStyle = TextStyle(
+            fontSize = displayData.layout.sizeFont,
+            fontWeight = displayData.layout.weightFont
+        ),
+        shouldDraw = stateUi.shouldDraw,
+        resizedTextStyle = stateUi.asTextStyle(),
+    )
 
-            rowData = rowData,
-            shouldDraw = stateUi.shouldDraw,
-            resizedTextStyle = stateUi.asTextStyle(),
-            onSetInitialTextStyle = { textStyle -> viewModel.setInitialTextStyle(textStyle) },
-            onAdjustTextStyle = { result, currentStyle, fallbackFontSize, fontWeight, color ->
+    val paramsTextStyle = ParamsTextStyle(
+        onSetInitialTextStyle = { textStyle -> viewModel.setInitialTextStyle(textStyle) },
+        onAdjustTextStyle = { result, currentStyle, fallbackFontSize, fontWeight, color ->
                 viewModel.adjustTextStyleIfNeeded(
                     result,
                     currentStyle,
@@ -54,11 +59,26 @@ fun Calculator(
                     fontWeight,
                     color
                 )
-            },
-            modifier = Modifier,
-            textStyle = TextStyle(
-                fontSize = displayData.layout.sizeFont,
-                fontWeight = displayData.layout.weightFont
-            )
+        }
+    )
+
+    val paramsStyledText = ParamsStyledText(
+        paramsDisplayText = paramsDisplayText,
+        paramsTextStyle = paramsTextStyle,
+    )
+
+    val rowData = ProviderRow.StandardRows.create(state, StyleCalculator.Standard)
+
+        CalculatorPortrait(
+            paramsStyledText = paramsStyledText,
+
+            state = state,
+            style = style,
+            rowData = rowData,
+            rowSpacing = rowSpacing,
+
+            isLandscape = isLandscape,
+            onAction = { action -> viewModel.onAction(action) },
+            onButtonWidthCalculated = { dp -> viewModel.setButtonWidth(dp) },
         )
 }
