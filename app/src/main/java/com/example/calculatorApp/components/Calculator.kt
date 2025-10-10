@@ -52,13 +52,13 @@ fun Calculator(
     val paramsTextStyle = ParamsTextStyle(
         onSetInitialTextStyle = { textStyle -> viewModel.setInitialTextStyle(textStyle) },
         onAdjustTextStyle = { result, currentStyle, fallbackFontSize, fontWeight, color ->
-                viewModel.adjustTextStyleIfNeeded(
-                    result,
-                    currentStyle,
-                    fallbackFontSize,
-                    fontWeight,
-                    color
-                )
+            viewModel.adjustTextStyleIfNeeded(
+                result,
+                currentStyle,
+                fallbackFontSize,
+                fontWeight,
+                color
+            )
         }
     )
 
@@ -69,16 +69,24 @@ fun Calculator(
 
     val rowData = ProviderRow.StandardRows.create(state, StyleCalculator.Standard)
 
-        CalculatorPortrait(
-            paramsStyledText = paramsStyledText,
+    val calculatorUiCallbacks = CalculatorUiCallbacks(
+        onAction = { action -> viewModel.onAction(action) },
+        onButtonWidthCalculated = { dp -> viewModel.setButtonWidth(dp) }
+    )
 
-            state = state,
-            style = style,
-            rowData = rowData,
-            rowSpacing = rowSpacing,
+    val paramsRow = ParamsRow(
+        data = rowData,
+        style = style,
+        isLandscape = isLandscape,
+        state = state,
+        uiCallbacks = calculatorUiCallbacks
+    )
 
-            isLandscape = isLandscape,
-            onAction = { action -> viewModel.onAction(action) },
-            onButtonWidthCalculated = { dp -> viewModel.setButtonWidth(dp) },
-        )
+    val paramsPortrait = ParamsPortrait(
+        styledText = paramsStyledText,
+        row = paramsRow,
+        rowSpacing = rowSpacing,
+    )
+
+    CalculatorPortrait(paramsPortrait = paramsPortrait)
 }

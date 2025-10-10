@@ -9,24 +9,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
-import com.example.calculatorApp.domain.action.CalculatorAction
-import com.example.calculatorApp.model.elements.row.RowData
-import com.example.calculatorApp.model.state.CalculatorStateDomain
-import com.example.calculatorApp.model.styles.Style
 import com.example.calculatorApp.ui.theme.Black
 
 @Composable
-fun CalculatorPortrait(
-    paramsStyledText: ParamsStyledText,
-    rowData: Sequence<RowData>,
-    style: Style,
-    rowSpacing: Dp,
-    state: CalculatorStateDomain,
-    isLandscape: Boolean,
-    onAction: (CalculatorAction) -> Unit,
-    onButtonWidthCalculated: (Dp) -> Unit,
-) {
+fun CalculatorPortrait(paramsPortrait: ParamsPortrait) {
 
     Box(
         modifier = Modifier
@@ -35,21 +21,14 @@ fun CalculatorPortrait(
     ) {
         Column(
             modifier = Modifier
+                .background(Black)
                 .align(Alignment.BottomCenter)
-                .padding(bottom = rowSpacing * 8),
-            verticalArrangement = Arrangement.spacedBy(rowSpacing),
+                .padding(bottom = paramsPortrait.rowSpacing * 8),
+            verticalArrangement = Arrangement.spacedBy(paramsPortrait.rowSpacing),
         ) {
 
-            CalculatorDisplay(paramsStyledText = paramsStyledText)
-
-            CalculatorRow(
-                data = rowData,
-                style = style,
-                isLandscape = isLandscape,
-                onAction = onAction,
-                onButtonWidthCalculated = onButtonWidthCalculated,
-                state = state
-            )
+            CalculatorDisplay(paramsStyledText = paramsPortrait.styledText)
+            CalculatorRow(paramsRow = paramsPortrait.row)
         }
     }
 }

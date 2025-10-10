@@ -16,29 +16,41 @@ import com.example.calculatorApp.utils.Constants.SIZE_FONT_DEFAULT
 
 @Composable
 fun CalculatorDisplay(paramsStyledText: ParamsStyledText) {
+    val displayData = paramsStyledText.paramsDisplayText.data
+    val displayStyle = paramsStyledText.paramsDisplayText.style.displayStyle
 
-    CalculatorStyledBox(
+    val visuals = BoxVisuals(
         modifier = paramsStyledText.paramsDisplayText.modifier,
-        layout = paramsStyledText.paramsDisplayText.data.layout,
-        backgroundColor = paramsStyledText.paramsDisplayText.data.element.getBackgroundColor(paramsStyledText.paramsDisplayText.style.displayStyle)
-    ) {
+        layout = displayData.layout,
+        backgroundColor = displayData.element.getBackgroundColor(displayStyle),
+        foregroundColor = displayData.element.getForegroundColor(displayStyle),
+    )
 
+    val semantics = BoxSemantics(
+        contentDescription = paramsStyledText.paramsDisplayText.data.element::class.simpleName
+    )
+
+    val paramsStyledBox = ParamsStyledBox(
+        visuals = visuals,
+        semantics = semantics
+    ) {
         Text(
-            text = paramsStyledText.paramsDisplayText.data.getPlaceholderText(),
-            textAlign = paramsStyledText.paramsDisplayText.data.layout.alignText,
-            fontWeight = paramsStyledText.paramsDisplayText.data.layout.weightFont,
-            fontSize = paramsStyledText.paramsDisplayText.data.layout.sizeFont,
+            text = displayData.getPlaceholderText(),
+            textAlign = displayData.layout.alignText,
+            fontWeight = displayData.layout.weightFont,
+            fontSize = displayData.layout.sizeFont,
             color = Color.Transparent
         )
 
         CalculatorStyledText(paramsStyledText = paramsStyledText)
     }
+
+    CalculatorStyledBox(paramsStyledBox = paramsStyledBox)
 }
 
 @Preview(showBackground = false, widthDp = 320, heightDp = 100, name = "CalculatorDisplay")
 @Composable
 fun PreviewCalculatorDisplay() {
-
     val paramsDisplayText = ParamsDisplayText(
         modifier = Modifier.fillMaxWidth(),
         text = "123.45",
@@ -49,7 +61,10 @@ fun PreviewCalculatorDisplay() {
             fontWeight = FontWeight.Light
         ),
         shouldDraw = true,
-        resizedTextStyle = TextStyle.Default,
+        resizedTextStyle = TextStyle(
+            fontSize = SIZE_FONT_DEFAULT.sp,
+            fontWeight = FontWeight.Light
+        ),
     )
 
     val paramsTextStyle = ParamsTextStyle(

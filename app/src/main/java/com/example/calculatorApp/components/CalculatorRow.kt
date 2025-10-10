@@ -5,12 +5,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.calculatorApp.R
 import com.example.calculatorApp.components.ComponentsUtils.aspectRationOriented
 import com.example.calculatorApp.components.ComponentsUtils.calculateButtonCenter
 import com.example.calculatorApp.domain.action.CalculatorAction
@@ -22,42 +22,13 @@ import com.example.calculatorApp.model.elements.row.RowCalculatorStandard
 import com.example.calculatorApp.model.elements.row.RowData
 import com.example.calculatorApp.model.layout.row.RowLayoutStandard
 import com.example.calculatorApp.model.state.CalculatorStateDomain
-import com.example.calculatorApp.model.styles.Style
 import com.example.calculatorApp.model.styles.StyleCalculator
-import com.example.calculatorApp.presentation.CalculatorViewModel
 
 @Composable
-fun CalculatorRowStateful(
-    data: Sequence<RowData>,
-    style: Style,
-    viewModel: CalculatorViewModel,
-) {
-
-    val state by viewModel.stateCal.collectAsStateWithLifecycle()
-    val isLandscape by viewModel.isLandscape.collectAsStateWithLifecycle()
-
-    CalculatorRow(
-        data = data,
-        style = style,
-        state = state,
-        isLandscape = isLandscape,
-        onAction = { action -> viewModel.onAction(action) },
-        onButtonWidthCalculated = { dp -> viewModel.setButtonWidth(dp) },
-    )
-}
-
-@Composable
-fun CalculatorRow(
-    data: Sequence<RowData>,
-    style: Style,
-    state: CalculatorStateDomain,
-    isLandscape: Boolean,
-    onAction: (CalculatorAction) -> Unit,
-    onButtonWidthCalculated: (Dp) -> Unit,
-) {
+fun CalculatorRow(paramsRow: ParamsRow) {
     val density = LocalDensity.current
 
-    data.forEach { rowData ->
+    paramsRow.data.forEach { rowData ->
         val rowLayout = (rowData.layout as? RowLayoutStandard) ?: RowLayoutStandard()
 
         Column(
@@ -68,24 +39,45 @@ fun CalculatorRow(
                 horizontalArrangement = rowLayout.arrangementHorizontal,
                 verticalAlignment = rowLayout.alignmentVertical
             ) {
-                rowData.element.buttons.forEach { button ->
-                    val shouldCalculateCenter = button.element == ButtonCalculatorBinary.Division
+                rowData.element.buttons.forEach { buttonData ->
+                    val shouldCalculateCenter = buttonData.element == ButtonCalculatorBinary.Division
 
-                    CalculatorButton(
-                        data = button,
-                        style = style,
-                        state = state,
-                        modifier = Modifier
-                            .weight(button.layout.weight)
-                            .aspectRatio(button.layout.weight)
-                            .aspectRationOriented(isLandscape, button.layout.weight)
-                            .calculateButtonCenter(
-                                shouldCalculateCenter = shouldCalculateCenter,
-                                density = density,
-                                onCenterCalculated = onButtonWidthCalculated
+                    val buttonModifier = Modifier
+                        .weight(buttonData.layout.weight)
+                        .aspectRatio(buttonData.layout.weight)
+                        .aspectRationOriented(paramsRow.isLandscape, buttonData.layout.weight)
+                        .calculateButtonCenter(
+                            shouldCalculateCenter = shouldCalculateCenter,
+                            density = density,
+                            onCenterCalculated = paramsRow.uiCallbacks.onButtonWidthCalculated
+                        )
+                        .clickable {
+                            paramsRow.uiCallbacks.onAction(
+                                CalculatorAction.ButtonPressed(buttonData.element)
                             )
-                            .clickable { onAction(CalculatorAction.ButtonPressed(button.element)) }
+                        }
+
+                    val shouldHighlight = buttonData.element.shouldHighlight(paramsRow.state)
+                    val elementStyle = buttonData.element.getStyle(paramsRow.style.buttonStyle)
+
+                    val buttonColor = if (shouldHighlight) colorResource(R.color.button_binary_background_highlight) else elementStyle.backgroundColor
+                    val textColor = if (shouldHighlight) colorResource(R.color.button_binary_foreground_highlight) else elementStyle.foregroundColor
+
+                    val paramsButton = ParamsButton(
+                        data = buttonData,
+                        visuals = BoxVisuals(
+                            modifier = buttonModifier,
+                            layout = buttonData.layout,
+                            backgroundColor = buttonColor,
+                            foregroundColor = textColor
+                        ),
+                        semantics = BoxSemantics(
+                            role = Role.Button,
+                            contentDescription = buttonData.element.symbol.label
+                        )
                     )
+
+                    CalculatorButton(paramsButton)
                 }
             }
         }
@@ -95,7 +87,8 @@ fun CalculatorRow(
 @Preview(showBackground = true, widthDp = 320, heightDp = 480)
 @Composable
 fun CalculatorRowPreview() {
-    val mockRows = sequenceOf( RowData(
+    val data = sequenceOf(
+        RowData(
             RowCalculatorStandard.Standard1(
                 buttonSequence(
                     ButtonCalculatorControl.AllClear,
@@ -107,12 +100,20 @@ fun CalculatorRowPreview() {
         )
     )
 
-    CalculatorRow(
-        data = mockRows,
-        style = StyleCalculator.Standard,
-        state = CalculatorStateDomain(),
-        isLandscape = false, // Preview in portrait
-        onAction = { action -> /* Log or ignore for preview */ },
-        onButtonWidthCalculated = { dp -> /* Log or ignore for preview */ },
+    val state = CalculatorStateDomain()
+
+    val callbacksUi = CalculatorUiCallbacks(
+        onAction = { action -> /* No-op */ },
+        onButtonWidthCalculated = { dp -> /* No-op */ },
     )
+
+    val paramsRow = ParamsRow(
+        data = data,
+        style = StyleCalculator.Standard,
+        isLandscape = false,
+        state = state,
+        uiCallbacks = callbacksUi
+    )
+
+    CalculatorRow(paramsRow = paramsRow)
 }
