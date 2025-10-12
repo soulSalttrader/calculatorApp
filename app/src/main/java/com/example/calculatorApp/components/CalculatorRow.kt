@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -77,7 +78,21 @@ fun CalculatorRow(paramsRow: ParamsRow) {
                         )
                     )
 
-                    CalculatorButton(paramsButton)
+                    val paramsStyledBox = ParamsStyledBox(
+                        visuals = paramsButton.visuals,
+                        semantics = paramsButton.semantics,
+                    ) {
+                        Text(
+                            text = paramsButton.data.element.symbol.label,
+                            fontSize = paramsButton.data.layout.sizeFont,
+                            fontWeight = paramsButton.data.layout.weightFont,
+                            textAlign = paramsButton.data.layout.alignText,
+                            color = paramsButton.visuals.foregroundColor,
+                            modifier = paramsButton.data.layout.textModifier,
+                        )
+                    }
+
+                    CalculatorButton(paramsStyledBox = paramsStyledBox)
                 }
             }
         }
