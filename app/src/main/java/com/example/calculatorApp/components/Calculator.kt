@@ -1,9 +1,11 @@
 package com.example.calculatorApp.components
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -82,8 +84,37 @@ fun Calculator(
         uiCallbacks = calculatorUiCallbacks
     )
 
+    val displayStyle = paramsStyledText.paramsDisplayText.style.displayStyle
+
+    val visuals = BoxVisuals(
+        modifier = paramsStyledText.paramsDisplayText.modifier,
+        layout = displayData.layout,
+        backgroundColor = displayData.element.getBackgroundColor(displayStyle),
+        foregroundColor = displayData.element.getForegroundColor(displayStyle),
+    )
+
+    val semantics = BoxSemantics(
+        contentDescription = paramsStyledText.paramsDisplayText.data.element::class.simpleName
+    )
+    
+    val paramsStyledBox = ParamsStyledBox(
+        visuals = visuals,
+        semantics = semantics,
+    ) {
+        Text(
+            text = displayData.getPlaceholderText(),
+            textAlign = displayData.layout.alignText,
+            fontWeight = displayData.layout.weightFont,
+            fontSize = displayData.layout.sizeFont,
+            color = Color.Transparent
+        )
+
+        CalculatorStyledText(paramsStyledText = paramsStyledText)
+    }
+
     val paramsPortrait = ParamsPortrait(
         styledText = paramsStyledText,
+        styledBox = paramsStyledBox,
         row = paramsRow,
         rowSpacing = rowSpacing,
     )

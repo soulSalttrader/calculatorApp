@@ -4,6 +4,7 @@ import androidx.compose.ui.unit.Dp
 
 data class ParamsPortrait(
     val styledText: ParamsStyledText,
+    val styledBox: ParamsStyledBox,
     val row: ParamsRow,
     val rowSpacing: Dp
 )

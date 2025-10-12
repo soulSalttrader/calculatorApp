@@ -15,37 +15,15 @@ import com.example.calculatorApp.model.styles.StyleCalculator
 import com.example.calculatorApp.utils.Constants.SIZE_FONT_DEFAULT
 
 @Composable
-fun CalculatorDisplay(paramsStyledText: ParamsStyledText) {
-    val displayData = paramsStyledText.paramsDisplayText.data
-    val displayStyle = paramsStyledText.paramsDisplayText.style.displayStyle
+fun CalculatorDisplay(paramsStyledBox: ParamsStyledBox) {
 
-    val visuals = BoxVisuals(
-        modifier = paramsStyledText.paramsDisplayText.modifier,
-        layout = displayData.layout,
-        backgroundColor = displayData.element.getBackgroundColor(displayStyle),
-        foregroundColor = displayData.element.getForegroundColor(displayStyle),
-    )
-
-    val semantics = BoxSemantics(
-        contentDescription = paramsStyledText.paramsDisplayText.data.element::class.simpleName
-    )
-
-    val paramsStyledBox = ParamsStyledBox(
-        visuals = visuals,
-        semantics = semantics
-    ) {
-        Text(
-            text = displayData.getPlaceholderText(),
-            textAlign = displayData.layout.alignText,
-            fontWeight = displayData.layout.weightFont,
-            fontSize = displayData.layout.sizeFont,
-            color = Color.Transparent
+    CalculatorStyledBox(
+        paramsStyledBox = ParamsStyledBox(
+            visuals = paramsStyledBox.visuals,
+            semantics = paramsStyledBox.semantics,
+            content = paramsStyledBox.content,
         )
-
-        CalculatorStyledText(paramsStyledText = paramsStyledText)
-    }
-
-    CalculatorStyledBox(paramsStyledBox = paramsStyledBox)
+    )
 }
 
 @Preview(showBackground = false, widthDp = 320, heightDp = 100, name = "CalculatorDisplay")
@@ -77,5 +55,35 @@ fun PreviewCalculatorDisplay() {
         paramsTextStyle = paramsTextStyle,
     )
 
-    CalculatorDisplay(paramsStyledText = paramsStyledText)
+    val displayData = DisplayData(DisplayCalculatorInput.Standard)
+
+    val displayStyle = paramsStyledText.paramsDisplayText.style.displayStyle
+
+    val visuals = BoxVisuals(
+        modifier = paramsStyledText.paramsDisplayText.modifier,
+        layout = displayData.layout,
+        backgroundColor = displayData.element.getBackgroundColor(displayStyle),
+        foregroundColor = displayData.element.getForegroundColor(displayStyle),
+    )
+
+    val semantics = BoxSemantics(
+        contentDescription = paramsStyledText.paramsDisplayText.data.element::class.simpleName
+    )
+
+    val paramsStyledBox = ParamsStyledBox(
+        visuals = visuals,
+        semantics = semantics,
+    ) {
+        Text(
+            text = displayData.getPlaceholderText(),
+            textAlign = displayData.layout.alignText,
+            fontWeight = displayData.layout.weightFont,
+            fontSize = displayData.layout.sizeFont,
+            color = Color.Transparent
+        )
+
+        CalculatorStyledText(paramsStyledText = paramsStyledText)
+    }
+
+    CalculatorDisplay(paramsStyledBox = paramsStyledBox)
 }

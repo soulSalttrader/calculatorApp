@@ -27,7 +27,7 @@ fun CalculatorPortrait(paramsPortrait: ParamsPortrait) {
             verticalArrangement = Arrangement.spacedBy(paramsPortrait.rowSpacing),
         ) {
 
-            CalculatorDisplay(paramsStyledText = paramsPortrait.styledText)
+            CalculatorDisplay(paramsStyledBox = paramsPortrait.styledBox)
             CalculatorRow(paramsRow = paramsPortrait.row)
         }
     }
